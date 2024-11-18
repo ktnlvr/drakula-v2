@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-if not (VITE_DIR := getenv("RELATIVE_VITE_BUILD_PATH")):
+if not (VITE_DIR := getenv("VITE_BUILD_PATH")):
     from os.path import abspath, curdir as cwd
 
     print(
-        f"Environmental variable RELATIVE_VITE_BUILD_PATH not defined, assuming `{abspath(cwd)}`"
+        f"Environmental variable VITE_BUILD_PATH not defined, assuming `{abspath(cwd)}`"
     )
 
 app = FastAPI()
