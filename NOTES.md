@@ -1,19 +1,4 @@
 ## Ideas
-
-### Visuals:
-- Airport points
-- Airport connections archs
-	- Progress with airplane model
-	- Duration
-	- Plane model with character
-- Active cards etc
-- Continent border lighting
-- Film grain
-- Stronger vignette or fire/fire embers effect= % destruction
-- Volumetric clouds
-- Horizon
-- Stars
-- Characters
 ### Gameplay:
 - Inscryption Totems
 - Hours
@@ -37,6 +22,21 @@
 - Liars Dice fighting
 - Destruction of resources instead of paths
 
+### Visuals:
+- Airport points
+- Airport connections archs
+	- Progress with airplane model
+	- Duration
+	- Plane model with character
+- Active cards etc
+- Continent border lighting
+- Film grain
+- Stronger vignette or fire/fire embers effect= % destruction
+- Volumetric clouds
+- Horizon
+- Stars
+- Characters
+
 ### Optional:
 - Multiplayer
 - Drakula's trail consist of small betting encounters
@@ -48,6 +48,7 @@
 - [ ] Make first MVP
 - [ ] Implement seeds for debugging
 - [ ] ...
+
 ### Reminders:
 - Respect codestyle and formatter
 - Rebase
@@ -56,12 +57,14 @@
 - Test if you can
 - Dont leave work for the last weeks
 - ...
+
 ### Tech stack:
 - Vite
 - Svelte
 - ThreeJS/Threlte
 - TailwindCSS
 - FastAPI/Flask
+
 ### Others:
 Selfhosted Coolify (server)
 Sphinx docs
