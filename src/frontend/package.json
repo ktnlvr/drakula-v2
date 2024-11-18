@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
-    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.14.0",
     "globals": "^15.12.0",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@threlte/core": "^8.0.0-next.30",
     "@threlte/extras": "^9.0.0-next.39",
+    "camera-controls": "^2.9.0",
     "three": "^0.170.0"
   }
 }
