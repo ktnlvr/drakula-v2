@@ -1,4 +1,7 @@
 from os import getenv
+from typing import Optional
+from hashlib import md5
+
 from mysql.connector import connect
 
 from .models import Airport
@@ -15,10 +18,13 @@ class Database:
             autocommit=True,
         )
 
-    def get_airports(self) -> list[Airport]:
+    def get_airports(self, seed: Optional[str] = None) -> list[Airport]:
         cursor = self.connection.cursor(dictionary=True)
+        seed = (seed or '') and (int.from_bytes(md5(seed.encode()).digest()) % 2**16)
         cursor.execute(
-            "SELECT id, latitude_deg, longitude_deg, iso_country FROM airports LIMIT 15"
+            f"""SELECT
+                name, latitude_deg, longitude_deg, iso_country
+                FROM airport ORDER BY RAND({seed}) LIMIT 15"""
         )
         return list(map(lambda args: Airport(**args), cursor.fetchall()))
 

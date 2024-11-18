@@ -1,6 +1,8 @@
 from os import getenv
+from typing import Annotated, Optional
+from functools import lru_cache
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
@@ -21,6 +23,8 @@ app = FastAPI()
 
 static = StaticFiles(directory=VITE_DIR)
 
+DATABASE = None
+
 
 def db() -> Database:
     global DATABASE
@@ -30,8 +34,9 @@ def db() -> Database:
 
 
 @app.get("/airports")
-def airports() -> AirportsResponse:
-    return AirportsResponse(airports=[], connections=[])
+def airports(db: Annotated[Database, Depends(db)], seed: Optional[str] = None) -> AirportsResponse:
+    airports = db.get_airports(seed=seed)
+    return AirportsResponse(airports=airports, connections=[])
 
 
 app.mount("/", StaticFiles(directory=VITE_DIR, html=True), name="static")
