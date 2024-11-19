@@ -6,6 +6,8 @@ from mysql.connector import connect
 
 from .models import Airport
 
+DEFAULT_AIRPORT_AMOUT = 15
+
 
 class Database:
     def __init__(self, user, password, host, port):
@@ -18,13 +20,13 @@ class Database:
             autocommit=True,
         )
 
-    def get_airports(self, seed: Optional[str] = None) -> list[Airport]:
+    def get_airports(self, seed: Optional[str] = None, amount: int = DEFAULT_AIRPORT_AMOUT) -> list[Airport]:
         cursor = self.connection.cursor(dictionary=True)
         seed = (seed or '') and (int.from_bytes(md5(seed.encode()).digest()) % 2**16)
         cursor.execute(
             f"""SELECT
                 name, latitude_deg, longitude_deg, iso_country
-                FROM airport ORDER BY RAND({seed}) LIMIT 15"""
+                FROM airport ORDER BY RAND({seed}) LIMIT {amount or DEFAULT_AIRPORT_AMOUT}"""
         )
         return list(map(lambda args: Airport(**args), cursor.fetchall()))
 

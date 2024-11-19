@@ -33,6 +33,30 @@ class AirportsResponse(BaseModel):
     airports: list[Airport]
     connections: list[tuple[int, int]]
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "airports": [
+                        {
+                            "name": "Cool Airport Name",
+                            "latitude_deg": 69.420,
+                            "longitude_deg": 13.37,
+                            "iso_country": "GB",
+                        },
+                        {
+                            "name": "Le Coolér Airport",
+                            "latitude_deg": 19.84,
+                            "longitude_deg": -0,
+                            "iso_country": "FR",
+                        },
+                    ],
+                    "connections": [[0, 1]]
+                }
+            ]
+        }
+    }
+
     @staticmethod
     def from_airports(airports: list[Airport]) -> "AirportsResponse":
         connections = []

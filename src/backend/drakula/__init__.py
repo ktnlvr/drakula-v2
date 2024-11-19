@@ -1,13 +1,12 @@
 from os import getenv
 from typing import Annotated, Optional
-from functools import lru_cache
 
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
 from .models import AirportsResponse
-from .database import Database, make_db
+from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
 
 
 load_dotenv()
@@ -34,8 +33,12 @@ def db() -> Database:
 
 
 @app.get("/airports")
-def airports(db: Annotated[Database, Depends(db)], seed: Optional[str] = None) -> AirportsResponse:
-    airports = db.get_airports(seed=seed)
+def airports(
+    db: Annotated[Database, Depends(db)],
+    seed: Optional[str] = None,
+    amount=DEFAULT_AIRPORT_AMOUT,
+) -> AirportsResponse:
+    airports = db.get_airports(seed=seed, amount=amount)
     return AirportsResponse.from_airports(airports)
 
 
