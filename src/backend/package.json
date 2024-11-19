@@ -1,0 +1,19 @@
+{
+  "name": "drakula-v2-backend",
+  "version": "1.0.0",
+  "description": "Now with twice more fangs!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "drakula-team",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mariadb": "^3.4.0"
+  }
+}
