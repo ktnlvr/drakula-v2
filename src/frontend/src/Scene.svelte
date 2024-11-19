@@ -3,6 +3,7 @@
   import { Grid } from "@threlte/extras";
   import CameraControls from "./components/CameraControls.svelte";
   import Lights from "./components/Lights.svelte";
+  import Globe from "./components/Globe.svelte";
 </script>
 
 <T.PerspectiveCamera
@@ -20,4 +21,5 @@
   />
 </T.PerspectiveCamera>
 <Lights />
+<Globe />
 <Grid sectionThickness={0} infiniteGrid cellColor="#dddddd" cellSize={2} />
