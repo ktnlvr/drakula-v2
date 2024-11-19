@@ -36,7 +36,7 @@ def db() -> Database:
 @app.get("/airports")
 def airports(db: Annotated[Database, Depends(db)], seed: Optional[str] = None) -> AirportsResponse:
     airports = db.get_airports(seed=seed)
-    return AirportsResponse(airports=airports, connections=[])
+    return AirportsResponse.from_airports(airports)
 
 
 app.mount("/", StaticFiles(directory=VITE_DIR, html=True), name="static")
