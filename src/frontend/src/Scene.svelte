@@ -4,6 +4,15 @@
   import CameraControls from "./components/CameraControls.svelte";
   import Lights from "./components/Lights.svelte";
   import Globe from "./components/Globe.svelte";
+  import { fetchAirports } from "./api";
+  import { writable } from "svelte/store";
+
+  const airports = writable({ airports: [], connections: [] });
+
+  fetchAirports().then((data) => {
+    console.log(data)
+    airports.set(data);
+  });
 </script>
 
 <T.PerspectiveCamera
@@ -21,5 +30,5 @@
   />
 </T.PerspectiveCamera>
 <Lights />
-<Globe />
+<Globe airports={airports}/>
 <Grid sectionThickness={0} infiniteGrid cellColor="#dddddd" cellSize={2} />
