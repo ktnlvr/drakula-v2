@@ -60,7 +60,6 @@
 
 ### Tech stack:
 - Vite
-- Svelte
 - ThreeJS/Threlte
 - TailwindCSS
 - FastAPI/Flask
