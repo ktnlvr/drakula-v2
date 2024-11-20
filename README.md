@@ -33,9 +33,8 @@ Based on Zen of Python and previous experience.
 ### Frontend
 
 * **Tailwind**. Simpler CSS.
-* **Svelte 5**. Core megaframework, interactivity and state management.
 * **Vite**. Hot reloading and bundling.
-* **ThreeJS (via Threlte)**.
+* **ThreeJS**. Fast and beautiful 3D graphics.
 
 ### Backend
 
