@@ -5,10 +5,9 @@
 </script>
 
 <main>
- <Canvas>
+  <Canvas>
     <Scene />
   </Canvas>
-  <CardHand />
 </main>
 
 <style>

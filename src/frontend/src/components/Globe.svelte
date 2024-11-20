@@ -1,6 +1,8 @@
 <script>
   import { T, useTask } from "@threlte/core";
-  import { useTexture } from "@threlte/extras";
+  import { interactivity, useTexture } from "@threlte/extras";
+
+  import Airport from "./Airport.svelte";
 
   let { airports } = $props();
 
@@ -10,21 +12,13 @@
   const normalTexture = useTexture("/EarthNormal.png");
   const GLOBE_SPEED = 0;
 
-  function PosFromLatLon(phi, theta) {
-    let lat = (90 - phi) * (Math.PI / 180);
-    let lon = (theta + 180) * (Math.PI / 180);
-    let coords = {};
-    coords.x = 30 * -(Math.sin(lat) * Math.cos(lon));
-    coords.z = 30 * Math.sin(lat) * Math.sin(lon);
-    coords.y = 30 * Math.cos(lat);
-    return coords;
-  }
-
   useTask(() => {
     if (globeGroupRef) {
       globeGroupRef.rotation.y += GLOBE_SPEED;
     }
   });
+
+  interactivity();
 </script>
 
 <T.Group bind:ref={globeGroupRef}>
@@ -45,16 +39,9 @@
     {/await}{/await}
   <T.Group bind:ref={airportsGroupRef}>
     {#each $airports.airports as airport}
-      {@const coords = PosFromLatLon(
-        airport.latitude_deg,
-        airport.longitude_deg,
-      )}
-      {@const message = `Airport: ${airport.name} Lat=${airport.latitude_deg}, Lon=${airport.longitude_deg} X=${coords.x}, Y=${coords.y}, Z=${coords.z}`}
+      {@const message = `Airport: ${airport.name} Lat=${airport.latitude_deg}, Lon=${airport.longitude_deg}`}
       {@const ignored = console.log(message)}
-      <T.Mesh position={[coords.x, coords.y, coords.z]}>
-        <T.SphereGeometry args={[0.3, 128, 64]} />
-        <T.MeshStandardMaterial color={"#ff0000"} />
-      </T.Mesh>
+      <Airport lat={airport.latitude_deg} lon={airport.longitude_deg} />
     {/each}
   </T.Group>
 </T.Group>
