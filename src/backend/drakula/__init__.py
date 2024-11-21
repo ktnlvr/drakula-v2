@@ -4,6 +4,7 @@ from functools import lru_cache
 
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from .models import AirportsResponse
@@ -21,6 +22,21 @@ if not (VITE_DIR := getenv("VITE_BUILD_PATH")):
     )
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost",
+    "http://localhost:*",
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 static = StaticFiles(directory=VITE_DIR)
 
