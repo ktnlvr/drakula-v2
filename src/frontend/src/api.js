@@ -1,3 +1,5 @@
+import { Airport } from './game'
+
 export async function fetchAirports(n) {
     n ||= 15;
     try {
@@ -8,7 +10,6 @@ export async function fetchAirports(n) {
         console.warn("Failed to fetch from a local connection, using mock data.")
 
         // Generate a complete graph of the airports
-
         let points = []
         for (let i = 0; i < n; i++) {
             const lat = (2 * Math.random() - 1) * 90;
@@ -18,14 +19,13 @@ export async function fetchAirports(n) {
 
         const airports = [];
         for (let i = 0; i < points.length; i++) {
-            // @ts-ignore
             const [lat, lon] = points[i];
-            airports.push({
-                name: String.fromCharCode(97 + i % 26),
-                latitude_deg: lat,
-                longitude_deg: lon,
-                iso_country: "ZZ",
-            })
+            airports.push(new Airport(
+                String.fromCharCode(97 + i % 26),
+                lat,
+                lon,
+                "ZZ",
+            ))
         }
 
         const connections = [];
