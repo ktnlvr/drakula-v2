@@ -1,4 +1,4 @@
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import GUI from "lil-gui";
 
 export function setupGui(spotlight, renderer, scene) {
   const gui = new GUI();

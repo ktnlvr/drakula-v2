@@ -10,7 +10,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import CameraControls from "camera-controls";
-//import { setupGui } from "./components/gui";
+import { setupGui } from "./components/gui";
 
 let stats;
 const clock = new THREE.Clock();
@@ -46,12 +46,10 @@ const interactionManager = new InteractionManager(
 
 scene.add(createGlobe(interactionManager, outlinePass));
 scene.add(createTable());
-setupLights(scene);
-//Code for visualizing and editing the spotlight, needs the helper to be updated in the render loop
-//const spotlight = setupLights(scene);
-//const spotlightHelper = new THREE.SpotLightHelper(spotlight);
-//scene.add(spotlightHelper);
-//setupGui(spotlight, renderer, scene);
+const spotlight = setupLights(scene);
+const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+scene.add(spotlightHelper);
+setupGui(spotlight, renderer, scene);
 const cameraControls = new CameraControls(camera, renderer.domElement);
 setControls(cameraControls);
 
@@ -63,7 +61,7 @@ function render() {
   const delta = clock.getDelta();
   cameraControls.update(delta);
   interactionManager.update();
-  //spotlightHelper.update();
+  spotlightHelper.update();
 
   composer.render();
   stats.update();
