@@ -5,13 +5,15 @@ from numpy import ndarray, array
 from scipy.spatial import Delaunay
 
 
+
 class Airport(BaseModel):
     name: str
     latitude_deg: float
     longitude_deg: float
     iso_country: str
-
+      
     @property
+    
     def pos_3d(self) -> ndarray:
         FLATTENING = 1 / 298.25
         EARTH_RADIUS = 2.093e7
@@ -64,7 +66,6 @@ class AirportsResponse(BaseModel):
         for x, y, z in triangulate_points(points):
             connections.extend([[x, y], [y, z], [z, x]])
         return AirportsResponse(airports=airports, connections=connections)
-
 
 def triangulate_points(points):
     return Delaunay(points).convex_hull

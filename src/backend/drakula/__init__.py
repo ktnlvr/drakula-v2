@@ -1,5 +1,6 @@
 from os import getenv
 from typing import Annotated, Optional
+from functools import lru_cache
 
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
@@ -7,6 +8,7 @@ from dotenv import load_dotenv
 
 from .models import AirportsResponse
 from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
+
 
 
 load_dotenv()

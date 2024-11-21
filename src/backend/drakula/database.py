@@ -1,3 +1,4 @@
+
 import uuid
 from os import getenv
 from typing import Optional
@@ -71,7 +72,7 @@ def make_db() -> Database:
         cursor.execute(init_query)
     
     return db
-
+    
 
 def read_sql_query(filename: str)-> str:
     with open(filename, 'r') as file:
