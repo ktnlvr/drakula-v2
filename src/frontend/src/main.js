@@ -66,7 +66,6 @@ function render() {
   //spotlightHelper.update();
 
   composer.render();
-  //renderer.render(scene, camera);
   stats.update();
   requestAnimationFrame(render);
 }
