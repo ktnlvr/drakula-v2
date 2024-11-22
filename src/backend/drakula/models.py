@@ -2,8 +2,6 @@ from math import atan, tan, sin, cos
 
 from pydantic import BaseModel
 from numpy import ndarray, array
-from scipy.spatial import Delaunay
-
 
 
 class Airport(BaseModel):
@@ -11,9 +9,8 @@ class Airport(BaseModel):
     latitude_deg: float
     longitude_deg: float
     iso_country: str
-      
+
     @property
-    
     def pos_3d(self) -> ndarray:
         FLATTENING = 1 / 298.25
         EARTH_RADIUS = 2.093e7
@@ -53,19 +50,8 @@ class AirportsResponse(BaseModel):
                             "iso_country": "FR",
                         },
                     ],
-                    "connections": [[0, 1]]
+                    "connections": [[0, 1]],
                 }
             ]
         }
     }
-
-    @staticmethod
-    def from_airports(airports: list[Airport]) -> "AirportsResponse":
-        connections = []
-        points = array([airport.pos_3d for airport in airports])
-        for x, y, z in triangulate_points(points):
-            connections.extend([[x, y], [y, z], [z, x]])
-        return AirportsResponse(airports=airports, connections=connections)
-
-def triangulate_points(points):
-    return Delaunay(points).convex_hull
