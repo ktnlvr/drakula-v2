@@ -44,13 +44,19 @@
 }
 
 .card-info-p{
-  height: 30%;
-  width: 50%;
+  padding-left: 5px;
+  height: auto;
+  width: 40%;
   background-color: aqua;
+  font-size: 1.1em;
+  display: flex;
+  flex-wrap: wrap;
+  color: blue;
+  border-radius: 2px;
 }
 
 .card-info-token{
-  width: 90%;
+  width: 70%;
   height: 40%;
   border-radius: 5px;
   background-color: white;
