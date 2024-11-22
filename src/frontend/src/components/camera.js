@@ -1,24 +1,24 @@
 import * as THREE from "three";
 import CameraControls from "camera-controls";
 
-export function createCamera() {
-  CameraControls.install({ THREE });
+export function createCamera(renderer) {
+  //CameraControls.install({ THREE });
   const camera = new THREE.PerspectiveCamera(
-    70,
+    80,
     window.innerWidth / window.innerHeight,
-    10,
-    200
+    0.1,
+    500
   );
-  camera.position.x = 50;
-  camera.position.y = 40;
+  camera.position.x = 70;
+  camera.position.y = 20;
   return camera;
 }
 
 export function setControls(cameraControls) {
-  cameraControls.mouseButtons.left = CameraControls.ACTION.NONE;
-  cameraControls.mouseButtons.right = CameraControls.ACTION.ROTATE;
-  cameraControls.mouseButtons.wheel = CameraControls.ACTION.ROTATE;
-  cameraControls.maxDistance = 100;
+  cameraControls.maxDistance = 70;
   cameraControls.minDistance = 45;
+  cameraControls.mouseButtons.left = CameraControls.ACTION.NONE;
+  cameraControls.mouseButtons.right = CameraControls.ACTION.NONE;
+  cameraControls.mouseButtons.wheel = CameraControls.ACTION.DOLLY;
   cameraControls.touches.one = CameraControls.ACTION.TOUCH_ROTATE;
 }
