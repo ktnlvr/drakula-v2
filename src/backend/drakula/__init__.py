@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from numpy import array
 import networkx as nx
 
-from .models import AirportsResponse
+from .models import AirportsResponse, Connection
 from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
 from .utils import seed_to_short
 
@@ -63,7 +63,6 @@ def airports(
 
     airports = db.get_airports(seed=seed, amount=amount)
     points = array([airport.pos_3d for airport in airports])
-    connections = []
     graph = defaultdict(list)
 
     for x, y, z in triangulate_points(points):
@@ -82,7 +81,12 @@ def airports(
     G = spanning_tree
     for edge in difference.edges:
         if rng.random() < P:
-            G.add_edge(edge)
+            G.add_edge(*edge)
+
+    connections = []
+    for a, b in G.edges:
+        con = Connection(hours=0, a=a, b=b)
+        connections.append(con)
 
     return AirportsResponse(airports=airports, connections=connections)
 

@@ -1,6 +1,6 @@
 from math import atan, tan, sin, cos
 
-from pydantic import BaseModel
+from pydantic import BaseModel, AliasGenerator, ConfigDict
 from numpy import ndarray, array
 
 
@@ -28,9 +28,23 @@ class Airport(BaseModel):
         return array([x, y, z])
 
 
+class Connection(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=AliasGenerator(
+            serialization_alias=lambda name: (name == "a" and "0")
+            or (name == "b" and "1")
+            or None
+        )
+    )
+
+    a: int
+    b: int
+    hours: int
+
+
 class AirportsResponse(BaseModel):
     airports: list[Airport]
-    connections: list[tuple[int, int]]
+    connections: list[Connection]
 
     model_config = {
         "json_schema_extra": {
@@ -50,7 +64,7 @@ class AirportsResponse(BaseModel):
                             "iso_country": "FR",
                         },
                     ],
-                    "connections": [[0, 1]],
+                    "connections": [{"0": 0, "1": 1, "hours": 4}],
                 }
             ]
         }
