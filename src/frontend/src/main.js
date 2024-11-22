@@ -32,6 +32,7 @@ function updateCardCount(token)
     const characterId = character.getAttribute("char-id")
     const p = token.nextElementSibling;
     const tokenId = token.getAttribute("token-no")
+    console.lo
     cardCounts[characterId][tokenId] += 1;
     console.log("Decreament here and add changes according to yourself.")
     p.textContent = `x${cardCounts[characterId][tokenId]}`
