@@ -19,3 +19,26 @@ function animate() {
 }
 
 renderer.setAnimationLoop(animate);
+
+const cardCounts = {
+    1: { 1: 0, 2: 0 },
+    2: { 1: 0, 2: 0 },
+    3: { 1: 0, 2: 0 }
+  };
+
+function updateCardCount(token)
+{
+    const character = token.closest("#character-block")
+    const characterId = character.getAttribute("char-id")
+    const p = token.nextElementSibling;
+    const tokenId = token.getAttribute("token-no")
+    cardCounts[characterId][tokenId] += 1;
+    console.log("Decreament here and add changes according to yourself.")
+    p.textContent = `x${cardCounts[characterId][tokenId]}`
+}
+
+document.querySelectorAll(".token").forEach((token) => {
+    token.addEventListener("click",function(){
+        updateCardCount(token)
+    })
+})

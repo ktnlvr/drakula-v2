@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/src/index.css" />
-    <title>Drakula V2</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/src/index.css">
+        <title>Drakula V2</title>
+        <style>
       html {
         overflow-y: hidden;
       }
@@ -13,10 +13,58 @@
       body {
         margin: 0;
       }
-    </style>
-    <script type="module" src="/src/main.js"></script>
-  </head>
-  <body>
-    <div id="app"></div>
-  </body>
+      *{
+        margin: 0;
+        padding: 0;
+      }
+        </style>
+        <script type="module" src="/src/main.js"></script>
+    </head>
+    <body>
+        <div id="characters">
+            <div id="character-block" char-id="1">
+                <div class="character-img-container">
+                    <img src="https://placecats.com/100/100" class="character-img" alt="Cat">
+                </div>
+                <div class="card-info">
+                    <p class="card-info-p">My name is cat</p>
+                    <div class="card-info-token">
+                        <div class="square token" data-tooltip="This card traps Drakula." token-no="1"></div>
+                        <p class="card-count">x0</p>
+                        <div class="square token" data-tooltip="This card traps Drakula." token-no="2"></div>
+                        <p class="card-count">x0</p>
+                    </div>
+                </div>
+            </div>
+            <div id="character-block" char-id="2">
+                <div class="character-img-container">
+                    <img src="https://placecats.com/100/100" class="character-img" alt="Cat">
+                </div>
+                <div class="card-info">
+                    <p class="card-info-p">My name is cat</p>
+                    <div class="card-info-token">
+                        <div class="square token" data-tooltip="This card traps Drakula." token-no="1"></div>
+                        <p class="card-count">x0</p>
+                        <div class="square token" data-tooltip="This card traps Drakula." token-no="2"></div>
+                        <p class="card-count">x0</p>
+                    </div>
+                </div>
+            </div>
+            <div id="character-block">
+                <div class="character-img-container">
+                    <img src="https://placecats.com/100/100" class="character-img" alt="Cat">
+                </div>
+                <div class="card-info">
+                    <p class="card-info-p">My name is cat</p>
+                    <div class="card-info-token">
+                        <div class="square token" data-tooltip="This card traps Drakula." token-no="1"></div>
+                        <p class="card-count">x0</p>
+                        <div class="square token" data-tooltip="This card traps Drakula." token-no="2"></div>
+                        <p class="card-count">x0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="app"></div>
+    </body>
 </html>
