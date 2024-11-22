@@ -63,10 +63,6 @@ def make_db() -> Database:
 
     if not db.connection:
         print("Database connection error!")
-    else:
-        init_query = read_sql_query('query.sql')
-        cursor = db.connection.cursor()
-        cursor.execute(init_query)
     
     return db
     

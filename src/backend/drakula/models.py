@@ -1,6 +1,6 @@
 from math import atan, tan, sin, cos
 
-from pydantic import BaseModel, AliasGenerator, ConfigDict
+from pydantic import BaseModel, AliasGenerator, ConfigDict, field_validator
 from numpy import ndarray, array
 
 
@@ -9,6 +9,10 @@ class Airport(BaseModel):
     latitude_deg: float
     longitude_deg: float
     iso_country: str
+
+    @property
+    def lat_lon(self) -> ndarray:
+        return array([self.latitude_deg, self.longitude_deg])
 
     @property
     def pos_3d(self) -> ndarray:
@@ -39,7 +43,12 @@ class Connection(BaseModel):
 
     a: int
     b: int
-    hours: int
+    distance_km: float
+
+    @field_validator('distance_km')
+    @staticmethod
+    def _validate_distance_km(v):
+        return round(v, 2)
 
 
 class AirportsResponse(BaseModel):
@@ -64,7 +73,7 @@ class AirportsResponse(BaseModel):
                             "iso_country": "FR",
                         },
                     ],
-                    "connections": [{"0": 0, "1": 1, "hours": 4}],
+                    "connections": [{"0": 0, "1": 1, "distance_km": 400.43}],
                 }
             ]
         }

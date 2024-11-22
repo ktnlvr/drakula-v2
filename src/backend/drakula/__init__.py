@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from numpy import array
 import networkx as nx
+from geopy.distance import distance as geo_distance
 
 from .models import AirportsResponse, Connection
 from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
@@ -85,7 +86,9 @@ def airports(
 
     connections = []
     for a, b in G.edges:
-        con = Connection(hours=0, a=a, b=b)
+        lhs = airports[a]
+        rhs = airports[b]
+        con = Connection(distance_km=geo_distance(lhs.lat_lon, rhs.lat_lon).km, a=a, b=b)
         connections.append(con)
 
     return AirportsResponse(airports=airports, connections=connections)
