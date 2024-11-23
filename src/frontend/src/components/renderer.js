@@ -34,6 +34,7 @@ export function createRenderer(scene, camera) {
   outlinePass.edgeThickness = 1;
   outlinePass.pulsePeriod = 1.2;
   outlinePass.visibleEdgeColor.set("#ffffff");
+  outlinePass.hiddenEdgeColor.set("#ffffff");
 
   composer.addPass(outlinePass);
   const outputPass = new OutputPass();
