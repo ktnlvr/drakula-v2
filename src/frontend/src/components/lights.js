@@ -5,7 +5,7 @@ export function setupLights(scene) {
   scene.add(ambientLight);
 
   const spotlight = new THREE.SpotLight("#ff9329", 600, 300, 0.45, 1, 0.75);
-  spotlight.position.set(0, 190, 70);
+  spotlight.position.set(70, 190, 0);
   spotlight.lookAt(new THREE.Vector3(0, 0, 0));
   spotlight.castShadow = true;
   spotlight.shadow.mapSize.width = 2048;
