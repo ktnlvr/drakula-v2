@@ -15,12 +15,12 @@
 }
 
 #characters {
+height: 100%;
   position: absolute;
-  width: 25%;
-  display: flex;
+    display: flex;
   flex-direction: column;
-  gap: 20px;
-  justify-content: space-evenly;
+  flex-wrap: wrap;
+  justify-content:flex-start;
 }
 
 .character-img-container {
