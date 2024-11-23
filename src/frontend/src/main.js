@@ -18,7 +18,15 @@ const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 camera.position.z = 5;
 
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
 function animate() {
+  onWindowResize();
+
   cube.rotation.x += 0.01;
   cube.rotation.y += 0.01;
   renderer.render(scene, camera);
@@ -30,10 +38,10 @@ const cardCounts = {};
 
 function initializeCardCounts(charId, tokenTypes) {
   if (!cardCounts[charId]) {
-      cardCounts[charId] = {};
+    cardCounts[charId] = {};
   }
   tokenTypes.forEach((_, index) => {
-      cardCounts[charId][index + 1] = 0;
+    cardCounts[charId][index + 1] = 0;
   });
 }
 
@@ -50,57 +58,58 @@ function updateTokenCount(token) {
   p.textContent = `x${cardCounts[characterId][tokenId]}`;
 }
 
-function tooltip(tokenType){
-    if (tokenType === "square")
-        return `This is a trap.`
-    else
-        return `This is nothing.`
+function tooltip(tokenType) {
+  if (tokenType === "square")
+    return `This is a trap.`
+  else
+    return `This is nothing.`
 }
 
 function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
-    initializeCardCounts(charId, tokenTypes);
-    const characterName = imgAlt;
-    const characterBlock = document.createElement("div");
-    characterBlock.id = "character-block";
-    characterBlock.setAttribute("char-id", charId);
-    const characterImgContainer = document.createElement("div");
-    characterImgContainer.className = "character-img-container";
-    const characterImg = document.createElement("img");
-    characterImg.className = "character-img";
-    characterImg.src = imgSrc;
-    characterImg.alt = imgAlt;
-    characterImgContainer.appendChild(characterImg);
-    const cardInfo = document.createElement("div");
-    cardInfo.className = "card-info";
-    const cardInfoP = document.createElement("p");
-    cardInfoP.className = "card-info-p";
-    cardInfoP.textContent = `My name is ${characterName}`;
-    const cardInfoToken = document.createElement("div");
-    cardInfoToken.className = "card-info-token";
-    tokenTypes.forEach((tokenType, index) => {
-        const token = document.createElement("div");
-        token.classList.add("token", tokenType);
-        token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
-        token.setAttribute("token-no", index + 1);
-        token.addEventListener("click", () => {
-            console.log(`Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1}`);
-            updateTokenCount(token);
-        });
-        const cardCount = document.createElement("p");
-        cardCount.classList.add("card-count");
-        cardCount.textContent = "x0";
-        cardInfoToken.appendChild(token);
-        cardInfoToken.appendChild(cardCount);
+  initializeCardCounts(charId, tokenTypes);
+  const characterName = imgAlt;
+  const characterBlock = document.createElement("div");
+  characterBlock.id = "character-block";
+  characterBlock.setAttribute("char-id", charId);
+  const characterImgContainer = document.createElement("div");
+  characterImgContainer.className = "character-img-container";
+  const characterImg = document.createElement("img");
+  characterImg.className = "character-img";
+  characterImg.src = imgSrc;
+  characterImg.alt = imgAlt;
+  characterImgContainer.appendChild(characterImg);
+  const cardInfo = document.createElement("div");
+  cardInfo.className = "card-info";
+  const cardInfoP = document.createElement("p");
+  cardInfoP.className = "card-info-p";
+  cardInfoP.textContent = `My name is ${characterName}`;
+  const cardInfoToken = document.createElement("div");
+  cardInfoToken.className = "card-info-token";
+  tokenTypes.forEach((tokenType, index) => {
+    const token = document.createElement("div");
+    token.classList.add("token", tokenType);
+    token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
+    token.setAttribute("token-no", index + 1);
+    token.addEventListener("click", () => {
+      console.log(`Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1}`);
+      updateTokenCount(token);
     });
-    cardInfo.appendChild(cardInfoP);
-    cardInfo.appendChild(cardInfoToken);
-    characterBlock.appendChild(characterImgContainer);
-    characterBlock.appendChild(cardInfo);
-    parent.appendChild(characterBlock);
+    const cardCount = document.createElement("p");
+    cardCount.classList.add("card-count");
+    cardCount.textContent = "x0";
+    cardInfoToken.appendChild(token);
+    cardInfoToken.appendChild(cardCount);
+  });
+  cardInfo.appendChild(cardInfoP);
+  cardInfo.appendChild(cardInfoToken);
+  characterBlock.appendChild(characterImgContainer);
+  characterBlock.appendChild(cardInfo);
+  parent.appendChild(characterBlock);
 }
+
 const characters = document.querySelector("#characters");
-createCard(characters, 1, "https://placecats.com/100/100", "Cat", ["square","square"]);
-createCard(characters, 2, "https://placecats.com/100/100", "Cat", ["square","square"]);
-createCard(characters, 3, "https://placecats.com/100/100", "Cat", ["square","square"]);
-createCard(characters, 4, "https://placecats.com/100/100", "Cat", ["square","square", "square"]);
-createCard(characters, 5, "https://placecats.com/100/100", "Cat", ["square","square"]);
+createCard(characters, 1, "https://placecats.com/100/100", "Cat", ["square", "square"]);
+createCard(characters, 2, "https://placecats.com/100/100", "Cat", ["square", "square"]);
+createCard(characters, 3, "https://placecats.com/100/100", "Cat", ["square", "square"]);
+createCard(characters, 4, "https://placecats.com/100/100", "Cat", ["square", "square", "square"]);
+createCard(characters, 5, "https://placecats.com/100/100", "Cat", ["square", "square"]);
