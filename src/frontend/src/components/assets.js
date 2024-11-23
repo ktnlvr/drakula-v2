@@ -12,6 +12,66 @@ export function createGlobe(interactionManager, outlinePass) {
     normalMap: normalTexture,
   });
   const globe = new THREE.Mesh(geometry, material);
+
+  let mousedown = false;
+  let hovering = false;
+  let previousMousePos = null;
+  let velocity = { y: 0 };
+  const damping = 0.995;
+  const swiping = 0.08;
+  const stopping = 0.92;
+  globe.addEventListener('mousedown', (event) => {
+    event.stopPropagation();
+    mousedown = true;
+  });
+
+  window.addEventListener('mouseup', (event) => {
+    event.stopPropagation();
+    mousedown = false;
+    previousMousePos = null;
+  });
+
+  globe.addEventListener('mouseenter', () => {
+    hovering = true;
+    document.body.style.cursor = "grab";
+  });
+
+  globe.addEventListener('mousemove', (event) => {
+    event.stopPropagation();
+    if (hovering && mousedown) {
+      if (!previousMousePos) {
+        previousMousePos = { x: event.coords.x };
+        return;
+      }
+
+      velocity.y += (event.coords.x - previousMousePos.x) * swiping;
+      previousMousePos.x = event.coords.x;
+    }
+  });
+
+  globe.addEventListener('mouseleave', (event) => {
+    event.stopPropagation();
+    hovering = false;
+    document.body.style.cursor = "default";
+  });
+
+  function updateRotation() {
+    if (hovering && mousedown) {
+      document.body.style.cursor = "grabbing";
+      velocity.y *= stopping;
+    } else {
+      document.body.style.cursor = "grab";
+      velocity.y *= damping;
+    }
+    globeGroup.rotation.y += velocity.y;
+    
+    requestAnimationFrame(updateRotation);
+  }
+
+  updateRotation();
+
+  interactionManager.add(globe);
+
   globe.castShadow = true;
   globe.receiveShadow = true;
   globeGroup.add(globe);
@@ -33,7 +93,6 @@ export function createGlobe(interactionManager, outlinePass) {
       (start.z + end.z) / 2
     );
 
-    // Calculate the distance between points to determine arc height
     const distance = start.distanceTo(end);
     const height = distance * 0.5;
 
@@ -75,19 +134,17 @@ export function createGlobe(interactionManager, outlinePass) {
         });
         const airportPoint = new THREE.Mesh(geometry, material);
         interactionManager.add(airportPoint);
-        airportPoint.addEventListener("click", (event) => {
+        airportPoint.addEventListener("mousedown", (event) => {
           console.log("Selected airport: ", airport.name);
           event.stopPropagation();
           outlinePass.selectedObjects = [airportPoint];
         });
         airportPoint.addEventListener("mouseover", (event) => {
-          console.log("mouseover");
           airportPoint.material.color.set("#d8d8d8");
           document.body.style.cursor = "pointer";
         });
 
         airportPoint.addEventListener("mouseout", (event) => {
-          console.log("mouseout");
           airportPoint.material.color.set("#646464");
           document.body.style.cursor = "default";
         });
@@ -111,7 +168,7 @@ export function createGlobe(interactionManager, outlinePass) {
 }
 
 export function createTable() {
-  const geometry = new THREE.BoxGeometry(150, 2, 150);
+  const geometry = new THREE.BoxGeometry(220, 2, 220);
   const material = new THREE.MeshStandardMaterial({ color: "#38322c" });
   const table = new THREE.Mesh(geometry, material);
   table.position.y = -60;
