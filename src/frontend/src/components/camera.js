@@ -9,13 +9,13 @@ export function createCamera(renderer) {
     0.1,
     500
   );
-  camera.position.x = 70;
+  camera.position.z = 99;
   camera.position.y = 20;
   return camera;
 }
 
 export function setControls(cameraControls) {
-  cameraControls.maxDistance = 70;
+  cameraControls.maxDistance = 100;
   cameraControls.minDistance = 45;
   cameraControls.mouseButtons.left = CameraControls.ACTION.NONE;
   cameraControls.mouseButtons.right = CameraControls.ACTION.NONE;
