@@ -26,13 +26,16 @@ function animate() {
 
 renderer.setAnimationLoop(animate);
 
-const cardCounts = {
-  1: { 1: 0, 2: 0 },
-  2: { 1: 0, 2: 0 },
-  3: { 1: 0, 2: 0 },
-  4: { 1: 0, 2: 0 },
-  5: { 1: 0, 2: 0 }
-};
+const cardCounts = {};
+
+function initializeCardCounts(charId, tokenTypes) {
+  if (!cardCounts[charId]) {
+      cardCounts[charId] = {};
+  }
+  tokenTypes.forEach((_, index) => {
+      cardCounts[charId][index + 1] = 0;
+  });
+}
 
 function updateTokenCount(token) {
   //This is the token clicking hook here you can change and get info of the selected token ,inc or dec the count corresponding count to it.
@@ -55,6 +58,7 @@ function tooltip(tokenType){
 }
 
 function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
+    initializeCardCounts(charId, tokenTypes);
     const characterName = imgAlt;
     const characterBlock = document.createElement("div");
     characterBlock.id = "character-block";
@@ -98,5 +102,5 @@ const characters = document.querySelector("#characters");
 createCard(characters, 1, "https://placecats.com/100/100", "Cat", ["square","square"]);
 createCard(characters, 2, "https://placecats.com/100/100", "Cat", ["square","square"]);
 createCard(characters, 3, "https://placecats.com/100/100", "Cat", ["square","square"]);
-createCard(characters, 4, "https://placecats.com/100/100", "Cat", ["square","square"]);
+createCard(characters, 4, "https://placecats.com/100/100", "Cat", ["square","square", "square"]);
 createCard(characters, 5, "https://placecats.com/100/100", "Cat", ["square","square"]);
