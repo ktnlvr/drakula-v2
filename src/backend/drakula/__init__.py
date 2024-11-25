@@ -1,10 +1,11 @@
+from dotenv import load_dotenv
 from os import getenv
-from typing import Annotated, Optional
+from typing import Annotated, Optional,Dict
 from functools import lru_cache
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends,HTTPException
 from fastapi.staticfiles import StaticFiles
-from dotenv import load_dotenv
+
 
 from .models import AirportsResponse
 from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
@@ -14,7 +15,9 @@ from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
 load_dotenv()
 
 if not (VITE_DIR := getenv("VITE_BUILD_PATH")):
+
     from os.path import abspath, curdir as cwd
+    print(f"Loaded VITE_BUILD_PATH: {VITE_DIR}")
 
     print(
         f"Environmental variable VITE_BUILD_PATH not defined, assuming `{abspath(cwd)}`"
@@ -42,6 +45,21 @@ def airports(
 ) -> AirportsResponse:
     airports = db.get_airports(seed=seed, amount=amount)
     return AirportsResponse.from_airports(airports)
+
+games_db: Dict[str, dict] = {}
+
+@app.post("/game")
+async def create_game(game_id: str, game_data: dict):
+    if game_id in games_db:
+        raise HTTPException(status_code=409, detail="Game ID already exists.")
+    games_db[game_id] = game_data
+    return {"id": game_id, "data": game_data}
+
+@app.get("/game")
+async def get_game(game_id: str):
+    if game_id not in games_db:
+        raise HTTPException(status_code=404, detail="Game not found.")
+    return games_db[game_id]
 
 
 app.mount("/", StaticFiles(directory=VITE_DIR, html=True), name="static")
