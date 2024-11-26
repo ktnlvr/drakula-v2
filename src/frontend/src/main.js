@@ -1,38 +1,29 @@
 import * as THREE from "three";
+import { createCamera, setControls } from "./components/camera";
+import { createGlobe, createTable } from "./components/assets";
+import { setupLights } from "./components/lights";
+import { createRenderer, render } from "./components/renderer";
+import { setupGui } from "./components/gui";
+import CameraControls from "camera-controls";
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+const camera = createCamera();
+const { renderer, outlinePass, composer, interactionManager } = createRenderer(
+  scene,
+  camera
 );
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
 
-document.body.appendChild(renderer.domElement);
+scene.add(createGlobe(interactionManager, outlinePass));
+scene.add(createTable());
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-camera.position.z = 5;
+const { ambientLight, spotlight } = setupLights(scene);
+const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
+scene.add(spotlightHelper);
 
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function animate() {
-  onWindowResize();
-
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  renderer.render(scene, camera);
-}
-
-renderer.setAnimationLoop(animate);
+CameraControls.install({ THREE });
+const cameraControls = new CameraControls(camera, renderer.domElement);
+setControls(cameraControls);
 
 const cardCounts = {};
 
@@ -113,3 +104,18 @@ createCard(characters, 2, "https://placecats.com/100/100", "Cat", ["square", "sq
 createCard(characters, 3, "https://placecats.com/100/100", "Cat", ["square", "square"]);
 createCard(characters, 4, "https://placecats.com/100/100", "Cat", ["square", "square", "square"]);
 createCard(characters, 5, "https://placecats.com/100/100", "Cat", ["square", "square"]);
+
+render(cameraControls, spotlightHelper);
+
+window.addEventListener(
+  "resize",
+  () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    composer.setSize(window.innerWidth, window.innerHeight);
+  },
+  false
+);

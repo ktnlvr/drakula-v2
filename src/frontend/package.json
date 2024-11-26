@@ -17,6 +17,9 @@
   },
   "dependencies": {
     "camera-controls": "^2.9.0",
-    "three": "^0.170.0"
+    "lil-gui": "^0.20.0",
+    "stats-gl": "^3.6.0",
+    "three": "^0.170.0",
+    "three.interactive": "^1.8.0"
   }
 }

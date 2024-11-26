@@ -1,9 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-y: hidden;
+}
+
 body {
   /* Ok, this is done so that we don't forget */
   /* We need to set this so that when the stuff is not */
   /* Pixel perfect there won't be a weird strip of white */
   /* You can see that color by resizing */
   background-color: magenta;
+  overflow: hidden;
+  margin: 0;
 }
 
 .square {
@@ -96,17 +107,4 @@ body {
 .square:hover::after {
   visibility: visible;
   opacity: 1;
-}
-
-html {
-  overflow-y: hidden;
-}
-
-body {
-  margin: 0;
-}
-
-* {
-  margin: 0;
-  padding: 0;
 }
