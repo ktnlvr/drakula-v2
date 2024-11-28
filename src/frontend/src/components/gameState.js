@@ -36,7 +36,7 @@ export class Character {
     const currentIndex = GameState.airports.indexOf(this.airport);
     
     if (GameState.isConnected(currentIndex, target)) {
-      this.airport = GameState.airports(target);
+      this.airport = GameState.airports[target];
       this.updatePosition();
     } else {
       console.error('Unconnected airport:', target);
