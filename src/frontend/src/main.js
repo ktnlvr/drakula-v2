@@ -15,13 +15,12 @@ const { renderer, outlinePass, composer, interactionManager } = createRenderer(
 );
 
 async function setupGame() {
-  const { globeGroup} = await createGlobe(interactionManager, outlinePass);
+  const { globeGroup } = await createGlobe(interactionManager, outlinePass);
   scene.add(globeGroup);
   scene.add(createTable());
-  
+
   createCharacters(globeGroup);
   window.GameState = GameState;
-
 
   const { ambientLight, spotlight } = setupLights(scene);
   const spotlightHelper = new THREE.SpotLightHelper(spotlight);

@@ -16,6 +16,9 @@ export async function createGlobe(interactionManager, outlinePass) {
     normalMap: normalTexture,
   });
   const globe = new THREE.Mesh(geometry, material);
+  globe.position.y = 60;
+  globe.castShadow = true;
+  globe.receiveShadow = true;
 
   let mousedown = false;
   let hovering = false;
@@ -75,9 +78,6 @@ export async function createGlobe(interactionManager, outlinePass) {
   updateRotation();
 
   interactionManager.add(globe);
-
-  globe.castShadow = true;
-  globe.receiveShadow = true;
   globeGroup.add(globe);
 
   function PosFromLatLon(phi, theta) {
@@ -126,7 +126,7 @@ export async function createGlobe(interactionManager, outlinePass) {
   return new Promise((resolve) => {
     fetchAirports(30)
       .then((data) => {
-        let index = 0
+        let index = 0;
         for (const airport of data.airports) {
           const coords = PosFromLatLon(
             airport.latitude_deg,
@@ -137,10 +137,13 @@ export async function createGlobe(interactionManager, outlinePass) {
             color: "#646464",
           });
           const airportMesh = new THREE.Mesh(geometry, material);
-          airportMesh.name = index
+          airportMesh.name = index;
           interactionManager.add(airportMesh);
           airportMesh.addEventListener("mousedown", (event) => {
-            console.log("Selected airport: N.",GameState.airports[airportMesh.name].name);
+            console.log(
+              "Selected airport: N.",
+              GameState.airports[airportMesh.name].name
+            );
             event.stopPropagation();
             outlinePass.selectedObjects = [airportMesh];
           });
@@ -156,7 +159,7 @@ export async function createGlobe(interactionManager, outlinePass) {
           airportMesh.position.set(coords.x, coords.y, coords.z);
           globeGroup.add(airportMesh);
           airportsData.push(airportMesh);
-          index++
+          index++;
         }
         for (const connection of data.connections) {
           const [fromId, toId] = connection;
@@ -171,7 +174,7 @@ export async function createGlobe(interactionManager, outlinePass) {
           globe: globe,
           globeGroup: globeGroup,
         });
-        GameState.airports = airportsData
+        GameState.airports = airportsData;
         GameState.connections = connectionsData;
       })
       .catch(console.error);
@@ -182,7 +185,6 @@ export function createTable() {
   const geometry = new THREE.BoxGeometry(220, 2, 220);
   const material = new THREE.MeshStandardMaterial({ color: "#38322c" });
   const table = new THREE.Mesh(geometry, material);
-  table.position.y = -60;
   table.castShadow = true;
   table.receiveShadow = true;
   return table;

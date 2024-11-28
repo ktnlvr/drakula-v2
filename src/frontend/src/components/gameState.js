@@ -6,12 +6,12 @@ export const GameState = {
   characters: [],
   dracula: null,
   scene: null,
-  
+
   isConnected(from, to) {
-    return this.connections.some(([a, b]) => 
-      (a === from && b === to) || (a === to && b === from)
+    return this.connections.some(
+      ([a, b]) => (a === from && b === to) || (a === to && b === from)
     );
-  }
+  },
 };
 
 export class Character {
@@ -34,13 +34,13 @@ export class Character {
 
   setAirport(target) {
     const currentIndex = GameState.airports.indexOf(this.airport);
-    
+
     if (GameState.isConnected(currentIndex, target)) {
       this.airport = GameState.airports[target];
       this.updatePosition();
     } else {
-      console.error('Unconnected airport:', target);
-   } 
+      console.error("Unconnected airport:", target);
+    }
   }
 
   updatePosition() {
@@ -49,7 +49,7 @@ export class Character {
     this.mesh.position.copy(
       airportPos.clone().normalize().multiplyScalar(distance)
     );
-    this.mesh.lookAt(new THREE.Vector3(0, 0, 0));
+    this.mesh.lookAt(new THREE.Vector3(0, 60, 0));
   }
 }
 
