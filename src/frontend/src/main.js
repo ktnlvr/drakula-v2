@@ -38,7 +38,7 @@ async function setupGame(scene) {
     console.log(cameraControls.getPosition())
 
     const playerDice = new THREE.Group();
-    let dice_rotors = [];
+    let diceRotos = [];
     let n = 6;
     for (let i = 0; i < n; i++) {
       const theta = 2 * Math.PI * i / n;
@@ -52,8 +52,13 @@ async function setupGame(scene) {
       let [rotate, stop] = die.rotor(randomPointOnSphere().multiplyScalar(10));
       scheduled_callables.push(rotate);
 
-      dice_rotors.push([die, stop]);
+      diceRotos.push([die, stop]);
       playerDice.add(die);
+    }
+
+    for (let i = 0; i < n; i++) {
+      let [_, stop] = diceRotos[i];
+      setInterval(() => stop(2), 1000 + i * 200);
     }
 
     playerDice.position.set(0, -40, 0);
