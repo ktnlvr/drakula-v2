@@ -6,36 +6,18 @@ import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
-import { characterDeath } from "./components/chardeath";
-import { logInfo } from "./components/logger";
-import { matchEndScene } from "./components/winandloss";
-import { createCard, cardCounts } from "./components/cards";
+import { createCard } from "./components/cards";
+import { createDie } from "./components/dice";
+import { randomPointOnSphere } from "./components/utils";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
 const { renderer, selectionPass, hoverPass, composer, interactionManager } =
   createRenderer(scene, camera);
 
-async function setupGame() {
-  const { globeGroup } = await createGlobe(
-    interactionManager,
-    selectionPass,
-    hoverPass
-  );
-  scene.add(globeGroup);
-  createTable(scene);
+let TESTING_DICE = true
 
-  createCharacters(globeGroup);
-  window.GameState = GameState;
-
-  const { ambientLight, spotlight } = setupLights(scene);
-  const spotlightHelper = new THREE.SpotLightHelper(spotlight);
-  setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
-  scene.add(spotlightHelper);
-
-  CameraControls.install({ THREE });
-  const cameraControls = new CameraControls(camera, renderer.domElement);
-  setControls(cameraControls);
+function createCharacterCards() {
   const characters = document.querySelector("#characters");
   createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
     "square",
@@ -58,16 +40,66 @@ async function setupGame() {
     "square",
     "square",
   ]);
-
-  render(cameraControls, spotlightHelper);
-  /* Example actions
-  logInfo("Hello this is a fucking cat.");
-  matchEndScene("loss");
-  characterDeath(document.querySelector('[char-id="2"]'));
-  */
 }
 
-setupGame().catch(console.error);
+async function setupGame(scene) {
+  const { ambientLight, spotlight } = setupLights(scene);
+  const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+  setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
+  scene.add(spotlightHelper);
+
+  createTable(scene);
+
+  CameraControls.install({ THREE });
+  const cameraControls = new CameraControls(camera, renderer.domElement);
+  setControls(cameraControls);
+
+  createCharacterCards();
+  const scheduled_callables = [];
+
+  window.GameState = GameState;
+
+  if (TESTING_DICE) {
+    console.log(cameraControls.getPosition())
+
+    const playerDice = new THREE.Group();
+    let dice_rotors = [];
+    let n = 6;
+    for (let i = 0; i < n; i++) {
+      const theta = 2 * Math.PI * i / n;
+      const die = await createDie(scene);
+
+      const r = 40;
+      const x = r * Math.cos(theta);
+      const z = r * Math.sin(theta);
+      die.position.set(x, 0, z);
+
+      let [rotate, stop] = die.rotor(randomPointOnSphere().multiplyScalar(10));
+      scheduled_callables.push(rotate);
+
+      dice_rotors.push([die, stop]);
+      playerDice.add(die);
+    }
+
+    playerDice.position.set(0, -40, 0);
+    scene.add(playerDice);
+    await cameraControls.setLookAt(
+      camera.position.x, camera.position.y, camera.position.z,
+      playerDice.position.x, playerDice.position.y, playerDice.position.z);
+  } else {
+    const { globeGroup } = await createGlobe(
+      interactionManager,
+      selectionPass,
+      hoverPass
+    );
+    createCharacters(globeGroup);
+    scene.add(globeGroup);
+  }
+
+  render(cameraControls, spotlightHelper, scheduled_callables);
+}
+
+setupGame(scene);
 
 window.addEventListener(
   "resize",
