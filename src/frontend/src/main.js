@@ -138,5 +138,4 @@ window.addEventListener(
   },
   false
 );
-
-winorloss(false);
+winorloss(true)

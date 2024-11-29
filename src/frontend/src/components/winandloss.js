@@ -2,7 +2,6 @@ export function winorloss(iswin){
 	const gameOver = document.getElementsByClassName("game-over")[0];
 	const gameMsg = document.getElementById("game-result");
 	const button = document.querySelector("#try-button");
-	console.log(gameOver);
 	if (iswin)
 	{
 		gameOver.style.zIndex = "1000";
@@ -14,6 +13,11 @@ export function winorloss(iswin){
 		gameOver.style.zIndex = "1000";
 		gameMsg.innerHTML = `You lose!`;
 	}
+	button.addEventListener("click",(e) => {
+		e.preventDefault()
+		console.log("Reloading the page");
+		location.reload();
+	})
 }
 
 /*var old_element = document.getElementById("btn");

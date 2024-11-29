@@ -108,3 +108,45 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
+.game-over{
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  width: 50vw;
+  top: 25%;
+  left: 25%;
+  background-color: #2a2a2a;
+  color: white;
+  z-index: -1;
+  opacity: 0.5;
+  border: 2px solid rgba(255, 255, 255, 0.8); /* Base border color */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+              0 0 20px rgba(255, 255, 255, 0.6),
+              0 0 30px rgba(255, 255, 255, 0.4);
+  border-radius: 30px;
+}
+
+.game-info{
+  padding: 5px;
+  width: 100vw;
+  text-align: center;
+}
+
+#try-button{
+  background: linear-gradient(45deg, #ff007c, #ffca0f); /* Gradient effect */
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#game-result{
+  padding: 15px;
+}
