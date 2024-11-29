@@ -6,6 +6,7 @@ import { createRenderer, render } from "./components/renderer";
 import { setupGui } from "./components/gui";
 import { winorloss } from "./components/winandloss"
 import CameraControls from "camera-controls";
+import { characterDeath } from "./components/chardeath";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -138,4 +139,5 @@ window.addEventListener(
   },
   false
 );
-winorloss(true)
+
+characterDeath(document.querySelector('[char-id="2"]'));
