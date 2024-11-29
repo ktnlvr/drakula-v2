@@ -57,12 +57,18 @@ export function createRenderer(scene, camera) {
     interactionManager: interactionManager,
   };
 }
-export function render(cameraControls, spotlightHelper) {
-  cameraControls.update(clock.getDelta());
+export function render(cameraControls, spotlightHelper, scheduled_callables) {
+  const dt = clock.getDelta();
+  cameraControls.update(dt);
   interactionManager.update();
   spotlightHelper.update();
 
+  const schedule_systems = [];
+  for (let callable of scheduled_callables)
+    if (callable(dt))
+      schedule_systems.push(callable)
+
   composer.render();
   stats.update();
-  requestAnimationFrame(() => render(cameraControls, spotlightHelper));
+  requestAnimationFrame(() => render(cameraControls, spotlightHelper, scheduled_callables));
 }
