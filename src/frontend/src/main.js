@@ -142,7 +142,7 @@ window.addEventListener(
 );
 
 characterDeath(document.querySelector('[char-id="2"]'));
-const logger = document.querySelector(".logger-box");
+const logger = document.querySelector(".logs");
 LogInfo({
   parent: logger,
   event: LogEventTypes.MOVE,
@@ -159,9 +159,88 @@ LogInfo({
 
 LogInfo({
   parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
   event : LogEventTypes.ITEM_EXCHANGE,
   initiator : "Light",
   receiver : "heavy",
   initiatorItems: ["teleport"],
   receiverItems : ["nothing","but","a","cat"]
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
 })

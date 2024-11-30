@@ -66,9 +66,7 @@ export function LogInfo({
   if (parent || logMessage) {
     const logEntry = document.createElement("p");
     logEntry.textContent = logMessage;
-    logEntry.style.marginBottom = "8px";
-    logEntry.style.fontFamily = "Roboto Mono, monospace";
-    logEntry.style.color = "#fff";
+	logEntry.classList.add("spooky-text");
     parent.appendChild(logEntry);
   }
 }
