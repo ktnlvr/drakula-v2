@@ -7,6 +7,7 @@ import { setupGui } from "./components/gui";
 import { winorloss } from "./components/winandloss"
 import CameraControls from "camera-controls";
 import { characterDeath } from "./components/chardeath";
+import { LogInfo, LogEventTypes } from "./components/logger";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -141,3 +142,26 @@ window.addEventListener(
 );
 
 characterDeath(document.querySelector('[char-id="2"]'));
+const logger = document.querySelector(".logger-box");
+LogInfo({
+  parent: logger,
+  event: LogEventTypes.MOVE,
+  initiator: "Dracula",
+  moveDestination: "Airport A",
+  airportsTravelled: 2,
+});
+
+LogInfo({
+  parent : logger,
+  event: LogEventTypes.GAME_END,
+  initiator: "Player"
+})
+
+LogInfo({
+  parent : logger,
+  event : LogEventTypes.ITEM_EXCHANGE,
+  initiator : "Light",
+  receiver : "heavy",
+  initiatorItems: ["teleport"],
+  receiverItems : ["nothing","but","a","cat"]
+})
