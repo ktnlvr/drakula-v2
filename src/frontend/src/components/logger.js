@@ -6,17 +6,15 @@
 	exchanging items
 **/
 
-import { time } from "three/webgpu";
-
 export const LogEventTypes = {
   MOVE: "move",
-  CHARACTER_DEATH: "character_death",
-  GAME_END: "game_end",
-  ITEM_ACQUISITION: "item_acquisition",
-  ITEM_EXCHANGE: "item_exchange",
+  CHARACTER_DEATH: "characterDeath",
+  GAME_END: "gameEnd",
+  ITEM_ACQUISITION: "itemAcquisition",
+  ITEM_EXCHANGE: "itemExchange",
 };
 
-export function LogInfo({
+export function logInfo({
   parent,
   event,
   initiator,

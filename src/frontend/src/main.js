@@ -4,10 +4,10 @@ import { createGlobe, createTable } from "./components/assets";
 import { setupLights } from "./components/lights";
 import { createRenderer, render } from "./components/renderer";
 import { setupGui } from "./components/gui";
-import { winorloss } from "./components/winandloss"
+import { matchEndScene } from "./components/winandloss";
 import CameraControls from "camera-controls";
 import { characterDeath } from "./components/chardeath";
-import { LogInfo, LogEventTypes } from "./components/logger";
+import { logInfo, LogEventTypes } from "./components/logger";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -143,7 +143,7 @@ window.addEventListener(
 
 characterDeath(document.querySelector('[char-id="2"]'));
 const logger = document.querySelector(".logs");
-LogInfo({
+logInfo({
   parent: logger,
   event: LogEventTypes.MOVE,
   initiator: "Dracula",
@@ -151,96 +151,97 @@ LogInfo({
   airportsTravelled: 2,
 });
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
-  event : LogEventTypes.ITEM_EXCHANGE,
-  initiator : "Light",
-  receiver : "heavy",
+logInfo({
+  parent: logger,
+  event: LogEventTypes.ITEM_EXCHANGE,
+  initiator: "Light",
+  receiver: "heavy",
   initiatorItems: ["teleport"],
-  receiverItems : ["nothing","but","a","cat"]
-})
+  receiverItems: ["nothing", "but", "a", "cat"],
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
 
-LogInfo({
-  parent : logger,
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
-LogInfo({
-  parent : logger,
+  initiator: "Player",
+});
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
-LogInfo({
-  parent : logger,
+  initiator: "Player",
+});
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
-LogInfo({
-  parent : logger,
+  initiator: "Player",
+});
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
-LogInfo({
-  parent : logger,
+  initiator: "Player",
+});
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
-LogInfo({
-  parent : logger,
+  initiator: "Player",
+});
+logInfo({
+  parent: logger,
   event: LogEventTypes.GAME_END,
-  initiator: "Player"
-})
+  initiator: "Player",
+});
+matchEndScene("win")
