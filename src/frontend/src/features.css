@@ -26,6 +26,7 @@
 #try-button {
   background: linear-gradient(45deg, #ff007c, #ffca0f);
   color: black;
+  font-family: "Roboto Mono", monospace;
   border: none;
   padding: 10px 20px;
   font-size: 1.2rem;
