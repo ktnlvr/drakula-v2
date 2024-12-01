@@ -11,3 +11,7 @@ body {
 #webgl-canvas {
   outline: none;
 }
+
+.hidden {
+  display: none;
+}

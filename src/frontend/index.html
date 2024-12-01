@@ -10,14 +10,16 @@
   </head>
   <body>
     <div id="app"></div>
-    <div class="overlay">
+    <div class="betting-overlay">
       <div class="center">
         <div class="betting">
-          <div class="current-bet">Current bet: ⚁⚁<br>What do you do?</div>
-          <div class="betting-option">⚂⚂</div>
-          <div class="betting-option">⚁⚁⚁</div>
-          <div class="betting-option">⚂⚂⚂</div>
-          <div class="betting-option">call</div>
+          <div class="current-bet" id="current-bet">Current bet: ⚁⚁<br>What do you do?</div>
+          <div id="betting-options">
+            <div class="betting-option" id="bet-bump-value">⚂⚂</div>
+            <div class="betting-option" id="bet-bump-number">⚁⚁⚁</div>
+            <div class="betting-option" id="bet-bump-both">⚂⚂⚂</div>
+            <div class="betting-option" id="bet-call">call</div>
+          </div>
         </div>
       </div>
     </div>
