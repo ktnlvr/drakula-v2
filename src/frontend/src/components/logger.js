@@ -6,6 +6,8 @@
 	exchanging items
 **/
 
+import { time } from "three/webgpu";
+
 export const LogEventTypes = {
   MOVE: "move",
   CHARACTER_DEATH: "character_death",
@@ -27,7 +29,7 @@ export function LogInfo({
   initiatorLocation = null,
 }) {
   let logMessage = "";
-
+  const timestamp = new Date().toLocaleTimeString();
   if (
     event === LogEventTypes.MOVE &&
     initiator &&
@@ -65,8 +67,8 @@ export function LogInfo({
   console.log(parent);
   if (parent || logMessage) {
     const logEntry = document.createElement("p");
-    logEntry.textContent = logMessage;
-	logEntry.classList.add("spooky-text");
+    logEntry.innerHTML =  `<span class="timestamp">[${timestamp}]</span> <span class="spooky-text">${logMessage}</span>`;
+    logEntry.classList.add("spooky-text");
     parent.appendChild(logEntry);
   }
 }
