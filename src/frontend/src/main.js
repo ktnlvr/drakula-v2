@@ -7,7 +7,7 @@ import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
 import { createCard } from "./components/cards";
-import { createDie } from "./components/dice";
+import { createDie, setupDiceGame } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
 
 const scene = new THREE.Scene();
@@ -92,6 +92,8 @@ async function setupGame(scene) {
     await cameraControls.setLookAt(
       camera.position.x, camera.position.y, camera.position.z,
       playerDice.position.x, playerDice.position.y, playerDice.position.z);
+
+    await setupDiceGame();
   } else {
     const { globeGroup } = await createGlobe(
       interactionManager,
