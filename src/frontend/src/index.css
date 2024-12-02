@@ -1,0 +1,110 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-y: hidden;
+}
+
+body {
+  /* Ok, this is done so that we don't forget */
+  /* We need to set this so that when the stuff is not */
+  /* Pixel perfect there won't be a weird strip of white */
+  /* You can see that color by resizing */
+  background-color: magenta;
+  overflow: hidden;
+  margin: 0;
+}
+
+.square {
+  height: 40px;
+  width: 40px;
+  background-color: #555;
+  position: relative;
+}
+
+#character-block {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  height: 100px;
+  width: 400px;
+  align-items: flex-start;
+}
+
+#characters {
+  height: 100%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.character-img-container {
+  height: 100px;
+  width: 100px;
+}
+
+.character-img {
+  border-radius: 5px;
+}
+
+.card-info {
+  height: 75%;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px;
+}
+
+.card-info-p {
+  padding: 4px 6px;
+  height: auto;
+  background-color: aqua;
+  font-size: 1.1em;
+  width: fit-content;
+  color: blue;
+  border-radius: 2px;
+}
+
+.card-info-token {
+  height: 80px;
+  border-radius: 5px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  gap: 5px;
+}
+
+.card-count {
+  padding-left: 0px;
+}
+
+.square::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  color: bisque;
+  background-color: rgba(241, 54, 40, 0.7);
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  top: 100%;
+  left: 50%;
+  margin-left: -50%;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent rgba(0, 0, 0, 0.7) transparent;
+}
+
+.square:hover::after {
+  visibility: visible;
+  opacity: 1;
+}

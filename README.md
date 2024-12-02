@@ -32,7 +32,6 @@ Based on Zen of Python and previous experience.
 
 ### Frontend
 
-* **Tailwind**. Simpler CSS.
 * **Vite**. Hot reloading and bundling.
 * **ThreeJS**. Fast and beautiful 3D graphics.
 

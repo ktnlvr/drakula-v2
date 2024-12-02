@@ -1,13 +1,10 @@
-
 import uuid
 from dotenv import load_dotenv
 from os import getenv
 import os
 from typing import Optional
 from hashlib import md5
-
 from mysql.connector import connect, Error
-
 from .models import Airport
 
 DEFAULT_AIRPORT_AMOUT = 15
@@ -30,9 +27,8 @@ class Database:
             print(f"Error: {e}")
             self.connection = None
 
-    def get_airports(self, seed: Optional[str] = None, amount: int = DEFAULT_AIRPORT_AMOUT) -> list[Airport]:
+    def get_airports(self, seed: Optional[int] = None, amount: int = DEFAULT_AIRPORT_AMOUT) -> list[Airport]:
         cursor = self.connection.cursor(dictionary=True)
-        seed = (seed or '') and (int.from_bytes(md5(seed.encode()).digest()) % 2**16)
         cursor.execute(
              """SELECT
                 name, latitude_deg, longitude_deg, iso_country

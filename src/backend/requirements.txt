@@ -23,6 +23,8 @@ mysql-connector-python==8.0.29
 networkx==3.4.2
 nodejs==0.1.1
 numpy==2.0.2
+networkx==3.4.2
+geopy==2.4.1
 optional-django==0.1.0
 protobuf==5.28.3
 pycparser==2.22
