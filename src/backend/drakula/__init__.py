@@ -19,9 +19,18 @@ from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
 from .utils import seed_to_short
 
 
-dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend/drakula/example.env'))
 
-load_dotenv(dotenv_path=dotenv_path)
+load_dotenv()
+'''
+host = getenv("DRAKULA_V2_MARIADB_HOST")
+user = getenv("DRAKULA_V2_MARIADB_USER")
+password = getenv("DRAKULA_V2_MARIADB_PASSWORD")
+port = getenv("DRAKULA_V2_MARIADB_PORT")
+
+print("Database host:", host)
+print("Database user:", user)
+print("Database password:", password)
+print("Database port:", port)'''
 
 if not (VITE_DIR := getenv("VITE_BUILD_PATH")):
 
