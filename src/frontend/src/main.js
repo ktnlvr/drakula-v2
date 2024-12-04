@@ -8,6 +8,7 @@ import { matchEndScene } from "./components/winandloss";
 import CameraControls from "camera-controls";
 import { characterDeath } from "./components/chardeath";
 import { logInfo, LogEventTypes } from "./components/logger";
+import { workingToColorSpace } from "three/webgpu";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -104,6 +105,10 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
 }
 
 const characters = document.querySelector("#characters");
+createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
+  "square",
+  "square",
+]);
 createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
   "square",
   "square",
@@ -115,13 +120,9 @@ createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
 createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
   "square",
   "square",
+  "square",
 ]);
 createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
-  "square",
-  "square",
-  "square",
-]);
-createCard(characters, 5, "https://placecats.com/100/100", "Cat", [
   "square",
   "square",
 ]);
@@ -143,105 +144,5 @@ window.addEventListener(
 
 characterDeath(document.querySelector('[char-id="2"]'));
 const logger = document.querySelector(".logs");
-logInfo({
-  parent: logger,
-  event: LogEventTypes.MOVE,
-  initiator: "Dracula",
-  moveDestination: "Airport A",
-  airportsTravelled: 2,
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.ITEM_EXCHANGE,
-  initiator: "Light",
-  receiver: "heavy",
-  initiatorItems: ["teleport"],
-  receiverItems: ["nothing", "but", "a", "cat"],
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-logInfo({
-  parent: logger,
-  event: LogEventTypes.GAME_END,
-  initiator: "Player",
-});
-matchEndScene("win")
+logInfo("Hello this is a fucking cat.");
+matchEndScene("loss");

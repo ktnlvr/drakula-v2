@@ -1,6 +1,6 @@
 export const MatchResult = {
-	WIN: "win",
-	LOSS: "loss",
+  WIN: "win",
+  LOSS: "loss",
 };
 
 export function matchEndScene(result) {
