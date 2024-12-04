@@ -1,13 +1,17 @@
 import requests
 import json
 
+
 def post_game(url, game_id, game_data):
     endpoint = f"{url}/game"
-    headers = {'Content-Type': 'application/json'}
-    params = {"game_id": game_id} 
-    response = requests.post(endpoint, headers=headers, params=params, data=json.dumps(game_data))
+    headers = {"Content-Type": "application/json"}
+    params = {"game_id": game_id}
+    response = requests.post(
+        endpoint, headers=headers, params=params, data=json.dumps(game_data)
+    )
     handle_response(response)
     return response
+
 
 def get_game(url, game_id):
     endpoint = f"{url}/game"
@@ -16,16 +20,15 @@ def get_game(url, game_id):
     handle_response(response)
     return response
 
+
 def get_airports(url, seed=None, amount=15):
 
-    params = {
-        "seed": seed,
-        "amount": amount
-    }
+    params = {"seed": seed, "amount": amount}
     endpoint = f"{url}/airports"
     response = requests.get(endpoint, params=params)
     handle_response(response)
     return response
+
 
 def handle_response(response):
     if response.status_code == 202:
@@ -41,22 +44,23 @@ def handle_response(response):
     else:
         print(f"Response status code: {response.status_code}")
 
+
 if __name__ == "__main__":
     base_url = "http://127.0.0.1:8000"
-    
+
     game_id = 1234
     game_data = {
         "name": "Drakula Adventure",
         "genre": "Horror",
         "platform": "PC",
-        "release_year": 2024
+        "release_year": 2024,
     }
-    
+
     post_response = post_game(base_url, game_id, game_data)
     print(f"POST Response: {post_response.status_code}")
     if post_response.status_code == 201:
         print(post_response.json())
-    
+
     get_response = get_game(base_url, game_id)
     print(f"GET Response: {get_response.status_code}")
     if get_response.status_code == 200:

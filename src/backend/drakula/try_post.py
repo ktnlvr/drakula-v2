@@ -2,11 +2,7 @@ import requests
 
 url = "http://127.0.0.1:8000/game"
 params = {"game_id": "1"}
-game_data = {
-    "score": 100,
-    "level": 5,
-    "player": "player1"
-}
+game_data = {"score": 100, "level": 5, "player": "player1"}
 
 response = requests.post(url, params=params, json=game_data)
 

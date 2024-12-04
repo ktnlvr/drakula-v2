@@ -45,7 +45,7 @@ class Connection(BaseModel):
     b: int
     distance_km: float
 
-    @field_validator('distance_km')
+    @field_validator("distance_km")
     @staticmethod
     def _validate_distance_km(v):
         return round(v, 2)

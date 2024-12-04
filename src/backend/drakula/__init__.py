@@ -1,4 +1,3 @@
-
 from os import getenv
 import os
 from typing import Annotated, Optional, Dict
@@ -19,9 +18,8 @@ from .database import Database, make_db, DEFAULT_AIRPORT_AMOUT
 from .utils import seed_to_short
 
 
-
 load_dotenv()
-'''
+"""
 host = getenv("DRAKULA_V2_MARIADB_HOST")
 user = getenv("DRAKULA_V2_MARIADB_USER")
 password = getenv("DRAKULA_V2_MARIADB_PASSWORD")
@@ -30,11 +28,12 @@ port = getenv("DRAKULA_V2_MARIADB_PORT")
 print("Database host:", host)
 print("Database user:", user)
 print("Database password:", password)
-print("Database port:", port)'''
+print("Database port:", port)"""
 
 if not (VITE_DIR := getenv("VITE_BUILD_PATH")):
 
     from os.path import abspath, curdir as cwd
+
     print(
         f"Environmental variable VITE_BUILD_PATH not defined, assuming `{abspath(cwd)}`"
     )
@@ -58,23 +57,24 @@ static = StaticFiles(directory=VITE_DIR)
 
 DATABASE = None
 
+
 def db() -> Database:
     global DATABASE
     if DATABASE is None:
         DATABASE = make_db()
     return DATABASE
 
+
 @app.get("/airports")
 def airports(
     db: Annotated[Database, Depends(db)],
     seed: Optional[str] = None,
-
     amount: int = DEFAULT_AIRPORT_AMOUT,
     prune_percentage: Optional[float] = 0.0,
-
 ) -> AirportsResponse:
     def triangulate_points(points):
         return Delaunay(points).convex_hull
+
     seed = seed_to_short(seed)
 
     airports = db.get_airports(seed=seed, amount=amount)
@@ -103,12 +103,16 @@ def airports(
     for a, b in G.edges:
         lhs = airports[a]
         rhs = airports[b]
-        con = Connection(distance_km=geo_distance(lhs.lat_lon, rhs.lat_lon).km, a=a, b=b)
+        con = Connection(
+            distance_km=geo_distance(lhs.lat_lon, rhs.lat_lon).km, a=a, b=b
+        )
         connections.append(con)
 
     return AirportsResponse(airports=airports, connections=connections)
 
+
 games_db: Dict[str, dict] = {}
+
 
 @app.post("/game")
 async def create_game(game_id: str, game_data: dict):
@@ -116,6 +120,7 @@ async def create_game(game_id: str, game_data: dict):
         raise HTTPException(status_code=409, detail="Game ID already exists.")
     games_db[game_id] = game_data
     return {"id": game_id, "data": game_data}
+
 
 @app.get("/game")
 async def get_game(game_id: str):
