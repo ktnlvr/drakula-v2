@@ -137,10 +137,21 @@ async function betBumpBoth() {
 }
 
 function removeDice(idx) {
-    console.log(idx)
-    console.log(diceState)
-    diceState.dice[idx].pop()
-    // TODO: animate dice removal
+    console.log(idx);
+    console.log(diceState);
+    diceState.dice[idx].pop();
+    if (idx == DICE_INDEX_PLAYER) {
+        // TODO: animate dice removal
+        const meshes = diceState.playerDiceMeshes;
+        const i = Math.floor(Math.random() * meshes.length);
+        console.log(meshes[i])
+        meshes[i].removeFromParent();
+        meshes.splice(i, 1);
+        if (meshes.length === 0) {
+            alert("Game over, the player is out of dice!")
+            return
+        }
+    }
 }
 
 async function callOut() {
@@ -151,8 +162,6 @@ async function callOut() {
     console.log("Dracula: ", diceState.dice[DICE_INDEX_DRACULA]);
     console.log("Bet was " + diceToString(n, m) + ", found " + diceToString(x, m));
 
-    // 0 is player
-    // 1 is dracula
     // Is Dracula's Turn? | Is The Bet Safe? | Who loses the dice?
     //        No          |       No         |        Player
     //        No          |       Yes        |        Dracula
@@ -170,13 +179,14 @@ async function callOut() {
     }
 }
 
-export async function setupDiceGame(draculaDiceCount = 6) {
+export async function startDiceRound(draculaDiceCount = 6, playerDiceMeshes = []) {
     // one two, literally
     diceState.bet = [1, 2];
     const draculaDice = [];
     for (let i = 0; i < draculaDiceCount; i++)
         draculaDice.push(Math.floor(Math.random() * 6) + 1)
     diceState.dice = [[], draculaDice];
+    diceState.playerDiceMeshes = playerDiceMeshes;
     console.log(diceState)
 
     diceState.turn = DICE_TURN_YOU;
