@@ -84,10 +84,11 @@ function updateCurrentBet() {
 
 function hideBettingOptions() {
     document.getElementById("betting-options").classList.add(["hidden"]);
+    console.log(document.getElementById("betting-options").classList)
 }
 
 function showBettingOptions() {
-    document.getElementById("betting-options").classList.remove(["hidden"]);
+    document.getElementById("betting-options").classList.remove("hidden");
     const betBumpValue = document.getElementById("bet-bump-value");
     const betBumpNumber = document.getElementById("bet-bump-number");
     const betBumpBoth = document.getElementById("bet-bump-both");
@@ -107,8 +108,32 @@ function showBettingOptions() {
 }
 
 async function draculaThink() {
-    const DRACULA_THINKING_TIME = 1700 + Math.random(300);
-    await new Promise(resolve => setTimeout(resolve, DRACULA_THINKING_TIME));
+    // The formula is kinda hand-tweaked
+    // If you plot in for x \in [0; 1] you can see
+    // that the fast times are really fast, possibly giving
+    // a feeling of a very confident bet
+    const DRACULA_THINKING_TIME = 100 + 990 * Math.log(17 * Math.random(300) + 1);
+    // how often the dots are updated
+    const UPDATE_INTERVAL = 300;
+
+    const thinkingPlaceholder = document.getElementById('dracula-thinking');
+
+    thinkingPlaceholder.classList.remove('hidden');
+    // Display 3 dots while the dracula is thinking, blinking
+    // them periodically
+    thinkingPlaceholder.innerText = ".";
+    const payload = { i: 1 };
+    const thinker = setInterval(() => {
+        thinkingPlaceholder.innerText = ".".repeat(payload.i % 3 + 1);
+        payload.i++;
+    }, UPDATE_INTERVAL);
+
+    // Wait for a given amount of time
+    await setTimeout(() => {
+        clearInterval(thinker);
+        thinkingPlaceholder.classList.add('hidden');
+    }, DRACULA_THINKING_TIME);
+
     let choices = [betBumpNumber, callOut];
     if (diceState.bet[1] != 6) {
         choices.push(betBumpValue);
@@ -117,7 +142,6 @@ async function draculaThink() {
 
     // TODO: make dracula be able to select calling out
     await choices[Math.floor(choices.length * Math.random())]()
-    showBettingOptions();
 }
 
 async function betBumpValue() {
@@ -145,10 +169,10 @@ function removeDice(idx) {
     diceState.dice[idx].pop();
     if (idx == DICE_INDEX_PLAYER) {
         // TODO: animate dice removal
-        const meshes = diceState.playerDiceMeshes;
+        const meshes = diceState.playerDiceProxies;
         const i = Math.floor(Math.random() * meshes.length);
         console.log(meshes[i])
-        meshes[i].removeFromParent();
+        diceState.playerDiceProxies[i].model.removeFromParent();
         meshes.splice(i, 1);
         if (meshes.length === 0) {
             alert("Game over, the player is out of dice!")
@@ -158,8 +182,9 @@ function removeDice(idx) {
 }
 
 async function callOut() {
+    console.log(diceState.turn + ' calls!');
     const [n, m] = diceState.bet;
-    console.log("The bet is ", diceToString(n, m));
+    console.log("The bet is", diceToString(n, m));
 
     console.log("Player: ", diceState.dice[DICE_INDEX_PLAYER]);
     console.log("Dracula: ", diceState.dice[DICE_INDEX_DRACULA]);
@@ -191,14 +216,14 @@ async function callOut() {
     }
 }
 
-export async function startDiceRound(draculaDiceCount = 6, playerDiceMeshes = []) {
+export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = []) {
     // one two, literally
     diceState.bet = [1, 2];
     const draculaDice = [];
     for (let i = 0; i < draculaDiceCount; i++)
         draculaDice.push(Math.floor(Math.random() * 6) + 1)
-    const playerDice = playerDiceMeshes.map((dice) => dice.face + 1);
-    diceState.playerDiceMeshes = playerDiceMeshes;
+    const playerDice = playerDiceProxies.map((dice) => dice.face + 1);
+    diceState.playerDiceProxies = playerDiceProxies;
     diceState.dice = [playerDice, draculaDice];
     console.log(diceState)
 
@@ -222,6 +247,7 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceMeshes = []
             await draculaThink();
             // Return turn back to the player
             diceState.turn = DICE_TURN_YOU;
+            showBettingOptions();
         }
 
         return wrapped
