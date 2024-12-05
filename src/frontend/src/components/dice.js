@@ -39,14 +39,14 @@ class DiceProxy {
         return this.shouldRotate;
     }
 
-    stop(value) {
-        this.face = value ? value - 1 : (Math.random() * 6);
+    stop() {
         this.startRotation = new THREE.Euler().copy(this.model.rotation);
         this.shouldRotate = false
         this.slerpTime = SLERP_DURATION
     }
 
-    setSpin(spin) {
+    setSpin(spin, value) {
+        this.face = value ? value - 1 : (Math.random() * 6);
         this.spin = spin;
         this.shouldRotate = true;
     }
@@ -197,8 +197,9 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceMeshes = []
     const draculaDice = [];
     for (let i = 0; i < draculaDiceCount; i++)
         draculaDice.push(Math.floor(Math.random() * 6) + 1)
-    diceState.dice = [[], draculaDice];
+    const playerDice = playerDiceMeshes.map((dice) => dice.face + 1);
     diceState.playerDiceMeshes = playerDiceMeshes;
+    diceState.dice = [playerDice, draculaDice];
     console.log(diceState)
 
     diceState.turn = DICE_TURN_YOU;

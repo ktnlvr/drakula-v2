@@ -50,7 +50,7 @@ async function setupGame(scene) {
       die.model.position.set(x, 0, z);
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
-      die.setSpin(randomSpin)
+      die.setSpin(randomSpin, 6);
       scheduledCallables.push((dt) => die.update(dt));
 
       dice.push(die);
@@ -58,7 +58,7 @@ async function setupGame(scene) {
     }
 
     for (let i = 0; i < n; i++) {
-      setInterval(() => dice[i].stop(2), 1000 + i * 200);
+      setInterval(() => dice[i].stop(), 1000 + i * 200);
     }
 
     diceModels.position.set(0, -40, 0);
@@ -67,7 +67,7 @@ async function setupGame(scene) {
       camera.position.x, camera.position.y, camera.position.z,
       diceModels.position.x, diceModels.position.y, diceModels.position.z);
 
-    await startDiceRound(6, diceModels);
+    await startDiceRound(6, dice);
   } else {
     const { globeGroup } = await createGlobe(interactionManager, outlinePass);
     scene.add(globeGroup);
