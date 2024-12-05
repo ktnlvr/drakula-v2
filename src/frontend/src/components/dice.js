@@ -12,48 +12,51 @@ const DICE_FACE_ROTATIONS_EULER = [
     new THREE.Euler(Math.PI, 0, 0), // 6
 ];
 
+const SLERP_DURATION = 0.33;
+
+class DiceProxy {
+    constructor(model) {
+        this.spin = new THREE.Vector3();
+        this.shouldRotate = true;
+        this.model = model;
+    }
+
+    update(dt) {
+        if (this.slerpTime <= 0)
+            return false;
+
+        if (!this.shouldRotate) {
+            const target = DICE_FACE_ROTATIONS_EULER[this.face];
+            let start = (new THREE.Quaternion()).setFromEuler(this.startRotation);
+            let rot = (new THREE.Quaternion()).setFromEuler(target)
+            let q = start.slerp(rot, 1 - this.slerpTime / SLERP_DURATION);
+            this.model.rotation.setFromQuaternion(q);
+            this.slerpTime -= dt;
+        } else {
+            this.model.rotateOnAxis((new THREE.Vector3()).copy(this.spin).normalize(), this.spin.length() * dt);
+        }
+
+        return this.shouldRotate;
+    }
+
+    stop(value) {
+        this.face = value ? value - 1 : (Math.random() * 6);
+        this.startRotation = new THREE.Euler().copy(this.model.rotation);
+        this.shouldRotate = false
+        this.slerpTime = SLERP_DURATION
+    }
+
+    setSpin(spin) {
+        this.spin = spin;
+        this.shouldRotate = true;
+    }
+}
+
 export async function createDie() {
     const gltf = await (new GLTFLoader).loadAsync('/dice.glb');
     const model = gltf.scene;
-
-    function rotor(rotation, slerpDuration = 0.33) {
-        let notify = {
-            shouldRotate: true,
-            slerpTime: slerpDuration,
-        };
-
-        return [(dt) => {
-            if (notify.slerpTime <= 0)
-                return false;
-
-            if (notify.shouldRotate) {
-                this.rotateOnAxis((new THREE.Vector3()).copy(rotation).normalize(), rotation.length() * dt);
-            } else {
-                const target = DICE_FACE_ROTATIONS_EULER[notify.face];
-                let start = (new THREE.Quaternion()).setFromEuler(notify.startRotation);
-                let rot = (new THREE.Quaternion()).setFromEuler(target)
-                let q = start.slerp(rot, 1 - notify.slerpTime / slerpDuration);
-                this.rotation.setFromQuaternion(q);
-                notify.slerpTime -= dt;
-            }
-
-            return notify.shouldRotate;
-        }, (value) => {
-            notify.face = value ? value - 1 : (Math.random() * 6);
-            notify.startRotation = new THREE.Euler().copy(this.rotation);
-            notify.shouldRotate = false
-        }];
-    }
-
-    const diceProto = {
-        rotor,
-        __proto__: model.__proto__,
-    }
-
-    model.__proto__ = diceProto;
     model.scale.set(6, 6, 6);
-
-    return model;
+    return new DiceProxy(model);
 }
 
 const DICE_TURN_DRACULA = 'dracula';
@@ -155,22 +158,31 @@ function removeDice(idx) {
 }
 
 async function callOut() {
-    console.log("The bet is ", diceState.bet);
     const [n, m] = diceState.bet;
-    let x = diceState.dice[DICE_INDEX_DRACULA].concat(diceState.dice[DICE_INDEX_DRACULA]).filter(x => x == m);
+    console.log("The bet is ", diceToString(n, m));
+
     console.log("Player: ", diceState.dice[DICE_INDEX_PLAYER]);
     console.log("Dracula: ", diceState.dice[DICE_INDEX_DRACULA]);
-    console.log("Bet was " + diceToString(n, m) + ", found " + diceToString(x, m));
+
+    const allDice = diceState.dice[DICE_INDEX_DRACULA].concat(diceState.dice[DICE_INDEX_DRACULA]);
+
+    // the amount of dice with the face value `m`
+    const N = allDice.filter(M => M == m).length;
+    console.log("Bet was " + diceToString(n, m) + ", found " + diceToString(N, m));
+
+    // The bet is safe if there is not less dice with the face value `m`    
+    let is_bet_safe = N >= n;
 
     // Is Dracula's Turn? | Is The Bet Safe? | Who loses the dice?
     //        No          |       No         |        Player
     //        No          |       Yes        |        Dracula
     //        Yes         |       No         |        Dracula
     //        Yes         |       Yes        |        Player
-    let is_bet_safe = x >= n;
     let idx =
         (diceState.turn == DICE_TURN_DRACULA) ^ is_bet_safe ?
             DICE_INDEX_PLAYER : DICE_INDEX_DRACULA;
+
+    // Remove the dice from the respective player
     removeDice(idx);
     if (idx == DICE_INDEX_DRACULA) {
         console.log("Dracula loses a dice");
@@ -193,14 +205,21 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceMeshes = []
     showBettingOptions();
     updateCurrentBet();
 
+    // Returns a function that handles all the setup and teardown
+    // for making a bet for a given `action`
     function betActionFactory(action) {
         async function wrapped() {
+            // If it's not the player's turn, don't react to buttons
             if (diceState.turn !== DICE_TURN_YOU)
                 return;
+            // Do the action
             await action();
+            // Hide the buttons after one is clicked
             hideBettingOptions();
+            // Move the turn over to Dracula
             diceState.turn = DICE_TURN_DRACULA;
             await draculaThink();
+            // Return turn back to the player
             diceState.turn = DICE_TURN_YOU;
         }
 

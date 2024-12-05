@@ -54,17 +54,17 @@ async function setupGame(scene) {
   camera.position.set(0, 100, 100);
   const cameraControls = new CameraControls(camera, renderer.domElement);
   setControls(cameraControls);
-
-  createCharacterCards();
-  const scheduled_callables = [];
+  const scheduledCallables = [];
 
   window.GameState = GameState;
+
+  createCharacterCards();
 
   if (TESTING_DICE) {
     console.log(cameraControls.getPosition())
 
-    const playerDice = new THREE.Group();
-    let diceRotors = [];
+    const diceModels = new THREE.Group();
+    let dice = [];
     let n = 6;
     for (let i = 0; i < n; i++) {
       const theta = 2 * Math.PI * i / n;
@@ -73,27 +73,27 @@ async function setupGame(scene) {
       const r = 40;
       const x = r * Math.cos(theta);
       const z = r * Math.sin(theta);
-      die.position.set(x, 0, z);
+      die.model.position.set(x, 0, z);
 
-      let [rotate, stop] = die.rotor(randomPointOnSphere().multiplyScalar(10));
-      scheduled_callables.push(rotate);
+      let randomSpin = randomPointOnSphere().multiplyScalar(10);
+      die.setSpin(randomSpin)
+      scheduledCallables.push((dt) => die.update(dt));
 
-      diceRotors.push([die, stop]);
-      playerDice.add(die);
+      dice.push(die);
+      diceModels.add(die.model);
     }
 
     for (let i = 0; i < n; i++) {
-      let [_, stop] = diceRotors[i];
-      setInterval(() => stop(2), 1000 + i * 200);
+      setInterval(() => dice[i].stop(2), 1000 + i * 200);
     }
 
-    playerDice.position.set(0, 20, 0);
-    scene.add(playerDice);
+    diceModels.position.set(0, 20, 0);
+    scene.add(diceModels);
     await cameraControls.setLookAt(
       camera.position.x, camera.position.y, camera.position.z,
-      playerDice.position.x, playerDice.position.y, playerDice.position.z);
+      diceModels.position.x, diceModels.position.y, diceModels.position.z);
 
-    await startDiceRound(6, diceRotors.map(([x, _]) => x));
+    await startDiceRound(6, diceModels);
   } else {
     const { globeGroup } = await createGlobe(
       interactionManager,
@@ -104,7 +104,7 @@ async function setupGame(scene) {
     scene.add(globeGroup);
   }
 
-  render(cameraControls, spotlightHelper, scheduled_callables);
+  render(cameraControls, spotlightHelper, scheduledCallables);
 }
 
 setupGame(scene);
