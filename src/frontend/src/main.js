@@ -7,7 +7,7 @@ import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
 import { createCard } from "./components/cards";
-import { createDie, setupDiceGame } from "./components/dice";
+import { createDie, startDiceRound } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
 
 const scene = new THREE.Scene();
@@ -64,7 +64,7 @@ async function setupGame(scene) {
     console.log(cameraControls.getPosition())
 
     const playerDice = new THREE.Group();
-    let diceRotos = [];
+    let diceRotors = [];
     let n = 6;
     for (let i = 0; i < n; i++) {
       const theta = 2 * Math.PI * i / n;
@@ -78,12 +78,12 @@ async function setupGame(scene) {
       let [rotate, stop] = die.rotor(randomPointOnSphere().multiplyScalar(10));
       scheduled_callables.push(rotate);
 
-      diceRotos.push([die, stop]);
+      diceRotors.push([die, stop]);
       playerDice.add(die);
     }
 
     for (let i = 0; i < n; i++) {
-      let [_, stop] = diceRotos[i];
+      let [_, stop] = diceRotors[i];
       setInterval(() => stop(2), 1000 + i * 200);
     }
 
@@ -93,7 +93,7 @@ async function setupGame(scene) {
       camera.position.x, camera.position.y, camera.position.z,
       playerDice.position.x, playerDice.position.y, playerDice.position.z);
 
-    await setupDiceGame();
+    await startDiceRound(6, diceRotors.map(([x, _]) => x));
   } else {
     const { globeGroup } = await createGlobe(
       interactionManager,
