@@ -4,7 +4,11 @@ import { createGlobe, createTable } from "./components/assets";
 import { setupLights } from "./components/lights";
 import { createRenderer, render } from "./components/renderer";
 import { setupGui } from "./components/gui";
+import { matchEndScene } from "./components/winandloss";
 import CameraControls from "camera-controls";
+import { characterDeath } from "./components/chardeath";
+import { logInfo, LogEventTypes } from "./components/logger";
+import { workingToColorSpace } from "three/webgpu";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -44,16 +48,14 @@ function updateTokenCount(token) {
   const p = token.nextElementSibling;
   const tokenId = token.getAttribute("token-no");
   cardCounts[characterId][tokenId] += 1;
-  console.log(`The new value is ${cardCounts[characterId][tokenId]}`)
+  console.log(`The new value is ${cardCounts[characterId][tokenId]}`);
   console.log("Decreament here and add changes according to yourself.");
   p.textContent = `x${cardCounts[characterId][tokenId]}`;
 }
 
 function tooltip(tokenType) {
-  if (tokenType === "square")
-    return `This is a trap.`
-  else
-    return `This is nothing.`
+  if (tokenType === "square") return `This is a trap.`;
+  else return `This is nothing.`;
 }
 
 function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
@@ -82,7 +84,11 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () => {
-      console.log(`Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1}`);
+      console.log(
+        `Clicked ${tokenType} card for Character ${charId}, Token No: ${
+          index + 1
+        }`
+      );
       updateTokenCount(token);
     });
     const cardCount = document.createElement("p");
@@ -99,11 +105,27 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
 }
 
 const characters = document.querySelector("#characters");
-createCard(characters, 1, "https://placecats.com/100/100", "Cat", ["square", "square"]);
-createCard(characters, 2, "https://placecats.com/100/100", "Cat", ["square", "square"]);
-createCard(characters, 3, "https://placecats.com/100/100", "Cat", ["square", "square"]);
-createCard(characters, 4, "https://placecats.com/100/100", "Cat", ["square", "square", "square"]);
-createCard(characters, 5, "https://placecats.com/100/100", "Cat", ["square", "square"]);
+createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
+  "square",
+  "square",
+]);
+createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
+  "square",
+  "square",
+]);
+createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
+  "square",
+  "square",
+]);
+createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
+  "square",
+  "square",
+  "square",
+]);
+createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
+  "square",
+  "square",
+]);
 
 render(cameraControls, spotlightHelper);
 
@@ -119,3 +141,8 @@ window.addEventListener(
   },
   false
 );
+
+characterDeath(document.querySelector('[char-id="2"]'));
+const logger = document.querySelector(".logs");
+logInfo("Hello this is a fucking cat.");
+matchEndScene("loss");
