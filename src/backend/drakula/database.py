@@ -1,5 +1,3 @@
-
-import uuid
 from os import getenv
 from typing import Optional
 from hashlib import md5
@@ -22,13 +20,12 @@ class Database:
             autocommit=True,
         )
 
-    def get_airports(self, seed: Optional[str] = None, amount: int = DEFAULT_AIRPORT_AMOUT) -> list[Airport]:
+    def get_airports(self, seed: Optional[int] = None, amount: int = DEFAULT_AIRPORT_AMOUT) -> list[Airport]:
         cursor = self.connection.cursor(dictionary=True)
-        seed = (seed or '') and (int.from_bytes(md5(seed.encode()).digest()) % 2**16)
         cursor.execute(
             f"""SELECT
                 name, latitude_deg, longitude_deg, iso_country
-                FROM airport ORDER BY RAND({seed}) LIMIT {amount or DEFAULT_AIRPORT_AMOUT}"""
+                FROM airport ORDER BY RAND({seed or ''}) LIMIT {amount or DEFAULT_AIRPORT_AMOUT}"""
         )
         return list(map(lambda args: Airport(**args), cursor.fetchall()))
     
@@ -66,10 +63,6 @@ def make_db() -> Database:
 
     if not db.connection:
         print("Database connection error!")
-    else:
-        init_query = read_sql_query('query.sql')
-        cursor = db.connection.cursor()
-        cursor.execute(init_query)
     
     return db
     
