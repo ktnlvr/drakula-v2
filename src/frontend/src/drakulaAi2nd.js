@@ -2,11 +2,11 @@
 //main drakula logic
 export function draculaTurn(draculaDice, playerDice) {
     // Dracula chooses a value and counts how many of that value he has
-    const chosenValue = draculaDice[Math.floor(Math.random() * draculaDice.length)];
-    const chosenNumber = draculaDice.filter(value => value === chosenValue).length;
+    let chosenValue = draculaDice[Math.floor(Math.random() * draculaDice.length)];
+    let chosenNumber = draculaDice.filter(value => value === chosenValue).length;
     console.log(`Dracula initially chooses number: ${chosenNumber}, dice value: ${chosenValue}`);
-    const totalDice = draculaDice.length + playerDice.length;
-    const halfDice = totalDice / 2;
+    let totalDice = draculaDice.length + playerDice.length;
+    let halfDice = totalDice / 2;
     const potentialAction = Math.random();
     let bumpValue = false;
     let bumpNumber = false;
@@ -79,11 +79,11 @@ export function draculaTurn(draculaDice, playerDice) {
         } else {
             call = true;
         }
-
+    }
     // Less dice drakula less bump
     function drakulaEqualOrLessDice(){
         if (potentialAction < 0.4) {
-            draculaAction = 'call'; // Call more often in a defensive stance
+            call = true; // Call more often in a defensive stance
         } else if (chosenValue <= 3 && potentialAction<0.5) {
             bumpValue = true;
         } else if (chosenNumber < totalDice && potentialAction<0.9) {
@@ -93,49 +93,60 @@ export function draculaTurn(draculaDice, playerDice) {
         }
     }
 
-    let draculaAction;
     // When Dracula has more Dice
     if (draculaDice.length > playerDice.length) {
-        draculaAction = draculaMoreDice();
+        draculaMoreDice();
         // When Dracula has fewer or equal number of dices than player
     } else if (draculaDice.length <= playerDice.length) {
-        draculaAction = drakulaEqualOrLessDice();
+        drakulaEqualOrLessDice();
     } else {
         call = true; // Unexpected situation meet, Dracula calls
         }
+    
+
+    let draculaAction = null;
+    if (call) {
+        draculaAction = 'call';
+    } else if (bumpValue && bumpNumber) {
+        draculaAction = 'bumpValueAndNumber';
+    } else if (bumpValue) {
+        draculaAction = 'bumpValue';
+    } else if (bumpNumber) {
+        draculaAction = 'bumpNumber';
+    } else {
+        draculaAction = 'call';
     }
 
-    // Log and return Dracula's action
-    if (call) {
-        console.log(`Dracula chooses to call.`);
-        return { action: 'call', chosenNumber, chosenValue};
+    // Handle the actions
+    if (draculaAction === 'call') {
+        console.log(`Dracula chooses to call -> Number:${chosenNumber}, Value:${chosenValue}`);
+        return { action: 'call', chosenNumber, chosenValue };
     }
-    
-     // Dracula's another thinking
-    if (bumpValue && bumpNumber){
+
+    if (draculaAction === 'bumpValueAndNumber') {
         if (chosenValue < 6 && chosenNumber < 8) {
-            chosenValue = chosenValue + 1;
-            chosenNumber = chosenNumber + 1;
-            console.log(`Dracula guesses to bump both number and value, Number:${chosenNumber}, Value: ${chosenValue}`);
+            chosenValue += 1;
+            chosenNumber += 1;
+            console.log(`Dracula bumps both number and value -> Number:${chosenNumber}, Value:${chosenValue}`);
         } else {
-            console.log(`Dracula bump out of range, keeping it at Number:${chosenNumber}, Value: ${chosenValue}`);
+            console.log(`Dracula bump out of range, keeping it at Number:${chosenNumber}`);
         }
-    } else if(bumpValue) {
+    } else if (draculaAction === 'bumpValue') {
         if (chosenValue < 6) {
-            chosenValue = chosenValue + 1; // Bump the value and assign the new value to chosenValue
-            console.log(`Dracula guesses to bump the value of the dice from previous value to ${chosenValue}`);
+            chosenValue += 1;
+            console.log(`Dracula bumps the value -> Number:${chosenNumber}, Value:${chosenValue}`);
         } else {
-            console.log(`Dracula cannot bump the value beyond 6, keeping it at ${chosenValue}`);
+            console.log(`Cannot bump value beyond 6, keeping it at ${chosenValue}`);
         }
-    } else if (bumpNumber) {
+    } else if (draculaAction === 'bumpNumber') {
         if (chosenNumber < 8) {
-            chosenNumber = chosenNumber + 1; // Bump the number and assign the new number to chosenNumber
-            console.log(`Dracula guesses to bump the number of ${chosenValue} from previous number to ${chosenNumber}`);
+            chosenNumber += 1;
+            console.log(`Dracula bumps the number -> Number:${chosenNumber}, Value:${chosenValue}`);
         } else {
-            console.log(`Dracula cannot bump the number beyond 8, keeping it at ${chosenNumber}`);
+            console.log(`Cannot bump number beyond 8, keeping it at ${chosenNumber}`);
         }
-    } 
+    }
 
     console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
-    return { action: draculaAction, chosenNumber, chosenValue};
-}
+    return { action: draculaAction, chosenNumber, chosenValue };
+    }
