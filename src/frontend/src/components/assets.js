@@ -190,7 +190,7 @@ export function createTable(scene) {
   const loader = new GLTFLoader();
 
   loader.load(
-    "new_table.glb",
+    "table.glb",
     function (gltf) {
       gltf.scene.traverse(function (object) {
         if (object.isMesh) {
