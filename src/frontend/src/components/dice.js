@@ -15,6 +15,20 @@ const DICE_FACE_ROTATIONS_EULER = [
 
 const SLERP_DURATION = 0.33;
 
+// Q: Why define them as separate strings?
+//    Surely you can just access as properties
+//    like .dracula and .player in all cases?
+// A: Well, yeah, but them we lose the opportunity
+//    to manipulate over the values using code
+//    because we don't allow our program to
+//    operate on them. There is no reason to give
+//    them special treatment, in a saner language
+//    we would use an enum
+
+const DRACULA = 'dracula';
+const PLAYER = 'player';
+
+
 class DiceProxy {
     constructor(model) {
         this.spin = new THREE.Vector3();
@@ -64,15 +78,10 @@ export async function createDie() {
     return new DiceProxy(model);
 }
 
-const DICE_TURN_DRACULA = 'dracula';
-const DICE_TURN_PLAYER = 'you';
-const DICE_INDEX_PLAYER = 0;
-const DICE_INDEX_DRACULA = 1;
-
 const diceState = {
     bet: [4, 2],
     dice: [[], []],
-    turn: DICE_TURN_DRACULA,
+    turn: DRACULA,
 };
 
 // https://www.compart.com/en/unicode/U+2680
@@ -184,7 +193,7 @@ async function removeDice(loser_idx) {
     console.log(loser_idx);
     console.log(diceState);
     diceState.dice[loser_idx].pop();
-    if (loser_idx == DICE_INDEX_PLAYER) {
+    if (loser_idx == PLAYER) {
         const proxies = diceState.playerDiceProxies;
         const i = Math.floor(Math.random() * proxies.length);
 
@@ -216,7 +225,7 @@ async function removeDice(loser_idx) {
 }
 
 async function callOut() {
-    const isPlayerTurn = diceState.turn == DICE_TURN_PLAYER;
+    const isPlayerTurn = diceState.turn == PLAYER;
     if (isPlayerTurn)
         hideBettingOptions();
 
@@ -224,10 +233,10 @@ async function callOut() {
     const [n, m] = diceState.bet;
     console.log("The bet is", diceToString(n, m));
 
-    console.log("Player: ", diceState.dice[DICE_INDEX_PLAYER]);
-    console.log("Dracula: ", diceState.dice[DICE_INDEX_DRACULA]);
-
-    const allDice = diceState.dice[DICE_INDEX_DRACULA].concat(diceState.dice[DICE_INDEX_DRACULA]);
+    console.log("Player: ", diceState.dice[PLAYER]);
+    console.log("Dracula: ", diceState.dice[DRACULA]);
+    console.log(diceState.dice);
+    const allDice = diceState.dice[DRACULA].concat(diceState.dice[PLAYER]);
 
     // the amount of dice with the face value `m`
     const N = allDice.filter(M => M == m).length;
@@ -242,21 +251,22 @@ async function callOut() {
     //        Yes         |       No         |        Dracula
     //        Yes         |       Yes        |        Player
     let loser_idx =
-        (diceState.turn == DICE_TURN_DRACULA) ^ is_bet_safe ?
-            DICE_INDEX_PLAYER : DICE_INDEX_DRACULA;
+        (diceState.turn == DRACULA) ^ is_bet_safe ?
+            PLAYER : DRACULA;
 
+    // TODO: refactor me
     let betStatus = 'undefined';
     if (isPlayerTurn)
-        if (loser_idx == DICE_INDEX_DRACULA)
-            betStatus = `Good call. Dracula has ${diceState.dice[DICE_INDEX_DRACULA].length - 1} left.`;
+        if (loser_idx == DRACULA)
+            betStatus = `Good call. Dracula has ${diceState.dice[DRACULA].length - 1} left.`;
         else
             betStatus = "Poor call";
     else
-        if (loser_idx == DICE_INDEX_PLAYER)
+        if (loser_idx == PLAYER)
             betStatus = "Dracula calls you out. Lose a dice";
         else
             // Just wanted to sneak in a Harry Potter reference
-            betStatus = `Dracula called and lost, he has ${diceState.dice[DICE_INDEX_DRACULA].length - 1} left.`;
+            betStatus = `Dracula called and lost, he has ${diceState.dice[DRACULA].length - 1} left.`;
 
     setBetStatus(betStatus)
 
@@ -264,20 +274,27 @@ async function callOut() {
     await removeDice(loser_idx);
 
     // Reroll player's dice
-    await rollDice(diceState.playerDiceProxies);
+    await rollDice(diceState.playerDiceProxies, 'wait');
     // Reroll Dracula's dice
     let newDice = []
-    for (let i = 0; i < diceState.dice[DICE_INDEX_DRACULA].length; i++)
+    for (let i = 0; i < diceState.dice[DRACULA].length; i++)
         newDice.push(Math.floor(Math.random() * 6) + 1);
-    diceState.dice[DICE_INDEX_DRACULA] = newDice;
+    diceState.dice[DRACULA] = newDice;
 
-    
+
     diceState.bet = draculaSetStartingBet();
     updateCurrentBetDisplay();
     if (isPlayerTurn)
         showBettingOptions();
 }
 
+// Q: Why use a mode argument instead of just a boolean?
+//    You're switching between 'nowait' and 'wait' either way
+//    and those are only two values
+// A: Yes, but rollDice(dice, true) doesn't make any sense
+//    seing a boolean like this doesn't give you any info
+//    as to what it's doing, while rollDice(dice, 'wait')
+//    at least gives you a hint that it has to wait for smth
 export async function rollDice(dice = [], mode = 'nowait') {
     for (const die of dice) {
         let randomSpin = randomPointOnSphere().multiplyScalar(10);
@@ -303,10 +320,17 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = [
         draculaDice.push(Math.floor(Math.random() * 6) + 1)
     const playerDice = playerDiceProxies.map((dice) => dice.face + 1);
     diceState.playerDiceProxies = playerDiceProxies;
-    diceState.dice = [playerDice, draculaDice];
+
+    // I wish you could say diceState.dice = { PLAYER: ..., DRACULA: ...},
+    // but the PLAYER and DRACULA are treated as identifiers and the only way
+    // to access them is using .PLAYER and .DRACULA, which is not what we want
+    diceState.dice = {}
+    diceState.dice[PLAYER] = playerDice;
+    diceState.dice[DRACULA] = draculaDice;
+
     console.log(diceState)
 
-    diceState.turn = DICE_TURN_PLAYER;
+    diceState.turn = PLAYER;
     showBettingOptions();
     updateCurrentBetDisplay();
 
@@ -315,17 +339,17 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = [
     function betActionFactory(action) {
         async function wrapped() {
             // If it's not the player's turn, don't react to buttons
-            if (diceState.turn !== DICE_TURN_PLAYER)
+            if (diceState.turn !== PLAYER)
                 return;
             // Do the action
             await action();
             // Hide the buttons after one is clicked
             hideBettingOptions();
             // Move the turn over to Dracula
-            diceState.turn = DICE_TURN_DRACULA;
+            diceState.turn = DRACULA;
             await draculaThink();
             // Return turn back to the player
-            diceState.turn = DICE_TURN_PLAYER;
+            diceState.turn = PLAYER;
             showBettingOptions();
         }
 
@@ -336,7 +360,7 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = [
     document.getElementById("bet-bump-number").onclick = betActionFactory(betBumpNumber);
     document.getElementById("bet-bump-both").onclick = betActionFactory(betBumpBoth);
     document.getElementById("bet-call").onclick = async () => {
-        if (diceState.turn !== DICE_TURN_PLAYER)
+        if (diceState.turn !== PLAYER)
             return;
 
         await callOut()
