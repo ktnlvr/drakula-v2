@@ -1,5 +1,5 @@
 
-import * as drakulaAi from './drakula_ai.js';
+import * as drakulaAi from './drakulaAi2nd.js';
 import { playerGuess} from './player_logic.js';
 
 function playGame(draculaDice, playerDice) {
