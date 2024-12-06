@@ -1,9 +1,7 @@
 from math import atan, tan, sin, cos
 
-from pydantic import BaseModel
+from pydantic import BaseModel, AliasGenerator, ConfigDict, field_validator
 from numpy import ndarray, array
-from scipy.spatial import Delaunay
-
 
 
 class Airport(BaseModel):
@@ -11,9 +9,12 @@ class Airport(BaseModel):
     latitude_deg: float
     longitude_deg: float
     iso_country: str
-      
+
     @property
-    
+    def lat_lon(self) -> ndarray:
+        return array([self.latitude_deg, self.longitude_deg])
+
+    @property
     def pos_3d(self) -> ndarray:
         FLATTENING = 1 / 298.25
         EARTH_RADIUS = 2.093e7
@@ -31,9 +32,28 @@ class Airport(BaseModel):
         return array([x, y, z])
 
 
+class Connection(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=AliasGenerator(
+            serialization_alias=lambda name: (name == "a" and "0")
+            or (name == "b" and "1")
+            or None
+        )
+    )
+
+    a: int
+    b: int
+    distance_km: float
+
+    @field_validator('distance_km')
+    @staticmethod
+    def _validate_distance_km(v):
+        return round(v, 2)
+
+
 class AirportsResponse(BaseModel):
     airports: list[Airport]
-    connections: list[tuple[int, int]]
+    connections: list[Connection]
 
     model_config = {
         "json_schema_extra": {
@@ -53,19 +73,8 @@ class AirportsResponse(BaseModel):
                             "iso_country": "FR",
                         },
                     ],
-                    "connections": [[0, 1]]
+                    "connections": [{"0": 0, "1": 1, "distance_km": 400.43}],
                 }
             ]
         }
     }
-
-    @staticmethod
-    def from_airports(airports: list[Airport]) -> "AirportsResponse":
-        connections = []
-        points = array([airport.pos_3d for airport in airports])
-        for x, y, z in triangulate_points(points):
-            connections.extend([[x, y], [y, z], [z, x]])
-        return AirportsResponse(airports=airports, connections=connections)
-
-def triangulate_points(points):
-    return Delaunay(points).convex_hull
