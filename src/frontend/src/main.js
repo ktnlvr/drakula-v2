@@ -47,7 +47,7 @@ async function setupGame(scene) {
       die.model.position.set(width * i / n - width / 2, 0, 50);
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
-      die.setSpin(randomSpin, 6);
+      die.setSpin(randomSpin);
       scheduledCallables.push((dt) => die.update(dt));
 
       dice.push(die);
