@@ -4,11 +4,11 @@ import { createRenderer, render } from "./components/renderer";
 import { createGlobe, createTable } from "./components/assets";
 import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
-import { matchEndScene } from "./components/winandloss";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
 import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
+import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
 
 const scene = new THREE.Scene();
@@ -58,11 +58,13 @@ async function setupGame() {
     "square",
     "square",
   ]);
-  characterDeath(document.querySelector('[char-id="2"]'));
+
   render(cameraControls, spotlightHelper);
-  const logger = document.querySelector(".logs");
+  /* Example actions
   logInfo("Hello this is a fucking cat.");
   matchEndScene("loss");
+  characterDeath(document.querySelector('[char-id="2"]'));
+  */
 }
 
 setupGame().catch(console.error);
