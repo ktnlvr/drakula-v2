@@ -58,7 +58,7 @@ async function setupGame(scene) {
     }
 
     for (let i = 0; i < n; i++) {
-      setInterval(() => dice[i].stop(), 1000 + i * 200);
+      setTimeout(() => dice[i].stop(), 1000 + i * 200);
     }
 
     diceModels.position.set(0, -40, 0);
