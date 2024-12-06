@@ -30,3 +30,7 @@
     color:beige;
     text-shadow: beige 0px 0 20px;
 }
+
+.bet-status {
+    font-style: italic;
+}
