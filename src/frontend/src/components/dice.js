@@ -1,4 +1,4 @@
-import { easeInQuart, randomPointOnSphere } from "./utils";
+import { easeInQuart, randomPointOnSphere, sleep, sleepActive } from "./utils";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from 'three';
 
@@ -134,25 +134,17 @@ async function draculaThink() {
     // If you plot in for x \in [0; 1] you can see
     // that the fast times are really fast, possibly giving
     // a feeling of a very confident bet
-    const DRACULA_THINKING_TIME = 100 + 990 * Math.log(17 * Math.random(300) + 1);
+    const DRACULA_THINKING_TIME = .100 + Math.log(17 * Math.random() + 1);
     // how often the dots are updated
-    const UPDATE_INTERVAL = 300;
+    const UPDATE_INTERVAL = .3;
 
     // Display 3 dots while the dracula is thinking, blinking
     // them periodically
     setBetStatus(".")
-    const payload = { i: 1 };
-    const thinker = setInterval(() => {
-        setBetStatus(".".repeat(payload.i % 3 + 1));
-        payload.i++;
-    }, UPDATE_INTERVAL);
-
-    // Wait for a given amount of time
-    await new Promise(resolve => setTimeout(() => {
-        clearInterval(thinker);
-        thinkingPlaceholder.classList.add('hidden');
-        resolve()
-    }, DRACULA_THINKING_TIME));
+    await sleepActive((i) => {
+        setBetStatus(".".repeat(i % 3 + 1));
+    }, UPDATE_INTERVAL, DRACULA_THINKING_TIME);
+    thinkingPlaceholder.classList.add('hidden');
 
     let choices = [betBumpNumber, callOut];
     // Can bump value
@@ -201,18 +193,15 @@ async function removeDice(loser_idx) {
         const TIMESLICES = 100;
         // XXX: assuming scale is uniform
         const START_SCALE = proxies[i].model.scale[0];
-        const dt = 1000 * DICE_REMOVE_ANIMATION_DURATION_S / TIMESLICES;
+        const dt = DICE_REMOVE_ANIMATION_DURATION_S / TIMESLICES;
         const integrator = { t: 0 }
-        let interval = setInterval(() => {
+
+        await sleepActive(() => {
             const SCALE = START_SCALE * (1 - easeInQuart(integrator.t));
             proxies[i].model.scale.set(SCALE, SCALE, SCALE);
             integrator.t += dt;
-        }, dt);
-        await new Promise(resolve => setTimeout(() => {
-            clearInterval(interval);
-            diceState.playerDiceProxies[i].model.removeFromParent();
-            resolve()
-        }, 1000 * DICE_REMOVE_ANIMATION_DURATION_S));
+        }, dt, DICE_REMOVE_ANIMATION_DURATION_S);
+        diceState.playerDiceProxies[i].model.removeFromParent();
 
         proxies.splice(i, 1);
         if (proxies.length === 0) {
@@ -273,7 +262,7 @@ async function callOut() {
     // Remove the dice from the respective player
     await removeDice(loser_idx);
 
-    // Reroll player's dice
+    // Reroll Player's dice
     await rollDice(diceState.playerDiceProxies, 'wait');
     // Reroll Dracula's dice
     let newDice = []
@@ -301,15 +290,19 @@ export async function rollDice(dice = [], mode = 'nowait') {
         die.setSpin(randomSpin);
     }
 
+    let promises = []
     for (let i = 0; i < dice.length; i++) {
-        const duration = 1000 + i * 200;
+        const duration_s = 1 + 0.4 * i;
         if (mode == 'wait') {
-            await new Promise(resolve => setTimeout(() => {
-                dice[i].stop(); resolve();
-            }, duration));
+            promises.push(sleep(duration_s));
         } else {
-            setTimeout(() => dice[i].stop(), duration);
+            setTimeout(() => dice[i].stop(), 1000 * duration_s);
         }
+    }
+
+    for (let i = 0; i < promises.length; i++) {
+        await promises[i];
+        dice[i].stop();
     }
 }
 

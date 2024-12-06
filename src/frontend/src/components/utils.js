@@ -10,3 +10,21 @@ export function randomPointOnSphere() {
 export function easeInQuart(x) {
     return x * x * x * x;
 }
+
+// Non-blocking sleep for `t_s` seconds
+export async function sleep(t_s = 0.) {
+    return new Promise(resolve => setTimeout(resolve, 1000 * t_s))
+}
+
+// Calls the function `callable` every `interval_s` seconds over the period of time `t_s` (seconds)
+export async function sleepActive(callable, interval_s = 0, t_s = 0) {
+    const payload = { i: 0 };
+    const intervalID = setInterval(() => {
+        callable(payload.i);
+        payload.i++;
+    }, 1000 * interval_s);
+    await new Promise(resolve => setTimeout(() => {
+        clearInterval(intervalID);
+        resolve();
+    }, 1000 * t_s))
+}
