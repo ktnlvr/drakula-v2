@@ -32,6 +32,8 @@ class DiceProxy {
             let q = start.slerp(rot, 1 - this.slerpTime / SLERP_DURATION);
             this.model.rotation.setFromQuaternion(q);
             this.slerpTime -= dt;
+            if (this.slerpTime <= 0)
+                this.model.rotation.setFromQuaternion(rot);
         } else {
             this.model.rotateOnAxis((new THREE.Vector3()).copy(this.spin).normalize(), this.spin.length() * dt);
         }
@@ -84,7 +86,6 @@ function updateCurrentBet() {
 
 function hideBettingOptions() {
     document.getElementById("betting-options").classList.add(["hidden"]);
-    console.log(document.getElementById("betting-options").classList)
 }
 
 function showBettingOptions() {
@@ -129,10 +130,11 @@ async function draculaThink() {
     }, UPDATE_INTERVAL);
 
     // Wait for a given amount of time
-    await setTimeout(() => {
+    await new Promise(resolve => setTimeout(() => {
         clearInterval(thinker);
         thinkingPlaceholder.classList.add('hidden');
-    }, DRACULA_THINKING_TIME);
+        resolve()
+    }, DRACULA_THINKING_TIME));
 
     let choices = [betBumpNumber, callOut];
     if (diceState.bet[1] != 6) {

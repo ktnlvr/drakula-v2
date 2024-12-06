@@ -41,13 +41,10 @@ async function setupGame(scene) {
     let dice = [];
     let n = 6;
     for (let i = 0; i < n; i++) {
-      const theta = 2 * Math.PI * i / n;
       const die = await createDie(scene);
 
-      const r = 40;
-      const x = r * Math.cos(theta);
-      const z = r * Math.sin(theta);
-      die.model.position.set(x, 0, z);
+      const width = 150;
+      die.model.position.set(width * i / n - width / 2, 0, 50);
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
       die.setSpin(randomSpin, 6);
