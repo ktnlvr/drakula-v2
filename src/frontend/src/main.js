@@ -19,7 +19,7 @@ async function setupGame() {
     hoverPass
   );
   scene.add(globeGroup);
-  scene.add(createTable());
+  createTable(scene);
 
   createCharacters(globeGroup);
   window.GameState = GameState;

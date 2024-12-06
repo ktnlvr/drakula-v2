@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { fetchAirports } from "./api";
 import { GameState } from "./gameState";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let airportsData = [];
 let connectionsData = [];
@@ -20,7 +21,7 @@ export async function createGlobe(
     normalMap: normalTexture,
   });
   const globe = new THREE.Mesh(geometry, material);
-  globe.position.y = 60;
+  globe.position.set(0, 60, 0);
   globe.castShadow = true;
   globe.receiveShadow = true;
 
@@ -138,7 +139,7 @@ export async function createGlobe(
           );
           const geometry = new THREE.SphereGeometry(0.4, 64, 32);
           const material = new THREE.MeshStandardMaterial({
-            color: "#414141",
+            color: "#646464",
           });
           const airportMesh = new THREE.Mesh(geometry, material);
           airportMesh.name = index;
@@ -185,11 +186,25 @@ export async function createGlobe(
   });
 }
 
-export function createTable() {
-  const geometry = new THREE.BoxGeometry(220, 2, 220);
-  const material = new THREE.MeshStandardMaterial({ color: "#38322c" });
-  const table = new THREE.Mesh(geometry, material);
-  table.castShadow = true;
-  table.receiveShadow = true;
-  return table;
+export function createTable(scene) {
+  const loader = new GLTFLoader();
+
+  loader.load(
+    "new_table.glb",
+    function (gltf) {
+      gltf.scene.traverse(function (object) {
+        if (object.isMesh) {
+          object.receiveShadow = true;
+          object.position.z = -50;
+          object.scale.set(20, 20, 20);
+        } else {
+        }
+      });
+      scene.add(gltf.scene);
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
 }

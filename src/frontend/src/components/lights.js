@@ -11,7 +11,7 @@ export function setupLights(scene) {
   spotlight.shadow.mapSize.width = 2048;
   spotlight.shadow.mapSize.height = 2048;
   spotlight.shadow.camera.near = 1;
-  spotlight.shadow.camera.far = 1000;
+  spotlight.shadow.camera.far = 100;
   spotlight.shadow.focus = 1;
   scene.add(spotlight);
   return {
