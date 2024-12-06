@@ -167,7 +167,7 @@ export async function createGlobe(
           index++;
         }
         for (const connection of data.connections) {
-          const [fromId, toId] = connection;
+          const { 0: fromId, 1: toId } = connection;
           const connectionLine = createConnection(
             airportsData[fromId].position,
             airportsData[toId].position
