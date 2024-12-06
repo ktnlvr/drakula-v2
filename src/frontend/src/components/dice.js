@@ -1,3 +1,4 @@
+import { easeInQuart, randomPointOnSphere } from "./utils";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from 'three';
 
@@ -52,6 +53,7 @@ class DiceProxy {
         this.face = value ? value - 1 : Math.floor(Math.random() * 6);
         this.spin = spin;
         this.shouldRotate = true;
+        this.slerpTime = SLERP_DURATION;
     }
 }
 
@@ -166,18 +168,33 @@ async function betBumpBoth() {
     updateCurrentBet();
 }
 
-function removeDice(idx) {
-    console.log(idx);
+async function removeDice(loser_idx) {
+    console.log(loser_idx);
     console.log(diceState);
-    diceState.dice[idx].pop();
-    if (idx == DICE_INDEX_PLAYER) {
-        // TODO: animate dice removal
-        const meshes = diceState.playerDiceProxies;
-        const i = Math.floor(Math.random() * meshes.length);
-        console.log(meshes[i])
-        diceState.playerDiceProxies[i].model.removeFromParent();
-        meshes.splice(i, 1);
-        if (meshes.length === 0) {
+    diceState.dice[loser_idx].pop();
+    if (loser_idx == DICE_INDEX_PLAYER) {
+        const proxies = diceState.playerDiceProxies;
+        const i = Math.floor(Math.random() * proxies.length);
+
+        const DICE_REMOVE_ANIMATION_DURATION_S = 0.75;
+        const TIMESLICES = 100;
+        // XXX: assuming scale is uniform
+        const START_SCALE = proxies[i].model.scale[0];
+        const dt = 1000 * DICE_REMOVE_ANIMATION_DURATION_S / TIMESLICES;
+        const integrator = { t: 0 }
+        let interval = setInterval(() => {
+            const SCALE = START_SCALE * (1 - easeInQuart(integrator.t));
+            proxies[i].model.scale.set(SCALE, SCALE, SCALE);
+            integrator.t += dt;
+        }, dt);
+        await new Promise(resolve => setTimeout(() => {
+            clearInterval(interval);
+            diceState.playerDiceProxies[i].model.removeFromParent();
+            resolve()
+        }, 1000 * DICE_REMOVE_ANIMATION_DURATION_S));
+
+        proxies.splice(i, 1);
+        if (proxies.length === 0) {
             alert("Game over, the player is out of dice!")
             return
         }
@@ -206,16 +223,43 @@ async function callOut() {
     //        No          |       Yes        |        Dracula
     //        Yes         |       No         |        Dracula
     //        Yes         |       Yes        |        Player
-    let idx =
+    let loser_idx =
         (diceState.turn == DICE_TURN_DRACULA) ^ is_bet_safe ?
             DICE_INDEX_PLAYER : DICE_INDEX_DRACULA;
 
     // Remove the dice from the respective player
-    removeDice(idx);
-    if (idx == DICE_INDEX_DRACULA) {
+    await removeDice(loser_idx);
+
+    if (loser_idx == DICE_INDEX_DRACULA) {
         console.log("Dracula loses a dice");
     } else {
         console.log("The player loses a dice");
+    }
+
+    // Reroll player's dice
+    await rollDice(diceState.playerDiceProxies);
+    // Reroll Dracula's dice
+    let newDice = []
+    for (let i = 0; i < diceState.dice[DICE_INDEX_DRACULA].length; i++)
+        newDice.push(Math.floor(Math.random() * 6) + 1);
+    diceState.dice[DICE_INDEX_DRACULA] = newDice;
+}
+
+export async function rollDice(dice = [], mode = 'nowait') {
+    for (const die of dice) {
+        let randomSpin = randomPointOnSphere().multiplyScalar(10);
+        die.setSpin(randomSpin);
+    }
+
+    for (let i = 0; i < dice.length; i++) {
+        const duration = 1000 + i * 200;
+        if (mode == 'wait') {
+            await new Promise(resolve => setTimeout(() => {
+                dice[i].stop(); resolve();
+            }, duration));
+        } else {
+            setTimeout(() => dice[i].stop(), duration);
+        }
     }
 }
 

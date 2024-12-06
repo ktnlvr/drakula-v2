@@ -6,7 +6,7 @@ import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
-import { createDie, startDiceRound } from "./components/dice";
+import { createDie, startDiceRound, rollDice } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
 
 const scene = new THREE.Scene();
@@ -54,9 +54,7 @@ async function setupGame(scene) {
       diceModels.add(die.model);
     }
 
-    for (let i = 0; i < n; i++) {
-      setTimeout(() => dice[i].stop(), 1000 + i * 200);
-    }
+    await rollDice(dice);
 
     diceModels.position.set(0, -40, 0);
     scene.add(diceModels);
