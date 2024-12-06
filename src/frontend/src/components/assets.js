@@ -5,7 +5,11 @@ import { GameState } from "./gameState";
 let airportsData = [];
 let connectionsData = [];
 
-export async function createGlobe(interactionManager, outlinePass) {
+export async function createGlobe(
+  interactionManager,
+  selectionPass,
+  hoverPass
+) {
   const dayTexture = new THREE.TextureLoader().load("/EarthColor.png");
   const normalTexture = new THREE.TextureLoader().load("/EarthNormal.png");
 
@@ -134,7 +138,7 @@ export async function createGlobe(interactionManager, outlinePass) {
           );
           const geometry = new THREE.SphereGeometry(0.4, 64, 32);
           const material = new THREE.MeshStandardMaterial({
-            color: "#646464",
+            color: "#414141",
           });
           const airportMesh = new THREE.Mesh(geometry, material);
           airportMesh.name = index;
@@ -145,15 +149,15 @@ export async function createGlobe(interactionManager, outlinePass) {
               GameState.airports[airportMesh.name].name
             );
             event.stopPropagation();
-            outlinePass.selectedObjects = [airportMesh];
+            selectionPass.selectedObjects = [airportMesh];
           });
           airportMesh.addEventListener("mouseover", (event) => {
-            airportMesh.material.color.set("#d8d8d8");
+            hoverPass.selectedObjects = [airportMesh];
             document.body.style.cursor = "pointer";
           });
 
           airportMesh.addEventListener("mouseout", (event) => {
-            airportMesh.material.color.set("#646464");
+            hoverPass.selectedObjects = [];
             document.body.style.cursor = "default";
           });
           airportMesh.position.set(coords.x, coords.y, coords.z);
