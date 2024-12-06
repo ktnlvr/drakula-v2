@@ -12,6 +12,13 @@ export const GameState = {
       ([a, b]) => (a === from && b === to) || (a === to && b === from)
     );
   },
+  markAirport(airport, isMarked = false) {
+    if (isMarked) {
+      this.airports[airport].material.color.set("#fffe32");
+    } else {
+      this.airports[airport].material.color.set("#414141");
+    }
+  },
 };
 
 export class Character {
