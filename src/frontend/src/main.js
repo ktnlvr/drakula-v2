@@ -9,13 +9,15 @@ import { createCharacters, GameState } from "./components/gameState";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
-const { renderer, outlinePass, composer, interactionManager } = createRenderer(
-  scene,
-  camera
-);
+const { renderer, selectionPass, hoverPass, composer, interactionManager } =
+  createRenderer(scene, camera);
 
 async function setupGame() {
-  const { globeGroup } = await createGlobe(interactionManager, outlinePass);
+  const { globeGroup } = await createGlobe(
+    interactionManager,
+    selectionPass,
+    hoverPass
+  );
   scene.add(globeGroup);
   scene.add(createTable());
 
