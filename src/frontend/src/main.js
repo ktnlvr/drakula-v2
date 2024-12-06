@@ -1,33 +1,49 @@
 import * as THREE from "three";
 import { createCamera, setControls } from "./components/camera";
+import { createRenderer, render } from "./components/renderer";
 import { createGlobe, createTable } from "./components/assets";
 import { setupLights } from "./components/lights";
-import { createRenderer, render } from "./components/renderer";
 import { setupGui } from "./components/gui";
 import { matchEndScene } from "./components/winandloss";
 import CameraControls from "camera-controls";
+import { createCharacters, GameState } from "./components/gameState";
 import { characterDeath } from "./components/chardeath";
 import { logInfo, LogEventTypes } from "./components/logger";
 import { workingToColorSpace } from "three/webgpu";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
-const { renderer, outlinePass, composer, interactionManager } = createRenderer(
-  scene,
-  camera
-);
+const { renderer, selectionPass, hoverPass, composer, interactionManager } =
+  createRenderer(scene, camera);
 
-scene.add(createGlobe(interactionManager, outlinePass));
-scene.add(createTable());
+async function setupGame() {
+  const { globeGroup } = await createGlobe(
+    interactionManager,
+    selectionPass,
+    hoverPass
+  );
+  scene.add(globeGroup);
+  createTable(scene);
 
-const { ambientLight, spotlight } = setupLights(scene);
-const spotlightHelper = new THREE.SpotLightHelper(spotlight);
-setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
-scene.add(spotlightHelper);
+  createCharacters(globeGroup);
+  window.GameState = GameState;
 
-CameraControls.install({ THREE });
-const cameraControls = new CameraControls(camera, renderer.domElement);
-setControls(cameraControls);
+  const { ambientLight, spotlight } = setupLights(scene);
+  const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+  setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
+  scene.add(spotlightHelper);
+
+  CameraControls.install({ THREE });
+  const cameraControls = new CameraControls(camera, renderer.domElement);
+  setControls(cameraControls);
+  
+  render(cameraControls, spotlightHelper);
+}
+
+setupGame().catch(console.error);
+
+
+
 
 const cardCounts = {};
 
@@ -126,8 +142,6 @@ createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
   "square",
   "square",
 ]);
-
-render(cameraControls, spotlightHelper);
 
 window.addEventListener(
   "resize",

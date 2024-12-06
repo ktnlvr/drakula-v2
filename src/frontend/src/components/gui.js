@@ -63,7 +63,7 @@ export function setupGui(
       }
     });
   });
-  ambientFolder.add(params, "intensity", 0, 5).onChange(function (val) {
+  ambientFolder.add(params, "intensity", 0, 3).onChange(function (val) {
     ambientLight.intensity = val;
   });
   ambientFolder.addColor(params, "color").onChange(function (val) {

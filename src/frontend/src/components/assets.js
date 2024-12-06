@@ -1,7 +1,16 @@
 import * as THREE from "three";
 import { fetchAirports } from "./api";
+import { GameState } from "./gameState";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-export function createGlobe(interactionManager, outlinePass) {
+let airportsData = [];
+let connectionsData = [];
+
+export async function createGlobe(
+  interactionManager,
+  selectionPass,
+  hoverPass
+) {
   const dayTexture = new THREE.TextureLoader().load("/EarthColor.png");
   const normalTexture = new THREE.TextureLoader().load("/EarthNormal.png");
 
@@ -12,6 +21,9 @@ export function createGlobe(interactionManager, outlinePass) {
     normalMap: normalTexture,
   });
   const globe = new THREE.Mesh(geometry, material);
+  globe.position.set(0, 60, 0);
+  globe.castShadow = true;
+  globe.receiveShadow = true;
 
   let mousedown = false;
   let hovering = false;
@@ -20,23 +32,23 @@ export function createGlobe(interactionManager, outlinePass) {
   const damping = 0.995;
   const swiping = 0.08;
   const stopping = 0.92;
-  globe.addEventListener('mousedown', (event) => {
+  globe.addEventListener("mousedown", (event) => {
     event.stopPropagation();
     mousedown = true;
   });
 
-  window.addEventListener('mouseup', (event) => {
+  window.addEventListener("mouseup", (event) => {
     event.stopPropagation();
     mousedown = false;
     previousMousePos = null;
   });
 
-  globe.addEventListener('mouseenter', () => {
+  globe.addEventListener("mouseenter", () => {
     hovering = true;
     document.body.style.cursor = "grab";
   });
 
-  globe.addEventListener('mousemove', (event) => {
+  globe.addEventListener("mousemove", (event) => {
     event.stopPropagation();
     if (hovering && mousedown) {
       if (!previousMousePos) {
@@ -49,7 +61,7 @@ export function createGlobe(interactionManager, outlinePass) {
     }
   });
 
-  globe.addEventListener('mouseleave', (event) => {
+  globe.addEventListener("mouseleave", (event) => {
     event.stopPropagation();
     hovering = false;
     document.body.style.cursor = "default";
@@ -64,16 +76,13 @@ export function createGlobe(interactionManager, outlinePass) {
       velocity.y *= damping;
     }
     globeGroup.rotation.y += velocity.y;
-    
+
     requestAnimationFrame(updateRotation);
   }
 
   updateRotation();
 
   interactionManager.add(globe);
-
-  globe.castShadow = true;
-  globe.receiveShadow = true;
   globeGroup.add(globe);
 
   function PosFromLatLon(phi, theta) {
@@ -119,60 +128,83 @@ export function createGlobe(interactionManager, outlinePass) {
     return new THREE.Line(geometry, material);
   }
 
-  fetchAirports(30)
-    .then((data) => {
-      const airportPoints = [];
-      for (const airport of data.airports) {
-        console.log(airport);
-        const coords = PosFromLatLon(
-          airport.latitude_deg,
-          airport.longitude_deg
-        );
-        const geometry = new THREE.SphereGeometry(0.4, 64, 32);
-        const material = new THREE.MeshStandardMaterial({
-          color: "#646464",
-        });
-        const airportPoint = new THREE.Mesh(geometry, material);
-        interactionManager.add(airportPoint);
-        airportPoint.addEventListener("mousedown", (event) => {
-          console.log("Selected airport: ", airport.name);
-          event.stopPropagation();
-          outlinePass.selectedObjects = [airportPoint];
-        });
-        airportPoint.addEventListener("mouseover", (event) => {
-          airportPoint.material.color.set("#d8d8d8");
-          document.body.style.cursor = "pointer";
-        });
+  return new Promise((resolve) => {
+    fetchAirports(30)
+      .then((data) => {
+        let index = 0;
+        for (const airport of data.airports) {
+          const coords = PosFromLatLon(
+            airport.latitude_deg,
+            airport.longitude_deg
+          );
+          const geometry = new THREE.SphereGeometry(0.4, 64, 32);
+          const material = new THREE.MeshStandardMaterial({
+            color: "#646464",
+          });
+          const airportMesh = new THREE.Mesh(geometry, material);
+          airportMesh.name = index;
+          interactionManager.add(airportMesh);
+          airportMesh.addEventListener("mousedown", (event) => {
+            console.log(
+              "Selected airport: N.",
+              GameState.airports[airportMesh.name].name
+            );
+            event.stopPropagation();
+            selectionPass.selectedObjects = [airportMesh];
+          });
+          airportMesh.addEventListener("mouseover", (event) => {
+            hoverPass.selectedObjects = [airportMesh];
+            document.body.style.cursor = "pointer";
+          });
 
-        airportPoint.addEventListener("mouseout", (event) => {
-          airportPoint.material.color.set("#646464");
-          document.body.style.cursor = "default";
+          airportMesh.addEventListener("mouseout", (event) => {
+            hoverPass.selectedObjects = [];
+            document.body.style.cursor = "default";
+          });
+          airportMesh.position.set(coords.x, coords.y, coords.z);
+          globeGroup.add(airportMesh);
+          airportsData.push(airportMesh);
+          index++;
+        }
+        for (const connection of data.connections) {
+          const [fromId, toId] = connection;
+          const connectionLine = createConnection(
+            airportsData[fromId].position,
+            airportsData[toId].position
+          );
+          globeGroup.add(connectionLine);
+          connectionsData.push(connection);
+        }
+        resolve({
+          globe: globe,
+          globeGroup: globeGroup,
         });
-        airportPoint.position.set(coords.x, coords.y, coords.z);
-        globeGroup.add(airportPoint);
-        airportPoints.push(airportPoint);
-      }
-      for (const connection of data.connections) {
-        console.log(connection);
-        const [fromIdx, toIdx] = connection;
-        const connectionLine = createConnection(
-          airportPoints[fromIdx].position,
-          airportPoints[toIdx].position
-        );
-        globeGroup.add(connectionLine);
-      }
-    })
-    .catch(console.error);
-
-  return globeGroup;
+        GameState.airports = airportsData;
+        GameState.connections = connectionsData;
+      })
+      .catch(console.error);
+  });
 }
 
-export function createTable() {
-  const geometry = new THREE.BoxGeometry(220, 2, 220);
-  const material = new THREE.MeshStandardMaterial({ color: "#38322c" });
-  const table = new THREE.Mesh(geometry, material);
-  table.position.y = -60;
-  table.castShadow = true;
-  table.receiveShadow = true;
-  return table;
+export function createTable(scene) {
+  const loader = new GLTFLoader();
+
+  loader.load(
+    "table.glb",
+    function (gltf) {
+      gltf.scene.traverse(function (object) {
+        if (object.isMesh) {
+          object.receiveShadow = true;
+          object.position.z = -50;
+          object.scale.set(20, 20, 20);
+        } else {
+        }
+      });
+      scene.add(gltf.scene);
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
 }
