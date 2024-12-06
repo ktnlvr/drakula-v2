@@ -28,7 +28,7 @@ class DiceProxy {
         if (!this.shouldRotate) {
             const target = DICE_FACE_ROTATIONS_EULER[this.face];
             let start = (new THREE.Quaternion()).setFromEuler(this.startRotation);
-            let rot = (new THREE.Quaternion()).setFromEuler(target)
+            let rot = (new THREE.Quaternion()).setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.randomYRot).multiply((new THREE.Quaternion()).setFromEuler(target));
             let q = start.slerp(rot, 1 - this.slerpTime / SLERP_DURATION);
             this.model.rotation.setFromQuaternion(q);
             this.slerpTime -= dt;
@@ -43,12 +43,13 @@ class DiceProxy {
 
     stop() {
         this.startRotation = new THREE.Euler().copy(this.model.rotation);
-        this.shouldRotate = false
-        this.slerpTime = SLERP_DURATION
+        this.shouldRotate = false;
+        this.slerpTime = SLERP_DURATION;
+        this.randomYRot = 2 * Math.PI * Math.random();
     }
 
-    setSpin(spin, value) {
-        this.face = value ? value - 1 : (Math.random() * 6);
+    setSpin(spin, value = undefined) {
+        this.face = value ? value - 1 : Math.floor(Math.random() * 6);
         this.spin = spin;
         this.shouldRotate = true;
     }
