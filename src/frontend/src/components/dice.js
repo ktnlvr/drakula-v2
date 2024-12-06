@@ -65,7 +65,7 @@ export async function createDie() {
 }
 
 const DICE_TURN_DRACULA = 'dracula';
-const DICE_TURN_YOU = 'you';
+const DICE_TURN_PLAYER = 'you';
 const DICE_INDEX_PLAYER = 0;
 const DICE_INDEX_DRACULA = 1;
 
@@ -82,7 +82,7 @@ function diceToString(n, m) {
     return ch.repeat(n)
 }
 
-function updateCurrentBet() {
+function updateCurrentBetDisplay() {
     let currentBet = document.getElementById("current-bet");
     currentBet.textContent = "Current bet: " + diceToString(...diceState.bet);
 }
@@ -91,6 +91,7 @@ function hideBettingOptions() {
     document.getElementById("betting-options").classList.add(["hidden"]);
 }
 
+// Shows and refreshes the betting options
 function showBettingOptions() {
     document.getElementById("betting-options").classList.remove("hidden");
     const betBumpValue = document.getElementById("bet-bump-value");
@@ -111,6 +112,14 @@ function showBettingOptions() {
     betBumpNumber.innerText = diceToString(n + 1, m);
 }
 
+const thinkingPlaceholder = document.getElementById('bet-status');
+
+// Used to report Dracula thinking as well as good and bad bet calls
+function setBetStatus(status) {
+    thinkingPlaceholder.classList.remove('hidden');
+    thinkingPlaceholder.innerText = status;
+}
+
 async function draculaThink() {
     // The formula is kinda hand-tweaked
     // If you plot in for x \in [0; 1] you can see
@@ -120,15 +129,12 @@ async function draculaThink() {
     // how often the dots are updated
     const UPDATE_INTERVAL = 300;
 
-    const thinkingPlaceholder = document.getElementById('dracula-thinking');
-
-    thinkingPlaceholder.classList.remove('hidden');
     // Display 3 dots while the dracula is thinking, blinking
     // them periodically
-    thinkingPlaceholder.innerText = ".";
+    setBetStatus(".")
     const payload = { i: 1 };
     const thinker = setInterval(() => {
-        thinkingPlaceholder.innerText = ".".repeat(payload.i % 3 + 1);
+        setBetStatus(".".repeat(payload.i % 3 + 1));
         payload.i++;
     }, UPDATE_INTERVAL);
 
@@ -140,6 +146,7 @@ async function draculaThink() {
     }, DRACULA_THINKING_TIME));
 
     let choices = [betBumpNumber, callOut];
+    // Can bump value
     if (diceState.bet[1] != 6) {
         choices.push(betBumpValue);
         choices.push(betBumpBoth);
@@ -149,23 +156,28 @@ async function draculaThink() {
     await choices[Math.floor(choices.length * Math.random())]()
 }
 
+function draculaSetStartingBet() {
+    // TODO: Possibly make up a better starting bet?
+    return [1, 1]
+}
+
 async function betBumpValue() {
     console.log(diceState.turn + " chose to bump the value");
     diceState.bet[1]++;
-    updateCurrentBet();
+    updateCurrentBetDisplay();
 }
 
 async function betBumpNumber() {
     console.log(diceState.turn + " chose to bump the number");
     diceState.bet[0]++;
-    updateCurrentBet();
+    updateCurrentBetDisplay();
 }
 
 async function betBumpBoth() {
     console.log(diceState.turn + " chose to bump both");
     diceState.bet[0]++;
     diceState.bet[1]++;
-    updateCurrentBet();
+    updateCurrentBetDisplay();
 }
 
 async function removeDice(loser_idx) {
@@ -199,9 +211,15 @@ async function removeDice(loser_idx) {
             return
         }
     }
+    // TODO: when Dracula's dice gets removed there is no timeout
+    // or animation, so it looks kinda choppy.
 }
 
 async function callOut() {
+    const isPlayerTurn = diceState.turn == DICE_TURN_PLAYER;
+    if (isPlayerTurn)
+        hideBettingOptions();
+
     console.log(diceState.turn + ' calls!');
     const [n, m] = diceState.bet;
     console.log("The bet is", diceToString(n, m));
@@ -227,14 +245,23 @@ async function callOut() {
         (diceState.turn == DICE_TURN_DRACULA) ^ is_bet_safe ?
             DICE_INDEX_PLAYER : DICE_INDEX_DRACULA;
 
+    let betStatus = 'undefined';
+    if (isPlayerTurn)
+        if (loser_idx == DICE_INDEX_DRACULA)
+            betStatus = `Good call. Dracula has ${diceState.dice[DICE_INDEX_DRACULA].length - 1} left.`;
+        else
+            betStatus = "Poor call";
+    else
+        if (loser_idx == DICE_INDEX_PLAYER)
+            betStatus = "Dracula calls you out. Lose a dice";
+        else
+            // Just wanted to sneak in a Harry Potter reference
+            betStatus = `Dracula called and lost, he has ${diceState.dice[DICE_INDEX_DRACULA].length - 1} left.`;
+
+    setBetStatus(betStatus)
+
     // Remove the dice from the respective player
     await removeDice(loser_idx);
-
-    if (loser_idx == DICE_INDEX_DRACULA) {
-        console.log("Dracula loses a dice");
-    } else {
-        console.log("The player loses a dice");
-    }
 
     // Reroll player's dice
     await rollDice(diceState.playerDiceProxies);
@@ -243,6 +270,12 @@ async function callOut() {
     for (let i = 0; i < diceState.dice[DICE_INDEX_DRACULA].length; i++)
         newDice.push(Math.floor(Math.random() * 6) + 1);
     diceState.dice[DICE_INDEX_DRACULA] = newDice;
+
+    
+    diceState.bet = draculaSetStartingBet();
+    updateCurrentBetDisplay();
+    if (isPlayerTurn)
+        showBettingOptions();
 }
 
 export async function rollDice(dice = [], mode = 'nowait') {
@@ -264,8 +297,7 @@ export async function rollDice(dice = [], mode = 'nowait') {
 }
 
 export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = []) {
-    // one two, literally
-    diceState.bet = [1, 2];
+    diceState.bet = draculaSetStartingBet();
     const draculaDice = [];
     for (let i = 0; i < draculaDiceCount; i++)
         draculaDice.push(Math.floor(Math.random() * 6) + 1)
@@ -274,16 +306,16 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = [
     diceState.dice = [playerDice, draculaDice];
     console.log(diceState)
 
-    diceState.turn = DICE_TURN_YOU;
+    diceState.turn = DICE_TURN_PLAYER;
     showBettingOptions();
-    updateCurrentBet();
+    updateCurrentBetDisplay();
 
     // Returns a function that handles all the setup and teardown
     // for making a bet for a given `action`
     function betActionFactory(action) {
         async function wrapped() {
             // If it's not the player's turn, don't react to buttons
-            if (diceState.turn !== DICE_TURN_YOU)
+            if (diceState.turn !== DICE_TURN_PLAYER)
                 return;
             // Do the action
             await action();
@@ -293,7 +325,7 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = [
             diceState.turn = DICE_TURN_DRACULA;
             await draculaThink();
             // Return turn back to the player
-            diceState.turn = DICE_TURN_YOU;
+            diceState.turn = DICE_TURN_PLAYER;
             showBettingOptions();
         }
 
@@ -303,5 +335,10 @@ export async function startDiceRound(draculaDiceCount = 6, playerDiceProxies = [
     document.getElementById("bet-bump-value").onclick = betActionFactory(betBumpValue);
     document.getElementById("bet-bump-number").onclick = betActionFactory(betBumpNumber);
     document.getElementById("bet-bump-both").onclick = betActionFactory(betBumpBoth);
-    document.getElementById("bet-call").onclick = callOut;
+    document.getElementById("bet-call").onclick = async () => {
+        if (diceState.turn !== DICE_TURN_PLAYER)
+            return;
+
+        await callOut()
+    };
 }
