@@ -32,7 +32,7 @@ function playGame(draculaDice, playerDice) {
 
         console.log(`Dracula chosenNumber: ${chosenNumber}, chosenValue: ${chosenValue}`);
 
-        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice, chosenValue, chosenNumber);
+        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice);
 
         if (draculaResult.action === 'call') {
             console.log(`Dracula calls!  Number: ${chosenNumber}, Value: ${chosenValue}`);
@@ -47,22 +47,21 @@ function playGame(draculaDice, playerDice) {
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
         // Player's Turn
         console.log("Player's Turn:");
-        let playerResult = playerLogic.playerGuess(chosenValue, chosenNumber);
+        let playerResult = playerLogic.playerGuess();
 
-        if (playerResult.playerAction === '3') {
+        if (playerResult === '3') {
             console.log(`Player calls! Number: ${chosenNumber}, Value: ${chosenValue}`);
-            compareAndDetermineOutcome('player', chosenValue, chosenNumber, draculaDice, playerDice);
-            //break; // Stop the loop if Player calls
+            compareAndDetermineOutcome('player', chosenNumber, chosenValue, draculaDice, playerDice);
+            break; // Stop the loop if Player calls
         } else {
             // Update the global variables with Player's guesses
-            chosenValue = playerResult.valueGuess;
-            chosenNumber = playerResult.countGuess;
+            chosenNumber = playerResult.chosenNumber;
+            chosenValue = playerResult.chosenValue;
             console.log(`Player guesses: Number = ${chosenNumber}, Value = ${chosenValue}`);
-        }
+        } 
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
     }
 
-    
     if (draculaDice.length <= 0) {
         console.log("\n--- Game Over ---");
         console.log("Player wins! Dracula has no more dice.");
@@ -72,7 +71,7 @@ function playGame(draculaDice, playerDice) {
     }
 }
 
-function compareAndDetermineOutcome(caller, chosenValue, chosenNumber, draculaDice, playerDice) {
+function compareAndDetermineOutcome(caller, chosenNumber, chosenValue, draculaDice, playerDice) {
     let actualDraculaCount = draculaDice.filter(value => value === chosenValue).length;
     let actualPlayerCount = playerDice.filter(value => value === chosenValue).length;
     let actualTotalCount = actualDraculaCount + actualPlayerCount;
@@ -96,6 +95,8 @@ function compareAndDetermineOutcome(caller, chosenValue, chosenNumber, draculaDi
             //console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
         }
     }
+
+    return { draculaDice, playerDice };
 }
 
 // Generate initial dice values for Dracula and Player

@@ -12,17 +12,18 @@ export function playerGuess() {
     if (guessType === '1') {
         chosenValue += 1
         console.log(`Player guesses to bump the value`);
-        //return { playerAction: '1', chosenValue, chosenNumber};
         updateGlobals(chosenValue, chosenNumber);
+        return { playerAction: '1', chosenValue: chosenValue,chosenNumber: chosenNumber};
+        
     } else if (guessType === '2') {
         chosenNumber+=1
         console.log(`Player guesses to bump the number`);
-        //return { playerAction: '2', chosenNumber, chosenValue};
         updateGlobals(chosenValue, chosenNumber);
+        return { playerAction: '2', chosenValue: chosenValue,chosenNumber: chosenNumber};
 
     } else if (guessType === '3') {
         console.log(`Player guesses to call`);
-        return { playerAction: '3', chosenNumber: chosenNumber, chosenValue: chosenValue };
+        return { playerAction: '3', chosenValue: chosenValue,chosenNumber: chosenNumber};
     } else {
         console.log("Invalid input.\n Please enter '1' for 'value' or '2' for 'number'.");
         return playerGuess(); // Retry until valid input
