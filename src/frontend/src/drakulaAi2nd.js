@@ -8,6 +8,7 @@ export function draculaTurn(draculaDice, playerDice) {
     let bumpValue = false;
     let bumpNumber = false;
     let call = false;
+    let draculaNumber = 0;
 
     function draculaMoreDice() {
         // Dracula has more dice - more confident to bump values or numbers, dice number max 8 min 3
@@ -90,16 +91,22 @@ export function draculaTurn(draculaDice, playerDice) {
         }
     }
 
+    draculaNumber = draculaDice.filter(value => value === chosenValue).length;
+    if (chosenNumber < draculaNumber){
     // When Dracula has more Dice
-    if (draculaDice.length > playerDice.length) {
-        draculaMoreDice();
-        // When Dracula has fewer or equal number of dices than player
-    } else if (draculaDice.length <= playerDice.length) {
-        drakulaEqualOrLessDice();
-    } else {
+        if (draculaDice.length > playerDice.length) {
+            draculaMoreDice();
+            // When Dracula has fewer or equal number of dices than player
+        } else if (draculaDice.length <= playerDice.length) {
+            drakulaEqualOrLessDice();
+        } else {
+            call = true; // Unexpected situation meet, Dracula calls
+        }
+    } else if (chosenNumber === draculaNumber && potentialAction < 0.7){
         call = true; // Unexpected situation meet, Dracula calls
+    }  else {
+        bumpNumber = true;
     }
-
 
     let draculaAction = null;
     if (call) {
