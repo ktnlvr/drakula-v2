@@ -1,6 +1,7 @@
-import { chosenValue, chosenNumber } from './testMainGameLoop.js';
+import { getGlobals, updateGlobals } from './testMainGameLoop.js';
 //main drakula logic
 export function draculaTurn(draculaDice, playerDice) {
+    let { chosenValue, chosenNumber } = getGlobals(); // Get current values
     let totalDice = draculaDice.length + playerDice.length;
     let halfDice = totalDice / 2;
     const potentialAction = Math.random();
@@ -142,7 +143,7 @@ export function draculaTurn(draculaDice, playerDice) {
             console.log(`Cannot bump number beyond 8, keeping it at ${chosenNumber}`);
         }
     }
-
+    updateGlobals(chosenValue, chosenNumber);
     //console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
-    return { action: draculaAction, chosenNumber, chosenValue };
+    return {action: draculaAction, chosenNumber: chosenNumber, chosenValue: chosenValue };
 }
