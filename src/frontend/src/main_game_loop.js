@@ -16,10 +16,10 @@ function playGame(draculaDice, playerDice) {
 
         // Player's Turn to Guess
         const playerGuessResult = playerGuess();
-        console.log(draculaDice.length, playerDice.length)
-        console.log(draculaDice, playerDice)
-        console.log(playerGuessResult)
-        console.log(draculaResult)
+        console.log(`dracula number of Dice: ${draculaDice.length}, player number of Dice: ${playerDice.length}`)
+        //console.log(draculaDice, playerDice)
+        //console.log(playerGuessResult)
+        //console.log(draculaResult)
         // Compare Player Guess vs. Dracula's Guess
         if (playerGuessResult.type === '1') {
             console.log(`playerGuessResult.guess`); 
@@ -29,7 +29,8 @@ function playGame(draculaDice, playerDice) {
 
         // Dracula's Next Move: Call or Continue Guessing
         if (Math.random() > 0.5) {
-            console.log(`Dracula chooses to call.`);
+            //console.log(`Dracula chooses to call.`);
+            console.log(`Dracula chooses to call -> Number:${draculaResult.chosenNumber}, Value:${draculaResult.chosenValue}. plyer number:${playerGuessResult.countGuess}, value: ${playerGuessResult.valueGuess}`);
             compareAndDetermineOutcome('dracula', draculaResult.chosenValue, draculaResult.chosenNumber, draculaDice, playerDice);
         } else {
             console.log(`Dracula chooses to continue guessing.`);

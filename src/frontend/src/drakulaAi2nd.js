@@ -147,6 +147,6 @@ export function draculaTurn(draculaDice, playerDice) {
         }
     }
 
-    console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
+    //console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
     return { action: draculaAction, chosenNumber, chosenValue };
     }
