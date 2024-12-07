@@ -1,39 +1,53 @@
-
 import * as drakulaAi from './drakulaAi2nd.js';
-import { playerGuess } from './testPlayerLogic.js';
+import * as playerLogic from './testPlayerLogic.js';
+
+// Global variables for current chosen value and number
+export let chosenValue = null; // Initial value
+export let chosenNumber = null; // Initial number
+
+//export function getGlobals() {
+ //   return { chosenValue, chosenNumber };
+//}
+
 
 function playGame(draculaDice, playerDice) {
+    // Initialize chosenValue and chosenNumber using Dracula's first turn
+    chosenValue = draculaDice[Math.floor(Math.random() * draculaDice.length)];
+    chosenNumber = draculaDice.filter(value => value === chosenValue).length;
+
+    console.log(`Dracula chosenValue: ${chosenValue}, chosenNumber: ${chosenNumber}`);
+// Loop round
     while (draculaDice.length > 0 && playerDice.length > 0) {
         console.log("\n--- New Round ---");
 
         // Dracula's Turn
-        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice);
+        console.log("Dracula's Turn:");
+        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice, chosenValue, chosenNumber);
 
         if (draculaResult.action === 'call') {
-            compareAndDetermineOutcome('dracula', draculaResult.chosenValue, draculaResult.chosenNumber, draculaDice, playerDice);
-            continue; // Move to next round
-        }
-
-        // Player's Turn to Guess
-        const playerGuessResult = playerGuess();
-        console.log(`dracula number of Dice: ${draculaDice.length}, player number of Dice: ${playerDice.length}`)
-        //console.log(draculaDice, playerDice)
-        //console.log(playerGuessResult)
-        //console.log(draculaResult)
-        // Compare Player Guess vs. Dracula's Guess
-        if (playerGuessResult.type === '1') {
-            console.log(`playerGuessResult.guess`);
-        } else if (playerGuessResult.type === '2') {
-            console.log(`playerGuessResult.guess`);
-        }
-
-        // Dracula's Next Move: Call or Continue Guessing
-        if (Math.random() > 0.5) {
-            //console.log(`Dracula chooses to call.`);
-            console.log(`Dracula chooses to call -> Number:${draculaResult.chosenNumber}, Value:${draculaResult.chosenValue}. plyer number:${playerGuessResult.countGuess}, value: ${playerGuessResult.valueGuess}`);
-            compareAndDetermineOutcome('dracula', draculaResult.chosenValue, draculaResult.chosenNumber, draculaDice, playerDice);
+            console.log(`Dracula calls!  Number: ${chosenNumber}, Value: ${chosenValue}`);
+            compareAndDetermineOutcome('dracula', chosenNumber, chosenValue, draculaDice, playerDice);
+            break; // Stop the loop if Dracula calls
         } else {
-            console.log(`Dracula chooses to continue guessing.`);
+            // Update the global variables with Dracula's guesses
+            chosenValue = draculaResult.chosenValue;
+            chosenNumber = draculaResult.chosenNumber;
+            console.log(`Dracula guesses: Number = ${chosenNumber}, Value = ${chosenValue}`);
+        }
+
+        // Player's Turn
+        console.log("Player's Turn:");
+        const playerResult = playerLogic.playerGuess(chosenValue, chosenNumber);
+
+        if (playerResult.playerAction === '3') {
+            console.log(`Player calls! Number: ${chosenNumber}, Value: ${chosenValue}`);
+            compareAndDetermineOutcome('player', chosenValue, chosenNumber, draculaDice, playerDice);
+            break; // Stop the loop if Player calls
+        } else {
+            // Update the global variables with Player's guesses
+            chosenValue = playerResult.valueGuess;
+            chosenNumber = playerResult.countGuess;
+            console.log(`Player guesses: Number = ${chosenNumber}, Value = ${chosenValue}`);
         }
     }
 
@@ -45,20 +59,9 @@ function playGame(draculaDice, playerDice) {
     }
 }
 
-// Generate initial dice values for Dracula and Player
-function initializeDice(numberOfDice) {
-    const dice = [];
-    for (let i = 0; i < numberOfDice; i++) {
-        dice.push(Math.floor(Math.random() * 6) + 1); // Random number between 1 and 6
-    }
-    return dice;
-}
-
-
 function compareAndDetermineOutcome(caller, chosenValue, chosenNumber, draculaDice, playerDice) {
     const actualDraculaCount = draculaDice.filter(value => value === chosenValue).length;
     const actualPlayerCount = playerDice.filter(value => value === chosenValue).length;
-
     const actualTotalCount = actualDraculaCount + actualPlayerCount;
 
     if (caller === 'dracula') {
@@ -80,6 +83,15 @@ function compareAndDetermineOutcome(caller, chosenValue, chosenNumber, draculaDi
     }
 }
 
+// Generate initial dice values for Dracula and Player
+function initializeDice(numberOfDice) {
+    const dice = [];
+    for (let i = 0; i < numberOfDice; i++) {
+        dice.push(Math.floor(Math.random() * 6) + 1); // Random number between 1 and 6
+    }
+    return dice;
+}
+
 // Dracula starts with 6 dice, each assigned a random value between 1 and 6
 const draculaDice = initializeDice(6);
 
@@ -88,4 +100,3 @@ const playerDice = initializeDice(2);
 
 // Start the game
 playGame(draculaDice, playerDice);
-
