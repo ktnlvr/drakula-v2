@@ -1,6 +1,6 @@
 
 import * as drakulaAi from './drakulaAi2nd.js';
-import { playerGuess } from './player_logic.js';
+import { playerGuess } from './testPlayerLogic.js';
 
 function playGame(draculaDice, playerDice) {
     while (draculaDice.length > 0 && playerDice.length > 0) {
