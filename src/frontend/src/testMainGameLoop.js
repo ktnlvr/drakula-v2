@@ -5,10 +5,14 @@ import * as playerLogic from './testPlayerLogic.js';
 export let chosenValue = null; // Initial value
 export let chosenNumber = null; // Initial number
 
-//export function getGlobals() {
- //   return { chosenValue, chosenNumber };
-//}
+export function getGlobals() {
+    return { chosenValue, chosenNumber };
+}
 
+export function updateGlobals(newValue, newNumber) {
+    chosenValue = newValue;
+    chosenNumber = newNumber;
+}
 
 function playGame(draculaDice, playerDice) {
     // Initialize chosenValue and chosenNumber using Dracula's first turn
@@ -22,7 +26,7 @@ function playGame(draculaDice, playerDice) {
 
         // Dracula's Turn
         console.log("Dracula's Turn:");
-        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice, chosenValue, chosenNumber);
+        let draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice, chosenValue, chosenNumber);
 
         if (draculaResult.action === 'call') {
             console.log(`Dracula calls!  Number: ${chosenNumber}, Value: ${chosenValue}`);
@@ -37,7 +41,7 @@ function playGame(draculaDice, playerDice) {
 
         // Player's Turn
         console.log("Player's Turn:");
-        const playerResult = playerLogic.playerGuess(chosenValue, chosenNumber);
+        let playerResult = playerLogic.playerGuess(chosenValue, chosenNumber);
 
         if (playerResult.playerAction === '3') {
             console.log(`Player calls! Number: ${chosenNumber}, Value: ${chosenValue}`);
@@ -60,9 +64,9 @@ function playGame(draculaDice, playerDice) {
 }
 
 function compareAndDetermineOutcome(caller, chosenValue, chosenNumber, draculaDice, playerDice) {
-    const actualDraculaCount = draculaDice.filter(value => value === chosenValue).length;
-    const actualPlayerCount = playerDice.filter(value => value === chosenValue).length;
-    const actualTotalCount = actualDraculaCount + actualPlayerCount;
+    let actualDraculaCount = draculaDice.filter(value => value === chosenValue).length;
+    let actualPlayerCount = playerDice.filter(value => value === chosenValue).length;
+    let actualTotalCount = actualDraculaCount + actualPlayerCount;
 
     if (caller === 'dracula') {
         if (actualTotalCount === chosenNumber) {
@@ -93,10 +97,10 @@ function initializeDice(numberOfDice) {
 }
 
 // Dracula starts with 6 dice, each assigned a random value between 1 and 6
-const draculaDice = initializeDice(6);
+let draculaDice = initializeDice(6);
 
 // Player starts with 2 dice, each assigned a random value between 1 and 6
-const playerDice = initializeDice(2);
+let playerDice = initializeDice(2);
 
 // Start the game
 playGame(draculaDice, playerDice);
