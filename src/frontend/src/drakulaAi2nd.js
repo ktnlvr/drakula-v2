@@ -126,21 +126,24 @@ export function draculaTurn(draculaDice, playerDice) {
             chosenNumber += 1;
             //console.log(`Dracula bumps both number and value -> Number:${chosenNumber}, Value:${chosenValue}`);
         } else {
-            console.log(`Dracula bump out of range, keeping it at Number:${chosenNumber}`);
+            //console.log(`Dracula bump out of range, keeping it at Number:${chosenNumber}`);
+            return { action: 'call', chosenNumber, chosenValue };
         }
     } else if (draculaAction === 'bumpValue') {
         if (chosenValue < 6) {
             chosenValue += 1;
             //console.log(`Dracula bumps the value -> Number:${chosenNumber}, Value:${chosenValue}`);
         } else {
-            console.log(`Cannot bump value beyond 6, keeping it at ${chosenValue}`);
+            //console.log(`Cannot bump value beyond 6, keeping it at ${chosenValue}`);
+            return { action: 'call', chosenNumber, chosenValue };
         }
     } else if (draculaAction === 'bumpNumber') {
         if (chosenNumber < 8) {
             chosenNumber += 1;
             //console.log(`Dracula bumps the number -> Number:${chosenNumber}, Value:${chosenValue}`);
         } else {
-            console.log(`Cannot bump number beyond 8, keeping it at ${chosenNumber}`);
+            //console.log(`Cannot bump number beyond 8, keeping it at ${chosenNumber}`);
+            return { action: 'call', chosenNumber, chosenValue };
         }
     }
     updateGlobals(chosenValue, chosenNumber);
