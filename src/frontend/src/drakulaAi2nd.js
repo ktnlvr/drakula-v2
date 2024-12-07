@@ -1,10 +1,6 @@
-
+import { chosenValue, chosenNumber } from './testMainGameLoop.js';
 //main drakula logic
 export function draculaTurn(draculaDice, playerDice) {
-    // Dracula chooses a value and counts how many of that value he has
-    let chosenValue = draculaDice[Math.floor(Math.random() * draculaDice.length)];
-    let chosenNumber = draculaDice.filter(value => value === chosenValue).length;
-    console.log(`Dracula initially chooses number: ${chosenNumber}, dice value: ${chosenValue}`);
     let totalDice = draculaDice.length + playerDice.length;
     let halfDice = totalDice / 2;
     const potentialAction = Math.random();
