@@ -12,81 +12,81 @@ export function draculaTurn(draculaDice, playerDice) {
     let bumpNumber = false;
     let call = false;
 
-    function draculaMoreDice(){
+    function draculaMoreDice() {
         // Dracula has more dice - more confident to bump values or numbers, dice number max 8 min 3
         if (chosenValue < 4 && chosenNumber < halfDice) {
             //chosen number max 4 min 1
-            if (chosenNumber >= halfDice - 3 && potentialAction<0.7){
+            if (chosenNumber >= halfDice - 3 && potentialAction < 0.7) {
                 // chosenNumber max 1 bump number or not meet
                 bumpNumber = true;
-            } else if (chosenNumber >= halfDice - 2){
+            } else if (chosenNumber >= halfDice - 2) {
                 // chosenNumber max 2 bump number or not meet
                 bumpNumber = true;
-            } else if (chosenNumber >= halfDice - 1 && potentialAction<0.9){
+            } else if (chosenNumber >= halfDice - 1 && potentialAction < 0.9) {
                 // chosenNumber max 3 bump number or not meet
                 bumpNumber = true;
             } else {
                 // Set both bumpValue and bumpNumber to true
                 bumpValue = true;
                 bumpNumber = true;
-            } 
-        } else if (chosenValue < 4 && chosenNumber >= halfDice  && potentialAction<0.6 ) {
-             //chosen number max 5 min 2
-             if (chosenNumber <= halfDice + 1 && potentialAction<0.6){
+            }
+        } else if (chosenValue < 4 && chosenNumber >= halfDice && potentialAction < 0.6) {
+            //chosen number max 5 min 2
+            if (chosenNumber <= halfDice + 1 && potentialAction < 0.6) {
                 // chosenNumber max 4 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 2){
+            } else if (chosenNumber <= halfDice + 2) {
                 // chosenNumber max 5 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 3 && potentialAction<0.9){
+            } else if (chosenNumber <= halfDice + 3 && potentialAction < 0.9) {
                 // chosenNumber max 6 bump number or not meet
                 bumpValue = true;
             } else {
                 // Set call
                 call = true;
-            } 
-        } else if (chosenValue >= 4 && chosenNumber < halfDice ) {
+            }
+        } else if (chosenValue >= 4 && chosenNumber < halfDice) {
             //chosen number max 4 min 1, Value max 6 min 4
-            if (chosenNumber >= halfDice - 3 && potentialAction<0.6){
+            if (chosenNumber >= halfDice - 3 && potentialAction < 0.6) {
                 // chosenNumber max 1 bump number or not meet
                 bumpNumber = true;
-            } else if (chosenNumber >= halfDice - 2){
+            } else if (chosenNumber >= halfDice - 2) {
                 // chosenNumber max 2 bump number or not meet
                 bumpNumber = true;
-            } else if (chosenNumber >= halfDice - 1 && potentialAction<0.9){
+            } else if (chosenNumber >= halfDice - 1 && potentialAction < 0.9) {
                 // chosenNumber max 3 bump number or not meet
                 bumpNumber = true;
             } else {
                 // Set both bumpValue and bumpNumber to true
                 bumpValue = true;
                 bumpNumber = true;
-            } 
+            }
         } else if (chosenValue >= 4 && chosenNumber >= halfDice) {
             //chosen number max 5 min 2
-            if (chosenNumber <= halfDice + 1 && potentialAction<0.3){
+            if (chosenNumber <= halfDice + 1 && potentialAction < 0.3) {
                 // chosenNumber max 4 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 2 && potentialAction<0.4){
+            } else if (chosenNumber <= halfDice + 2 && potentialAction < 0.4) {
                 // chosenNumber max 5 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 3 && potentialAction<0.8){
+            } else if (chosenNumber <= halfDice + 3 && potentialAction < 0.8) {
                 // chosenNumber max 6 bump number or not meet
                 bumpValue = true;
             } else {
                 // Set call
                 call = true;
-            } 
+            }
         } else {
             call = true;
         }
     }
     // Less dice drakula less bump
-    function drakulaEqualOrLessDice(){
+    function drakulaEqualOrLessDice() {
         if (potentialAction < 0.4) {
             call = true; // Call more often in a defensive stance
-        } else if (chosenValue <= 3 && potentialAction<0.5) {
+        } else if (chosenValue <= 3 && potentialAction < 0.5) {
             bumpValue = true;
-        } else if (chosenNumber < totalDice && potentialAction<0.9) {
+        } else if (chosenNumber < totalDice && potentialAction < 0.9) {
             bumpNumber = true;
         } else {
             call = true; // Fall back to calling if no other option is favorable
@@ -101,8 +101,8 @@ export function draculaTurn(draculaDice, playerDice) {
         drakulaEqualOrLessDice();
     } else {
         call = true; // Unexpected situation meet, Dracula calls
-        }
-    
+    }
+
 
     let draculaAction = null;
     if (call) {
@@ -149,4 +149,4 @@ export function draculaTurn(draculaDice, playerDice) {
 
     //console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
     return { action: draculaAction, chosenNumber, chosenValue };
-    }
+}

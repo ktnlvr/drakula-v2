@@ -1,6 +1,6 @@
 
 import * as drakulaAi from './drakulaAi2nd.js';
-import {playerGuess} from './player_logic.js';
+import { playerGuess } from './player_logic.js';
 
 function playGame(draculaDice, playerDice) {
     while (draculaDice.length > 0 && playerDice.length > 0) {
@@ -22,7 +22,7 @@ function playGame(draculaDice, playerDice) {
         //console.log(draculaResult)
         // Compare Player Guess vs. Dracula's Guess
         if (playerGuessResult.type === '1') {
-            console.log(`playerGuessResult.guess`); 
+            console.log(`playerGuessResult.guess`);
         } else if (playerGuessResult.type === '2') {
             console.log(`playerGuessResult.guess`);
         }

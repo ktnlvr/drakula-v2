@@ -18,7 +18,7 @@ export function playerGuess() {
         console.log(`Player guesses to bump the number of dices to: ${countGuess}`);
         return { type: '2', guess: countGuess };
     } else if (guessType === '3') {
-        
+
     } else {
         console.log("Invalid input.\n Please enter '1' for 'value' or '2' for 'number'.");
         return playerGuess(); // Retry until valid input
