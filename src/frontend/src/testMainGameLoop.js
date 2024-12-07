@@ -24,37 +24,13 @@ function playGame(draculaDice, playerDice) {
         // playerDice = initializeDice(playerDice.length);
         //draculaDice = initializeDice(draculaDice.length); 
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
-
-        // Dracula's Turn
-        console.log("Dracula's Turn:");
         // If it's the first round or after a call, initialize Dracula's guesses
         if (chosenValue === null || chosenNumber === null) {
             chosenValue = draculaDice[Math.floor(Math.random() * draculaDice.length)];
             chosenNumber = draculaDice.filter(value => value === chosenValue).length;
-            //console.log(`Initial Dracula Guess -> Number: ${chosenNumber}, Value: ${chosenValue}`);
+            console.log(`Dracula chosen Number: ${chosenNumber}, Value: ${chosenValue}`);
         }
-        //console.log(`Dracula chosenNumber: ${chosenNumber}, chosenValue: ${chosenValue}`);
 
-        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice);
-
-        if (draculaResult.action === 'call') {
-            console.log(`Dracula calls!  Number: ${chosenNumber}, Value: ${chosenValue}`);
-            compareAndDetermineOutcome('dracula', chosenNumber, chosenValue, draculaDice, playerDice);
-            // Reinitialize dice after a call
-            if (draculaDice.length > 0 && playerDice.length > 0) {
-                draculaDice = initializeDice(draculaDice.length);
-                playerDice = initializeDice(playerDice.length);
-                chosenValue = null;
-                chosenNumber = null;
-            }
-            continue; // Start a new round
-        } else {
-            // Update the global variables with Dracula's guesses
-            chosenValue = draculaResult.chosenValue;
-            chosenNumber = draculaResult.chosenNumber;
-            console.log(`Dracula guesses: Number ${chosenNumber}, Value ${chosenValue}`);
-        }
-        console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
         // Player's Turn
         console.log("Player's Turn:");
         const playerResult = playerLogic.playerGuess();
@@ -78,7 +54,28 @@ function playGame(draculaDice, playerDice) {
         }
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
 
+        // Dracula's Turn
+        console.log("Dracula's Turn:");
+        const draculaResult = drakulaAi.draculaTurn(draculaDice, playerDice);
 
+        if (draculaResult.action === 'call') {
+            console.log(`Dracula calls!  Number: ${chosenNumber}, Value: ${chosenValue}`);
+            compareAndDetermineOutcome('dracula', chosenNumber, chosenValue, draculaDice, playerDice);
+            // Reinitialize dice after a call
+            if (draculaDice.length > 0 && playerDice.length > 0) {
+                draculaDice = initializeDice(draculaDice.length);
+                playerDice = initializeDice(playerDice.length);
+                chosenValue = null;
+                chosenNumber = null;
+            }
+            continue; // Start a new round
+        } else {
+            // Update the global variables with Dracula's guesses
+            chosenValue = draculaResult.chosenValue;
+            chosenNumber = draculaResult.chosenNumber;
+            console.log(`Dracula guesses: Number ${chosenNumber}, Value ${chosenValue}`);
+        }
+        console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
     }
 
     if (draculaDice.length <= 0) {
