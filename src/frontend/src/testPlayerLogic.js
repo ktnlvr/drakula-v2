@@ -8,22 +8,22 @@ export function playerGuess() {
     //const countGuess = parseInt(prompt("Enter your guess for the total number of dice showing a particular value:"), 10);
     const playerCall = 'call';
 
-    
+
     if (guessType === '1') {
         chosenValue += 1
         console.log(`Player guesses to bump the value`);
         updateGlobals(chosenValue, chosenNumber);
-        return { playerAction: '1', chosenValue: chosenValue,chosenNumber: chosenNumber};
-        
+        return { playerAction: '1', chosenValue: chosenValue, chosenNumber: chosenNumber };
+
     } else if (guessType === '2') {
-        chosenNumber+=1
+        chosenNumber += 1
         console.log(`Player guesses to bump the number`);
         updateGlobals(chosenValue, chosenNumber);
-        return { playerAction: '2', chosenValue: chosenValue,chosenNumber: chosenNumber};
+        return { playerAction: '2', chosenValue: chosenValue, chosenNumber: chosenNumber };
 
     } else if (guessType === '3') {
         console.log(`Player guesses to call`);
-        return { playerAction: '3', chosenValue: chosenValue,chosenNumber: chosenNumber};
+        return { playerAction: '3', chosenValue: chosenValue, chosenNumber: chosenNumber };
     } else {
         console.log("Invalid input.\n Please enter '1' for 'value' or '2' for 'number'.");
         return playerGuess(); // Retry until valid input

@@ -16,15 +16,15 @@ export function updateGlobals(newValue, newNumber) {
 
 function playGame(draculaDice, playerDice) {
 
-// Loop round
+    // Loop round
     while (draculaDice.length > 0 && playerDice.length > 0) {
 
         console.log("\n--- New Round ---");
 
-       // playerDice = initializeDice(playerDice.length);
+        // playerDice = initializeDice(playerDice.length);
         //draculaDice = initializeDice(draculaDice.length); 
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
-        
+
         // Dracula's Turn
         console.log("Dracula's Turn:");
         // If it's the first round or after a call, initialize Dracula's guesses
@@ -75,9 +75,9 @@ function playGame(draculaDice, playerDice) {
             chosenNumber = playerResult.chosenNumber;
             chosenValue = playerResult.chosenValue;
             console.log(`Player guesses: Number = ${chosenNumber}, Value = ${chosenValue}`);
-        } 
+        }
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
-        
+
 
     }
 
