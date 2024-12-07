@@ -47,7 +47,7 @@ function playGame(draculaDice, playerDice) {
                 chosenValue = null;
                 chosenNumber = null;
             }
-            continue; // Start a new round//break; // Stop the loop if Dracula calls
+            continue; // Start a new round
         } else {
             // Update the global variables with Dracula's guesses
             chosenValue = draculaResult.chosenValue;
@@ -57,7 +57,7 @@ function playGame(draculaDice, playerDice) {
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
         // Player's Turn
         console.log("Player's Turn:");
-        let playerResult = playerLogic.playerGuess();
+        const playerResult = playerLogic.playerGuess();
 
         if (playerResult.playerAction === '3') {
             console.log(`Player calls! Number: ${chosenNumber}, Value: ${chosenValue}`);
@@ -72,8 +72,8 @@ function playGame(draculaDice, playerDice) {
             continue; // Start a new round
         } else {
             // Update the global variables with Player's guesses
-            chosenNumber = playerResult.chosenNumber;
-            chosenValue = playerResult.chosenValue;
+            chosenNumber = playerResult.countGuess;
+            chosenValue = playerResult.valueGuess;
             console.log(`Player guesses: Number = ${chosenNumber}, Value = ${chosenValue}`);
         }
         console.log(`current status dracula dice: ${draculaDice},player dice: ${playerDice}`);
