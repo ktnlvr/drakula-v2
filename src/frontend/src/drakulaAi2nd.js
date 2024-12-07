@@ -92,8 +92,8 @@ export function draculaTurn(draculaDice, playerDice) {
     }
 
     draculaNumber = draculaDice.filter(value => value === chosenValue).length;
-    if (chosenNumber < draculaNumber){
-    // When Dracula has more Dice
+    if (chosenNumber < draculaNumber) {
+        // When Dracula has more Dice
         if (draculaDice.length > playerDice.length) {
             draculaMoreDice();
             // When Dracula has fewer or equal number of dices than player
@@ -102,9 +102,9 @@ export function draculaTurn(draculaDice, playerDice) {
         } else {
             call = true; // Unexpected situation meet, Dracula calls
         }
-    } else if (chosenNumber === draculaNumber && potentialAction < 0.7){
+    } else if (chosenNumber === draculaNumber && potentialAction < 0.7) {
         call = true; // Unexpected situation meet, Dracula calls
-    }  else {
+    } else {
         bumpNumber = true;
     }
 
@@ -155,5 +155,5 @@ export function draculaTurn(draculaDice, playerDice) {
     }
     updateGlobals(chosenValue, chosenNumber);
     //console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
-    return {action: draculaAction, chosenNumber: chosenNumber, chosenValue: chosenValue };
+    return { action: draculaAction, chosenNumber: chosenNumber, chosenValue: chosenValue };
 }
