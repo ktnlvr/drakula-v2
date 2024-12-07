@@ -4,13 +4,9 @@ export function playerGuess() {
     const { chosenValue, chosenNumber } = getGlobals(); // Get current values
 
     const guessType = prompt("Enter '1' to guess the value of a dice,\n or '2' to guess the number of dices,\n or '3' to call:").toLowerCase();
-    //const valueGuess = parseInt(prompt("Enter the value of the dice you want to guess (1-6):"), 10);
-    //const countGuess = parseInt(prompt("Enter your guess for the total number of dice showing a particular value:"), 10);
-    //const playerCall = 'call';
-
 
     if (guessType === '1') {
-        const newValue = Math.min(chosenValue + 1, 6); 
+        const newValue = Math.min(chosenValue + 1, 6);
         console.log(`Player guesses to bump the value`);
         updateGlobals(newValue, chosenNumber);
         return { playerAction: '1', valueGuess: newValue, countGuess: chosenNumber };
