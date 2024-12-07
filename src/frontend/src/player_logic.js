@@ -1,5 +1,5 @@
 export function playerGuess() {
-    const guessType = prompt("Enter '1' to guess the value of a dice,\n or '2' to guess the number of dices:").toLowerCase();
+    const guessType = prompt("Enter '1' to guess the value of a dice,\n or '2' to guess the number of dices,\n or '3' to call:").toLowerCase();
 
     if (guessType === '1') {
         const valueGuess = parseInt(prompt("Enter the value of the dice you want to guess (1-6):"), 10);
@@ -17,6 +17,8 @@ export function playerGuess() {
         }
         console.log(`Player guesses to bump the number of dices to: ${countGuess}`);
         return { type: '2', guess: countGuess };
+    } else if (guessType === '3') {
+        
     } else {
         console.log("Invalid input.\n Please enter '1' for 'value' or '2' for 'number'.");
         return playerGuess(); // Retry until valid input
