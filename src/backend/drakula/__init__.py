@@ -19,16 +19,7 @@ from .utils import seed_to_short
 
 
 load_dotenv()
-"""
-host = getenv("DRAKULA_V2_MARIADB_HOST")
-user = getenv("DRAKULA_V2_MARIADB_USER")
-password = getenv("DRAKULA_V2_MARIADB_PASSWORD")
-port = getenv("DRAKULA_V2_MARIADB_PORT")
 
-print("Database host:", host)
-print("Database user:", user)
-print("Database password:", password)
-print("Database port:", port)"""
 
 if not (VITE_DIR := getenv("VITE_BUILD_PATH")):
 
