@@ -22,7 +22,6 @@ def get_game(url, game_id):
 
 
 def get_airports(url, seed=None, amount=15):
-
     params = {"seed": seed, "amount": amount}
     endpoint = f"{url}/airports"
     response = requests.get(endpoint, params=params)
