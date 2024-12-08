@@ -56,9 +56,9 @@ if __name__ == "__main__":
     }
 
     post_response = post_game(base_url, game_id, game_data)
-    # print(f"POST Response: {post_response.status_code}")
-    # if post_response.status_code == 201:
-    print(post_response.json())
+    print(f"POST Response: {post_response.status_code}")
+    if post_response.status_code == 201:
+        print(post_response.json())
 
     get_response = get_game(base_url, game_id)
     print(f"GET Response: {get_response.status_code}")

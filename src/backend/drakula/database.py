@@ -45,8 +45,6 @@ class Database:
         cursor = self.connection.cursor(dictionary=True)
         cursor.execute("SELECT `json` FROM games WHERE id = %s", (game_id,))
 
-        # result = cursor.fetchall()
-        # return json.loads(result["json"])
         return cursor.fetchall()
 
 
