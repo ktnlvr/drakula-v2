@@ -44,7 +44,7 @@ class Connection(BaseModel):
     a: int
     b: int
     distance_km: float
-    midpoint: midarray = None
+    midpoint: ndarray = None
 
     @field_validator("distance_km")
     @staticmethod
