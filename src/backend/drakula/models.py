@@ -78,7 +78,14 @@ class AirportsResponse(BaseModel):
                             "iso_country": "FR",
                         },
                     ],
-                    "connections": [{"0": 0, "1": 1, "distance_km": 400.43}],
+                    "connections": [
+                        {
+                            "0": 0,
+                            "1": 1,
+                            "distance_km": 400.43,
+                            "midpoint": [12345.6, 6789.0, 345.6],
+                        }
+                    ],
                 }
             ]
         }
