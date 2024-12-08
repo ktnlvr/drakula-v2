@@ -14,19 +14,16 @@ load_dotenv()
 
 class Database:
     def __init__(self, user, password, host, port):
-        try:
-            self.connection = connect(
-                host=host,
-                port=port,
-                user=user,
-                password=password,
-                database="flight_game",
-                autocommit=True,
-                auth_plugin="mysql_native_password",
-            )
-        except Error as e:
-            print(f"Error: {e}")
-            self.connection = None
+
+        self.connection = connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database="flight_game",
+            autocommit=True,
+            auth_plugin="mysql_native_password",
+        )
 
     def get_airports(
         self, seed: Optional[int] = None, amount: int = DEFAULT_AIRPORT_AMOUT
