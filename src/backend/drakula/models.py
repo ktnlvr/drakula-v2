@@ -1,7 +1,8 @@
 from math import atan, tan, sin, cos
 
-from pydantic import BaseModel, AliasGenerator, ConfigDict, field_validator
+from pydantic import BaseModel, AliasGenerator, ConfigDict, field_validator, Field
 from numpy import ndarray, array
+from typing import List
 
 
 class Airport(BaseModel):
@@ -44,16 +45,26 @@ class Connection(BaseModel):
     a: int
     b: int
     distance_km: float
-    midpoint: ndarray = None
+    midpoint: List[float] = Field(default_factory=list)
+
+    # midpoint: ndarray = None
 
     @field_validator("distance_km")
     @staticmethod
     def _validate_distance_km(v):
         return round(v, 2)
 
-    def find_midpoint(self, airport_a: Airport, airport_b: Airport):
-        midpoint = (airport_a.pos_3d + airport_b.pos_3d) / 2
-        self.midpoint = midpoint.tolist()
+    def find_midpoint(self, airport_a, airport_b):
+        # Calculate the midpoint and store it as a list
+        self.midpoint = [
+            (airport_a.pos_3d[0] + airport_b.pos_3d[0]) / 2,
+            (airport_a.pos_3d[1] + airport_b.pos_3d[1]) / 2,
+            (airport_a.pos_3d[2] + airport_b.pos_3d[2]) / 2,
+        ]
+
+    # def find_midpoint(self, airport_a: Airport, airport_b: Airport):
+    #    midpoint = (airport_a.pos_3d + airport_b.pos_3d) / 2
+    # self.midpoint = midpoint.tolist()
 
 
 class AirportsResponse(BaseModel):
