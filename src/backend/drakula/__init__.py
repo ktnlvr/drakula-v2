@@ -102,22 +102,26 @@ def airports(
     return AirportsResponse(airports=airports, connections=connections)
 
 
-games_db: Dict[str, dict] = {}
+# games_db: Dict[str, dict] = {}
 
 
 @app.post("/game")
-async def create_game(game_id: str, game_data: dict):
-    if game_id in games_db:
+async def create_game(
+    game_id: str, game_data: dict, db: Annotated[Database, Depends(db)]
+):
+    game_exist = db.get_save(game_id)
+    if game_exist:
         raise HTTPException(status_code=409, detail="Game ID already exists.")
-    games_db[game_id] = game_data
+    db.set_save(game_id, game_data)
     return {"id": game_id, "data": game_data}
 
 
 @app.get("/game")
-async def get_game(game_id: str):
-    if game_id not in games_db:
+async def get_game(game_id: str, db: Annotated[Database, Depends(db)]):
+    game = db.get_save(game_id)
+    if not game:
         raise HTTPException(status_code=404, detail="Game not found.")
-    return games_db[game_id]
+    return game
 
 
 app.mount("/", StaticFiles(directory=VITE_DIR, html=True), name="static")

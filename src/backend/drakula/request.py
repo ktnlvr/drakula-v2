@@ -47,7 +47,7 @@ def handle_response(response):
 if __name__ == "__main__":
     base_url = "http://127.0.0.1:8000"
 
-    game_id = 1234
+    game_id = "1234"
     game_data = {
         "name": "Drakula Adventure",
         "genre": "Horror",
@@ -56,9 +56,9 @@ if __name__ == "__main__":
     }
 
     post_response = post_game(base_url, game_id, game_data)
-    print(f"POST Response: {post_response.status_code}")
-    if post_response.status_code == 201:
-        print(post_response.json())
+    # print(f"POST Response: {post_response.status_code}")
+    # if post_response.status_code == 201:
+    print(post_response.json())
 
     get_response = get_game(base_url, game_id)
     print(f"GET Response: {get_response.status_code}")

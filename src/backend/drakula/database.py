@@ -43,8 +43,10 @@ class Database:
 
     def get_save(self, game_id: str) -> list[dict]:
         cursor = self.connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM games WHERE id = %s", (game_id,))
+        cursor.execute("SELECT `json` FROM games WHERE id = %s", (game_id,))
 
+        # result = cursor.fetchall()
+        # return json.loads(result["json"])
         return cursor.fetchall()
 
 
