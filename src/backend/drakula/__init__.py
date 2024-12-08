@@ -103,9 +103,6 @@ def airports(
     return AirportsResponse(airports=airports, connections=connections)
 
 
-# games_db: Dict[str, dict] = {}
-
-
 @app.post("/game")
 async def create_game(
     game_id: str, game_data: dict, db: Annotated[Database, Depends(db)]
