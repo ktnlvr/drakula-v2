@@ -36,7 +36,7 @@ class Database:
             """SELECT
                 name, latitude_deg, longitude_deg, iso_country
                 FROM airport ORDER BY RAND(%s) LIMIT %s""",
-            (seed, amount)
+            (seed, amount),
         )
         return list(map(lambda args: Airport(**args), cursor.fetchall()))
 
