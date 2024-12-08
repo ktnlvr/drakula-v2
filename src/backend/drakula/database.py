@@ -1,15 +1,11 @@
 import uuid
-from dotenv import load_dotenv
+import json
 from os import getenv
-import os
 from typing import Optional
-from hashlib import md5
 from mysql.connector import connect, Error
 from .models import Airport
 
 DEFAULT_AIRPORT_AMOUT = 15
-
-load_dotenv()
 
 
 class Database:
@@ -37,7 +33,7 @@ class Database:
         )
         return list(map(lambda args: Airport(**args), cursor.fetchall()))
 
-    def set_save(self, id, json):
+    def set_save(self, id, json_data):
         if not self.connection:
             print("Database connection error!")
             return None
@@ -45,13 +41,14 @@ class Database:
 
         try:
             cursor.execute(
-                """INSERT INTO games (id, json_data) VALUES (%s, %s)""", (id, json)
+                """INSERT INTO games (id, `json`) VALUES (%s, %s)""",
+                (id, json.dumps(json_data)),
             )
             print(f"Insert new player complete!")
         except Error as e:
             print(f"Error: {e}")
 
-    def get_save(self, game_id: str, amount: int = DEFAULT_AIRPORT_AMOUT) -> list[dict]:
+    def get_save(self, game_id: str) -> list[dict]:
         if not self.connection:
             print("Database connection error!")
             return None
@@ -73,8 +70,12 @@ def make_db() -> Optional[Database]:
         if not db.connection:
             print("Database connection error!")
             return None
-        full_path = "query.sql"
-        init_query = read_sql_query(full_path)
+
+        init_query = """CREATE TABLE IF NOT EXISTS games (
+            id VARCHAR(255) PRIMARY KEY,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            'json' TEXT NOT NULL
+        )"""
         cursor = db.connection.cursor()
         cursor.execute(init_query)
         return db
@@ -82,13 +83,6 @@ def make_db() -> Optional[Database]:
     except Error as e:
         print(f"Error: {e}")
         return None
-
-
-def read_sql_query(filename: str) -> str:
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    full_path = os.path.abspath(os.path.join(base_dir, "query.sql"))
-    with open(full_path, "r") as file:
-        return file.read()
 
 
 if __name__ == "__main__":
