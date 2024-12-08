@@ -10,7 +10,6 @@ DEFAULT_AIRPORT_AMOUT = 15
 
 class Database:
     def __init__(self, user, password, host, port):
-
         self.connection = connect(
             host=host,
             port=port,
@@ -34,24 +33,15 @@ class Database:
         return list(map(lambda args: Airport(**args), cursor.fetchall()))
 
     def set_save(self, id, json_data):
-        # if not self.connection:
-        #    print("Database connection error!")
-        #    return None
         cursor = self.connection.cursor()
 
-        # try:
         cursor.execute(
             """INSERT INTO games (id, `json`) VALUES (%s, %s)""",
             (id, json.dumps(json_data)),
         )
         print(f"Insert new player complete!")
-        # except Error as e:
-        # print(f"Error: {e}")
 
     def get_save(self, game_id: str) -> list[dict]:
-        # if not self.connection:
-        #   print("Database connection error!")
-        #   return None
         cursor = self.connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM games WHERE id = %s", (game_id,))
 
@@ -59,17 +49,12 @@ class Database:
 
 
 def make_db() -> Optional[Database]:
-    # try:
     db = Database(
         host=getenv("DRAKULA_V2_MARIADB_HOST") or "127.0.0.1",
         port=int(getenv("DRAKULA_V2_MARIADB_PORT") or "3306"),
         password=getenv("DRAKULA_V2_MARIADB_PASSWORD"),
         user=getenv("DRAKULA_V2_MARIADB_USER"),
     )
-
-    # if not db.connection:
-    #   print("Database connection error!")
-    #   return None
 
     init_query = """CREATE TABLE IF NOT EXISTS games (
             id VARCHAR(255) PRIMARY KEY,
@@ -79,11 +64,6 @@ def make_db() -> Optional[Database]:
     cursor = db.connection.cursor()
     cursor.execute(init_query)
     return db
-
-
-# except Error as e:
-#   print(f"Error: {e}")
-#   return None
 
 
 if __name__ == "__main__":
