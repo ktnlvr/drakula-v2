@@ -44,11 +44,16 @@ class Connection(BaseModel):
     a: int
     b: int
     distance_km: float
+    midpoint: midarray = None
 
-    @field_validator('distance_km')
+    @field_validator("distance_km")
     @staticmethod
     def _validate_distance_km(v):
         return round(v, 2)
+
+    def find_midpoint(self, airport_a: Airport, airport_b: Airport):
+        midpoint = (airport_a.pos_3d + airport_b.pos_3d) / 2
+        self.midpoint = midpoint.tolist()
 
 
 class AirportsResponse(BaseModel):
