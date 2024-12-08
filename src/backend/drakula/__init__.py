@@ -98,6 +98,7 @@ def airports(
             distance_km=geo_distance(lhs.lat_lon, rhs.lat_lon).km, a=a, b=b
         )
         connections.append(con)
+        con.find_midpoint(lhs, rhs)
 
     return AirportsResponse(airports=airports, connections=connections)
 
