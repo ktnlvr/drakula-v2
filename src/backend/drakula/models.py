@@ -1,5 +1,4 @@
 from math import atan, tan, sin, cos
-
 from pydantic import BaseModel, AliasGenerator, ConfigDict, field_validator, Field
 from numpy import ndarray, array
 from typing import List
@@ -46,8 +45,6 @@ class Connection(BaseModel):
     b: int
     distance_km: float
     midpoint: List[float] = Field(default_factory=list)
-
-    # midpoint: ndarray = None
 
     @field_validator("distance_km")
     @staticmethod
