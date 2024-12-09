@@ -27,6 +27,7 @@ export class Character {
     this.airport = airport;
     this.mesh = this.createMesh();
     this.updatePosition();
+    this.totalMoves = 0;
   }
 
   createMesh() {
@@ -64,8 +65,8 @@ export class Character {
 
 export function createCharacters(
   globeGroup,
-  spawns = [0, 1, 2],
-  draculaSpawn = 3
+  spawns = [0, 1, 2, 3],
+  draculaSpawn = 4
 ) {
   spawns.forEach((spawn) => {
     const character = new Character("player", GameState.airports[spawn]);

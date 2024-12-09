@@ -10,6 +10,7 @@ import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
 import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
+import { isEndGame , getConnectedAirports, MoveDracula, hasWorldReachedDestructionLimit, Myloop} from './components/turnutils'
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -58,13 +59,15 @@ async function setupGame() {
     "square",
     "square",
   ]);
-
   render(cameraControls, spotlightHelper);
   /* Example actions
   logInfo("Hello this is a fucking cat.");
   matchEndScene("loss");
   characterDeath(document.querySelector('[char-id="2"]'));
   */
+  document.querySelector(".end-turn-btn").addEventListener('click',() => {
+    Myloop(GameState);
+  })
 }
 
 setupGame().catch(console.error);
