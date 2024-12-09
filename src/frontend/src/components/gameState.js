@@ -6,12 +6,19 @@ export const GameState = {
   characters: [],
   dracula: null,
   scene: null,
-  
+
   isConnected(from, to) {
-    return this.connections.some(([a, b]) => 
-      (a === from && b === to) || (a === to && b === from)
+    return this.connections.some(
+      ([a, b]) => (a === from && b === to) || (a === to && b === from)
     );
-  }
+  },
+  markAirport(airport, isMarked = false) {
+    if (isMarked) {
+      this.airports[airport].material.color.set("#fffe32");
+    } else {
+      this.airports[airport].material.color.set("#414141");
+    }
+  },
 };
 
 export class Character {
@@ -29,27 +36,29 @@ export class Character {
       transparent: true,
       opacity: 0.9,
     });
-    return new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(0, 60, 0);
+    return mesh;
   }
 
-  setAirport(target) {
+  setAirport(target, ignoreConnections = false) {
     const currentIndex = GameState.airports.indexOf(this.airport);
-    
-    if (GameState.isConnected(currentIndex, target)) {
-      this.airport = GameState.airports(target);
+    if (ignoreConnections) {
+      this.airport = GameState.airports[target];
+      this.updatePosition();
+      return;
+    } else if (GameState.isConnected(currentIndex, target)) {
+      this.airport = GameState.airports[target];
       this.updatePosition();
     } else {
-      console.error('Unconnected airport:', target);
-   } 
+      console.error("Unconnected airport:", target);
+    }
   }
 
   updatePosition() {
     const airportPos = this.airport.position;
-    const distance = airportPos.length() + 2.5;
-    this.mesh.position.copy(
-      airportPos.clone().normalize().multiplyScalar(distance)
-    );
-    this.mesh.lookAt(new THREE.Vector3(0, 0, 0));
+    this.mesh.position.copy(airportPos.clone());
+    this.mesh.lookAt(new THREE.Vector3(0, 60, 0));
   }
 }
 

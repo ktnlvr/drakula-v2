@@ -11,7 +11,9 @@ let interactionManager;
 let composer;
 const clock = new THREE.Clock();
 export function createRenderer(scene, camera) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+  });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -24,19 +26,31 @@ export function createRenderer(scene, camera) {
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
 
-  const outlinePass = new OutlinePass(
+  const selectionPass = new OutlinePass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     scene,
     camera
   );
-  outlinePass.edgeStrength = 3;
-  outlinePass.edgeGlow = 2;
-  outlinePass.edgeThickness = 1;
-  outlinePass.pulsePeriod = 1.2;
-  outlinePass.visibleEdgeColor.set("#ffffff");
-  outlinePass.hiddenEdgeColor.set("#ffffff");
+  selectionPass.edgeStrength = 3;
+  selectionPass.edgeGlow = 2;
+  selectionPass.edgeThickness = 1;
+  selectionPass.pulsePeriod = 1.2;
+  selectionPass.visibleEdgeColor.set("#ffffff");
+  selectionPass.hiddenEdgeColor.set("#ffffff");
 
-  composer.addPass(outlinePass);
+  composer.addPass(selectionPass);
+  const hoverPass = new OutlinePass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    scene,
+    camera
+  );
+  hoverPass.edgeStrength = 3;
+  hoverPass.edgeGlow = 0;
+  hoverPass.edgeThickness = 1;
+  hoverPass.visibleEdgeColor.set("#d9d9d9");
+  hoverPass.hiddenEdgeColor.set("#d9d9d9");
+  composer.addPass(hoverPass);
+
   const outputPass = new OutputPass();
   composer.addPass(outputPass);
 
@@ -52,7 +66,8 @@ export function createRenderer(scene, camera) {
 
   return {
     renderer: renderer,
-    outlinePass: outlinePass,
+    selectionPass: selectionPass,
+    hoverPass: hoverPass,
     composer: composer,
     interactionManager: interactionManager,
   };

@@ -6,17 +6,41 @@ import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
+import { createCard } from "./components/cards";
 import { createDie, startDiceRound, rollDice } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
-const { renderer, outlinePass, composer, interactionManager } = createRenderer(
-  scene,
-  camera
-);
+const { renderer, selectionPass, hoverPass, composer, interactionManager } =
+  createRenderer(scene, camera);
 
 let TESTING_DICE = true
+
+function createCharacterCards() {
+  const characters = document.querySelector("#characters");
+  createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
+    "square",
+    "square",
+  ]);
+  createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
+    "square",
+    "square",
+  ]);
+  createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
+    "square",
+    "square",
+  ]);
+  createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
+    "square",
+    "square",
+    "square",
+  ]);
+  createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
+    "square",
+    "square",
+  ]);
+}
 
 async function setupGame(scene) {
   const { ambientLight, spotlight } = setupLights(scene);
@@ -24,16 +48,18 @@ async function setupGame(scene) {
   setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
   scene.add(spotlightHelper);
 
-  const table = createTable();
-  scene.add(table);
+  createTable(scene);
 
   CameraControls.install({ THREE });
+  camera.position.set(0, 100, 100);
   const cameraControls = new CameraControls(camera, renderer.domElement);
   setControls(cameraControls);
   const scheduledCallables = [];
 
   window.GameState = GameState;
 
+  createCharacterCards();
+ 
   if (TESTING_DICE) {
     console.log(cameraControls.getPosition())
 
@@ -56,7 +82,8 @@ async function setupGame(scene) {
 
     await rollDice(dice);
 
-    diceModels.position.set(0, -40, 0);
+    diceModels.position.set(0, 20, 0);
+
     scene.add(diceModels);
     await cameraControls.setLookAt(
       camera.position.x, camera.position.y, camera.position.z,
@@ -64,10 +91,13 @@ async function setupGame(scene) {
 
     await startDiceRound(6, dice);
   } else {
-    const { globeGroup } = await createGlobe(interactionManager, outlinePass);
-    scene.add(globeGroup);
-
+    const { globeGroup } = await createGlobe(
+      interactionManager,
+      selectionPass,
+      hoverPass
+    );
     createCharacters(globeGroup);
+    scene.add(globeGroup);
   }
 
   render(cameraControls, spotlightHelper, scheduledCallables);
