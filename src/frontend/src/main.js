@@ -59,7 +59,7 @@ async function setupGame(scene) {
   window.GameState = GameState;
 
   createCharacterCards();
-
+ 
   if (TESTING_DICE) {
     console.log(cameraControls.getPosition())
 
@@ -83,6 +83,7 @@ async function setupGame(scene) {
     await rollDice(dice);
 
     diceModels.position.set(0, 20, 0);
+
     scene.add(diceModels);
     await cameraControls.setLookAt(
       camera.position.x, camera.position.y, camera.position.z,
