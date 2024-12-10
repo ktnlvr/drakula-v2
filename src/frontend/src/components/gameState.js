@@ -6,6 +6,7 @@ export const GameState = {
   characters: [],
   dracula: null,
   scene: null,
+  timer: null,
 
   isConnected(from, to) {
     return this.connections.some(
