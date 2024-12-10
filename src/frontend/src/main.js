@@ -10,7 +10,7 @@ import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
 import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
-import { isEndGame , getConnectedAirports, MoveDracula, hasWorldReachedDestructionLimit, Myloop} from './components/turnutils'
+import { myloop} from './components/turnutils'
 import { log } from "three/webgpu";
 
 const scene = new THREE.Scene();
@@ -70,12 +70,16 @@ async function setupGame() {
   matchEndScene("loss");
   characterDeath(document.querySelector('[char-id="2"]'));
   */
-  document.querySelector(".end-turn-btn").addEventListener('click',() => {
-    Myloop(GameState);
+  document.querySelector(".end-turn-button").addEventListener('click',() => {
+    if (myloop(GameState))
+    {
+      console.log("have not added the scene yet. Please add it.");
+    }
+    else
+    {
+      console.log("have not added the scene yet. Please add it.");
+    }
   })
-  document.querySelector('.card-info-token').addEventListener('mouseenter', () => {
-    console.log('Hovered over container!');
-  });
   logInfo("It displays the logs with current time attached to it.")
   logInfo("It also has a spooky-text effect when it appears.");
   logInfo("The logger also handles overflows so you can scroll and see the logs from before and not loss them.")
