@@ -1,19 +1,15 @@
 import { matchEndScene } from "./winandloss";
 
 //This function needs to be integrated into a bigger game loop this is the part i had to do.
-export function myloop(gamestate)
-{
-	if (isEndGame(gamestate)){
-		//Add the scene switch here to gambling.
-		return true;
-	}
-	moveDracula(gamestate);//This is stupid path decider add wangs funcion here.
-	if (hasWorldReachedDestructionLimit(gamestate))
-		matchEndScene("loss");
-	if (isEndGame(gamestate)){
-		//switch scene here again.
-		return true;
-	}
+export function myloop(gamestate) {
+  if (isEndGame(gamestate)) {
+    return true;
+  }
+  moveDracula(gamestate); //This is stupid path decider add wangs function here.
+  if (hasWorldReachedDestructionLimit(gamestate)) matchEndScene("loss");
+  if (isEndGame(gamestate)) {
+    return true;
+  }
   return null;
 }
 

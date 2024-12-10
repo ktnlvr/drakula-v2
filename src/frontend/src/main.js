@@ -10,7 +10,7 @@ import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
 import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
-import { myloop} from './components/turnutils'
+import { myloop } from "./components/turnutils";
 import { log } from "three/webgpu";
 
 const scene = new THREE.Scene();
@@ -42,27 +42,27 @@ async function setupGame() {
   createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
     "teleport",
     "stake",
-    "garlic"
+    "garlic",
   ]);
   createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
     "teleport",
     "stake",
-    "garlic"
+    "garlic",
   ]);
   createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
     "teleport",
     "stake",
-    "garlic"
+    "garlic",
   ]);
   createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
     "teleport",
     "stake",
-    "garlic"
+    "garlic",
   ]);
   createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
     "teleport",
     "stake",
-    "garlic"
+    "garlic",
   ]);
   render(cameraControls, spotlightHelper);
   /* Example actions
@@ -70,19 +70,20 @@ async function setupGame() {
   matchEndScene("loss");
   characterDeath(document.querySelector('[char-id="2"]'));
   */
-  document.querySelector(".end-turn-button").addEventListener('click',() => {
-    if (myloop(GameState))
-    {
-      console.log("have not added the scene yet. Please add it.");
+  document.querySelector(".end-turn-button").addEventListener("click", () => {
+    if (GameState.scene === "Overworld") {
+      if (myloop(GameState)) {
+        cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
+      } else {
+        cameraControls.setLookAt(0, 80, 99, 0, 60, 0, true);
+      }
     }
-    else
-    {
-      console.log("have not added the scene yet. Please add it.");
-    }
-  })
-  logInfo("It displays the logs with current time attached to it.")
+  });
+  logInfo("It displays the logs with current time attached to it.");
   logInfo("It also has a spooky-text effect when it appears.");
-  logInfo("The logger also handles overflows so you can scroll and see the logs from before and not loss them.")
+  logInfo(
+    "The logger also handles overflows so you can scroll and see the logs from before and not loss them."
+  );
 }
 
 setupGame().catch(console.error);

@@ -10,7 +10,7 @@ export const GameState = {
   connections: null,
   characters: [],
   dracula: null,
-  scene: null,
+  scene: "Overworld",
   timer: null,
 
   isConnected(from, to) {
