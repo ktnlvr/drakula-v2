@@ -58,14 +58,13 @@
 
 .logger-box {
   background: rgba(0, 0, 0, 0.494);
-  border: 2px solid #ffffff;
   border-radius: 10px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.7), 0px 0px 30px rgba(0, 0, 0, 0.3);
   position: absolute;
   height: 40vh;
-  width: 40vw;
+  width: 20%;
   top: 55%;
-  left: 58%;
+  right: 4%;
   overflow: hidden;
   scroll-behavior: smooth;
   display: flex;

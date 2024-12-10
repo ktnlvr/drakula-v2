@@ -32,7 +32,7 @@ function getCharacterPortraitPath(name) {
   return `/portraits/${name.toLowerCase().replaceAll(' ', '-')}.png`;
 }
 
-function createCard(parent, charId, name, tokenTypes = []) {
+function createCard(parent, charId, character, tokenTypes = []) {
   /// XXX: refactor me
   initializeCardCounts(charId, tokenTypes);
   const characterBlock = document.createElement("div");
@@ -43,13 +43,23 @@ function createCard(parent, charId, name, tokenTypes = []) {
   const characterImg = document.createElement("img");
   characterImg.className = "character-img";
 
-  characterImg.src = getCharacterPortraitPath(name);
+  characterImg.src = getCharacterPortraitPath(character.name);
   characterImgContainer.appendChild(characterImg);
   const cardInfo = document.createElement("div");
   cardInfo.className = "card-info";
   const cardInfoP = document.createElement("p");
   cardInfoP.className = "card-info-p";
-  cardInfoP.textContent = name;
+
+  cardInfoP.innerHTML = `
+    <span class="card-info-hunter-name">${character.name}</span>
+    <br>
+    <span class="stats">
+      <img class="stat-icon" src="/icons/capacity.svg">${character.capacity} 
+      <img class="stat-icon" src="/icons/edge.svg">${character.edge} 
+      <img class="stat-icon" src="/icons/haste.svg">${character.haste}
+    </span>
+  `;
+
   const cardInfoToken = document.createElement("div");
   cardInfoToken.className = "card-info-plaque";
   tokenTypes.forEach((tokenType, index) => {

@@ -36,7 +36,7 @@ async function setupGame() {
   const characters = document.querySelector("#characters");
   for (let i = 0; i < GameState.characters.length; i++) {
     const character = GameState.characters[i];
-    createCard(characters, i, character.name, [
+    createCard(characters, i, character, [
       "square",
       "square",
     ]);

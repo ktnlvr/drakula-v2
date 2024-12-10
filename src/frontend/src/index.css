@@ -17,11 +17,13 @@ html {
 }
 
 body {
+  font-family: "Merriweather", serif;
+
   /* Ok, this is done so that we don't forget */
   /* We need to set this so that when the stuff is not */
   /* Pixel perfect there won't be a weird strip of white */
   /* You can see that color by resizing */
-  background-color: magenta;
+  background-color: black;
   overflow: hidden;
   margin: 0;
 }
@@ -35,7 +37,7 @@ body {
 }
 
 #character-block {
-  padding: 10px;
+  padding-top: 48px;
   display: flex;
   flex-direction: row;
   height: 100px;
@@ -47,7 +49,6 @@ body {
 }
 
 #characters {
-  font-size: x-large;
   top: 5%;
   left: 2%;
   height: 100%;
@@ -58,14 +59,9 @@ body {
   justify-content: flex-start;
 }
 
-.character-img-container {
-  height: 100px;
-  width: 100px;
-}
-
 .character-img {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
 }
 
 .card-info {
@@ -75,6 +71,10 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: 5px;
+}
+
+.card-info-hunter-name {
+  font-size: larger;
 }
 
 .card-info-p {
@@ -88,7 +88,6 @@ body {
 }
 
 .card-info-plaque {
-  font-family: "Merriweather", serif;
   color: var(--character-plaque-text);
   background-color: var(--character-plaque-background);
   display: flex;
@@ -131,6 +130,15 @@ body {
 .token-group {
   display: flex;
   flex-direction: row;
-  height: 40px;
-  width: 100px;
+  height: var(--token-size);
+  width: calc(var(--token-size) * 1.75);
+}
+
+.stats {
+  height: 16pt;
+}
+
+.stat-icon {
+  height: 24px;
+  width: 24px;
 }

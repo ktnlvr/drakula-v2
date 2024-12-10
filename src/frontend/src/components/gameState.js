@@ -54,6 +54,14 @@ export class Character {
     this.mesh = this.createMesh();
     this.updatePosition();
     this.name = getRandomCharacterName();
+
+    // characters a semi-balanced, since all stats often add up to
+    // some fixed number, this is some real 3am mathemagic
+    // Conjecturally, gives a uniform 
+    const TOTAL = 3;
+    this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
+    this.capacity = Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
+    this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
   }
 
   createMesh() {
