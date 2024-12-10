@@ -8,15 +8,15 @@ export default `
     }
   
     float createWave(float yPos, float offset) {
-        float moveSpeed = 2.0;
-        float riseFactor = mod(uTime * moveSpeed + offset, 12.0) - 3.0;
-        float wave = smoothstep(0.0, 0.8, 1.0 - abs(yPos - riseFactor) / 2.0);
-        float topFade = smoothstep(2.75, 1.5, yPos); // Adjust these values to control fade height
+    float moveSpeed = 2.0;
+    float riseFactor = mod(uTime * moveSpeed + offset, 12.0) - 3.0;
+    float wave = smoothstep(0.0, 0.8, 1.0 - abs(yPos - riseFactor) / 2.0);
+    float topFade = smoothstep(2.75, 1.5, yPos); // Adjust these values to control fade height
   
-        return wave * topFade;
-    }
+    return wave * topFade;
+}
   
-void main() {
+    void main() {
     float wave1 = createWave(vPosition.y, 0.0);
     float wave2 = createWave(vPosition.y, 6.0);
 
@@ -33,11 +33,11 @@ void main() {
     colorIntensity = colorIntensity * radialFalloff;
     colorIntensity = clamp(colorIntensity + noise + baseEffect, 0.0, 1.2); 
 
-    vec3 baseColor = vec3(0.156, 0.28, 0.211);  
-    vec3 topColor = vec3(0.156, 0.28, 0.211);
+    vec3 baseColor = vec3(0.439, 0.192, 0.231);  
+    vec3 topColor = vec3(0.439, 0.192, 0.231);
     vec3 color = mix(baseColor, topColor, vPosition.y * 0.1 + 0.5);
 
-    vec3 waveColor = vec3(0.256, 0.38, 0.311);  
+    vec3 waveColor = vec3(0.439, 0.192, 0.231);  
     float waveStrength = (wave1 * 0.6 + wave2 * 0.4);
 
     vec3 finalColor = mix(color * colorIntensity, waveColor, waveStrength);
