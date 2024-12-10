@@ -27,13 +27,46 @@ export const GameState = {
   },
 };
 
+const CHARACTER_NAMES = [
+  "Unico",
+  "Alucard", // Protaganist from a manga about vampires
+  "Abraham Van Helsing", // Famous Vampire Hunter
+  "John Adams", // a Founding Father
+  "Sherlock Holmes", // Famous detective
+  "Tobias Forge", // The lead singer of "Ghost"
+  "Saint Nicholas", // Santa Claus
+  "Aleister Crowley", // Famous occultist
+  "Christopher Lee", // Actor that played Dracula
+  "Sam Winchester", // Supernatural
+  "Dean Winchester", // Supernatural
+]
+
+function getRandomCharacterName() {
+  if (!CHARACTER_NAMES) {
+    return "Anonymous";
+  }
+
+  const idx = Math.floor(Math.random() * CHARACTER_NAMES.length);
+  const name = CHARACTER_NAMES[idx];
+  CHARACTER_NAMES.splice(idx, 1);
+  return name;
+}
+
 export class Character {
   constructor(type, airport) {
     this.type = type;
     this.airport = airport;
     this.mesh = this.createMesh();
     this.updatePosition();
-    this.totalMoves = 0;
+    this.name = getRandomCharacterName();
+
+    // characters a semi-balanced, since all stats often add up to
+    // some fixed number, this is some real 3am mathemagic
+    // Conjecturally, gives a uniform 
+    const TOTAL = 3;
+    this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
+    this.capacity = Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
+    this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
   }
 
   createMesh() {

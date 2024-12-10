@@ -35,40 +35,14 @@ function tooltip(tokenType) {
   }
 }
 
-function getPath(tokenType)
-{
-  if (tokenType === "teleport") {
-    return "./icon_images/ticket.svg";
-  } 
-  else if (tokenType === "stake") {
-    return "./icon_images/stake-hammer.svg";
-  }
-  else if (tokenType === "garlic") {
-    return "./icon_images/garlic.svg";
-  }
-  else {
-    return ``;
-  }
+
+function getCharacterPortraitPath(name) {
+  return `/portraits/${name.toLowerCase().replaceAll(' ', '-')}.png`;
 }
 
-function getHoveredPath(tokenType) {
-  if (tokenType === "teleport") {
-    return "./icon_images/ticket (1).svg";
-  } 
-  else if (tokenType === "stake") {
-    return "./icon_images/stake-hammer (1).svg";
-  }
-  else if (tokenType === "garlic") {
-    return "./icon_images/garlic (1).svg";
-  }
-  else {
-    return "";
-  }
-}
-
-function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
+function createCard(parent, charId, character, tokenTypes = []) {
+  /// XXX: refactor me
   initializeCardCounts(charId, tokenTypes);
-  const characterName = imgAlt;
   const characterBlock = document.createElement("div");
   characterBlock.id = "character-block";
   characterBlock.setAttribute("char-id", charId);
@@ -76,30 +50,52 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
   characterImgContainer.className = "character-img-container";
   const characterImg = document.createElement("img");
   characterImg.className = "character-img";
-  characterImg.src = imgSrc;
-  characterImg.alt = imgAlt;
+
+  characterImg.src = getCharacterPortraitPath(character.name);
   characterImgContainer.appendChild(characterImg);
   const cardInfo = document.createElement("div");
   cardInfo.className = "card-info";
   const cardInfoP = document.createElement("p");
   cardInfoP.className = "card-info-p";
-  cardInfoP.textContent = `${characterName}`;
+  cardInfoP.innerHTML = `
+    <span class="card-info-hunter-name">${character.name}</span>
+    <br>
+    <span class="stats">
+      <img class="stat-icon" src="/icons/capacity.svg">${character.capacity} 
+      <img class="stat-icon" src="/icons/edge.svg">${character.edge} 
+      <img class="stat-icon" src="/icons/haste.svg">${character.haste}
+    </span>
+  `;
+
   const cardInfoToken = document.createElement("div");
-  cardInfoToken.className = "card-info-token";
+  cardInfoToken.className = "card-info-plaque";
   tokenTypes.forEach((tokenType, index) => {
+    const group = document.createElement('div');
+    group.classList.add("token-group")
     const token = document.createElement("img");
     token.classList.add("token-image", tokenType);
     token.src = `${getPath(tokenType)}`;
+
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () => {
       console.log(
-        `Clicked ${tokenType} card for Character ${charId}, Token No: ${
-          index + 1
+        `Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1
         }`
       );
       updateTokenCount(token);
     });
+
+
+    const tokenCount = document.createElement("p");
+    tokenCount.classList.add("card-count");
+    tokenCount.textContent = "x0";
+
+    group.appendChild(token);
+    group.appendChild(tokenCount);
+
+    cardInfoToken.appendChild(group);
+
     const tooltipDiv = document.createElement("div");
     tooltipDiv.classList.add("tooltip");
     tooltipDiv.textContent = tooltip(tokenType);
@@ -145,11 +141,6 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
       tooltipDiv.style.visibility = "hidden";
       document.body.removeChild(tooltipDiv);
     });
-    const cardCount = document.createElement("p");
-    cardCount.classList.add("card-count");
-    cardCount.textContent = "x0";
-    cardInfoToken.appendChild(token);
-    cardInfoToken.appendChild(cardCount);
   });
   cardInfo.appendChild(cardInfoP);
   cardInfo.appendChild(cardInfoToken);

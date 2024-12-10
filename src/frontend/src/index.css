@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+:root {
+  --character-plaque-text: #fafff3;
+  --character-plaque-background: #331c1d;
+  --character-plaque-name: #231213;
+  --token-size: 40px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -8,29 +18,31 @@ html {
 }
 
 body {
+  font-family: "Merriweather", serif;
+
   /* Ok, this is done so that we don't forget */
   /* We need to set this so that when the stuff is not */
   /* Pixel perfect there won't be a weird strip of white */
   /* You can see that color by resizing */
-  background-color: magenta;
+  background-color: black;
   overflow: hidden;
   margin: 0;
 }
 
-.square {
-  height: 40px;
-  width: 40px;
+.token-square {
+  height: var(--token-size);
+  width: var(--token-size);
   background-color: #555;
   position: relative;
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #character-block {
-  padding: 10px;
+  padding-top: 48px;
   display: flex;
   flex-direction: row;
   height: 100px;
-  width: 400px;
+  width: 460px;
   align-items: flex-start;
   padding-bottom: 12px;
   transition: padding-bottom 3s ease-in-out,
@@ -38,6 +50,8 @@ body {
 }
 
 #characters {
+  top: 5%;
+  left: 2%;
   height: 100%;
   position: absolute;
   display: flex;
@@ -46,13 +60,9 @@ body {
   justify-content: flex-start;
 }
 
-.character-img-container {
-  height: 100px;
-  width: 100px;
-}
-
 .character-img {
-  border-radius: 5px;
+  width: 120px;
+  height: 120px;
 }
 
 .card-info {
@@ -64,24 +74,29 @@ body {
   padding: 5px;
 }
 
-.card-info-p {
-  padding: 4px 6px;
-  height: auto;
-  background-color: aqua;
-  font-size: 1.1em;
-  width: fit-content;
-  color: blue;
-  border-radius: 2px;
+.card-info-hunter-name {
+  font-size: larger;
 }
 
-.card-info-token {
-  height: 80px;
-  border-radius: 5px;
-  background-color: #3b3f2e;;
+ {
+  padding: 4px 12px;
+  height: auto;
+  background-color: var(--character-plaque-name);
+  font-size: 1.4em;
+  width: fit-content;
+  color: var(--character-plaque-text);
+  border-top-right-radius: 10px;
+}
+
+.card-info-plaque {
+  color: var(--character-plaque-text);
+  background-color: var(--character-plaque-background);
   display: flex;
   flex-direction: row;
   padding: 10px;
   gap: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 10px;
 }
 
 .card-count {
@@ -92,7 +107,7 @@ body {
   content: attr(data-tooltip);
   position: absolute;
   opacity: 0;
-  visibility: hidden;
+  visibility: ;
   color: bisque;
   background-color: rgba(241, 54, 40, 0.7);
   padding: 5px;
@@ -111,4 +126,24 @@ body {
 .square:hover::after {
   visibility: visible;
   opacity: 1;
+}
+
+.token-group {
+  display: flex;
+  flex-direction: row;
+  height: var(--token-size);
+  width: calc(var(--token-size) * 1.75);
+}
+
+.stats {
+  height: 16pt;
+}
+
+.stat-icon {
+  height: 24px;
+  width: 24px;
+}
+
+.hidden {
+  display: none;
 }

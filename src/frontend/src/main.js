@@ -6,12 +6,14 @@ import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
+import { createCard } from "./components/cards";
 import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
 import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
 import { myloop } from "./components/turnutils";
 import { log } from "three/webgpu";
+
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -39,31 +41,14 @@ async function setupGame() {
   const cameraControls = new CameraControls(camera, renderer.domElement);
   setControls(cameraControls);
   const characters = document.querySelector("#characters");
-  createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
-    "teleport",
-    "stake",
-    "garlic",
-  ]);
-  createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
-    "teleport",
-    "stake",
-    "garlic",
-  ]);
-  createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
-    "teleport",
-    "stake",
-    "garlic",
-  ]);
-  createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
-    "teleport",
-    "stake",
-    "garlic",
-  ]);
-  createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
-    "teleport",
-    "stake",
-    "garlic",
-  ]);
+  for (let i = 0; i < GameState.characters.length; i++) {
+    const character = GameState.characters[i];
+    createCard(characters, i, character, [
+      "square",
+      "square",
+    ]);
+  }
+
   render(cameraControls, spotlightHelper);
   /* Example actions
   logInfo("Hello this is a fucking cat.");
