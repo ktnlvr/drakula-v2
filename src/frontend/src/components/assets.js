@@ -137,7 +137,7 @@ export async function createGlobe(
             airport.latitude_deg,
             airport.longitude_deg
           );
-          const geometry = new THREE.SphereGeometry(0.4, 64, 32);
+          const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.5);
           const material = new THREE.MeshStandardMaterial({
             color: "#646464",
           });
@@ -162,6 +162,8 @@ export async function createGlobe(
             document.body.style.cursor = "default";
           });
           airportMesh.position.set(coords.x, coords.y, coords.z);
+          airportMesh.lookAt(new THREE.Vector3(0, 60, 0));
+          airportMesh.rotateX(-Math.PI / 2);
           globeGroup.add(airportMesh);
           airportsData.push(airportMesh);
           index++;
