@@ -4,6 +4,7 @@
   --character-plaque-text: #fafff3;
   --character-plaque-background: #331c1d;
   --character-plaque-name: #231213;
+  --token-size: 40px;
 }
 
 * {
@@ -25,9 +26,9 @@ body {
   margin: 0;
 }
 
-.square {
-  height: 40px;
-  width: 40px;
+.token-square {
+  height: var(--token-size);
+  width: var(--token-size);
   background-color: #555;
   position: relative;
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -125,4 +126,11 @@ body {
 .square:hover::after {
   visibility: visible;
   opacity: 1;
+}
+
+.token-group {
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+  width: 100px;
 }

@@ -53,8 +53,11 @@ function createCard(parent, charId, name, tokenTypes = []) {
   const cardInfoToken = document.createElement("div");
   cardInfoToken.className = "card-info-plaque";
   tokenTypes.forEach((tokenType, index) => {
+    const group = document.createElement('div');
+    group.classList.add("token-group")
+
     const token = document.createElement("div");
-    token.classList.add("token", tokenType);
+    token.classList.add("token-square", tokenType);
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () => {
@@ -64,11 +67,15 @@ function createCard(parent, charId, name, tokenTypes = []) {
       );
       updateTokenCount(token);
     });
-    const cardCount = document.createElement("p");
-    cardCount.classList.add("card-count");
-    cardCount.textContent = "x0";
-    cardInfoToken.appendChild(token);
-    cardInfoToken.appendChild(cardCount);
+
+    const tokenCount = document.createElement("p");
+    tokenCount.classList.add("card-count");
+    tokenCount.textContent = "x0";
+
+    group.appendChild(token);
+    group.appendChild(tokenCount);
+
+    cardInfoToken.appendChild(group);
   });
   cardInfo.appendChild(cardInfoP);
   cardInfo.appendChild(cardInfoToken);
