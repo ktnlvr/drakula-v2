@@ -120,12 +120,12 @@ export async function createGlobe(
     const points = curve.getPoints(25);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({
-      color: 0xe5e5e5,
+      color: 0xe9d0b4,
       transparent: false,
-      opacity: 0.7,
+      opacity: 1,
     });
 
-    return new THREE.Line(geometry, material);
+    return new THREE.LineSegments(geometry, material);
   }
 
   return new Promise((resolve) => {
