@@ -1,33 +1,38 @@
 ## Ideas
+
 ### Gameplay:
+
 - Inscryption Totems
-- Hours
+- Turns and half turns
 - Coordinating multiple hunters
 - Types of characters:
-	- Speed
-	- Inventory size
-	- ...
+  - Speed
+  - Inventory size
+  - Amount of dice
+  - ...
 - Card powerups from airports
-	- Enviroment cards
-		- TP
-		- Has drakula been on this airport in the last 3 turns/x hours
-		- Trap
-		- ...
-	- Battle cards:
-		- Freeze dice
-		- See a dice on the table
-		- See an enemies dice
-		- Reroll enemy
-		- ...
+  - Enviroment cards
+    - TP
+    - Sense dracula two airports away or not
+    - Freeze dracula on place
+    - ...
+  - Battle cards:
+    - Freeze dice
+    - See a dice on the table
+    - See an enemies dice
+    - Reroll enemy
+    - Deal +1 damage (passive)
+    - ...
 - Liars Dice fighting
 - Destruction of resources instead of paths
 
 ### Visuals:
+
 - Airport points
 - Airport connections archs
-	- Progress with airplane model
-	- Duration
-	- Plane model with character
+  - Progress with airplane model
+  - Half moves
+  - Plane model with character
 - Active cards etc
 - Continent border lighting
 - Film grain
@@ -36,20 +41,25 @@
 - Horizon
 - Stars
 - Characters
+- Flickering candle, fire gets extinguished when dying
 
 ### Optional:
+
 - Multiplayer
-- Drakula's trail consist of small betting encounters
+- Dracula's trail consist of small betting encounters
 
 ## Notes
+
 ### Todo:
+
 - [ ] Design visuals, gameflow and db (Excalidraw etc)
-- [ ] Set codestyle and formatter
+- [x] Set codestyle and formatter
 - [ ] Make first MVP
-- [ ] Implement seeds for debugging
+- [x] Implement seeds for debugging
 - [ ] ...
 
 ### Reminders:
+
 - Respect codestyle and formatter
 - Rebase
 - Pull requests
@@ -59,10 +69,12 @@
 - ...
 
 ### Tech stack:
+
 - Vite
-- ThreeJS/Threlte
+- ThreeJS
 - FastAPI/Flask
 
 ### Others:
+
 Selfhosted Coolify (server)
 Sphinx docs

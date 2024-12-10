@@ -4,12 +4,14 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { InteractionManager } from "three.interactive";
+import { Timer } from "three/addons/misc/Timer.js";
 import Stats from "stats-gl";
 
 let stats;
 let interactionManager;
 let composer;
 const clock = new THREE.Clock();
+const timer = new Timer();
 export function createRenderer(scene, camera) {
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -62,7 +64,6 @@ export function createRenderer(scene, camera) {
     renderer.domElement
   );
   document.body.appendChild(renderer.domElement);
-  document.body.appendChild(stats.dom);
 
   return {
     renderer: renderer,
@@ -72,9 +73,12 @@ export function createRenderer(scene, camera) {
     interactionManager: interactionManager,
   };
 }
+
 export function render(cameraControls, spotlightHelper, scheduled_callables) {
   const dt = clock.getDelta();
-  cameraControls.update(dt);
+  timer.update();
+  cameraControls.update(timer.getDelta());
+  GameState.timer = timer.getElapsed();
   interactionManager.update();
   spotlightHelper.update();
 

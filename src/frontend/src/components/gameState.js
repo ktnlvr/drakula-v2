@@ -1,11 +1,17 @@
 import * as THREE from "three";
+import characterVertex from "./shaders/characterBeaconVert";
+import characterFragment from "./shaders/characterBeaconFrag";
+import draculaVertex from "./shaders/draculaBeaconVert";
+import draculaFragment from "./shaders/draculaBeaconFrag";
 
+const center = new THREE.Vector3(0, 60, 0);
 export const GameState = {
   airports: null,
   connections: null,
   characters: [],
   dracula: null,
-  scene: null,
+  scene: "Overworld",
+  timer: null,
 
   isConnected(from, to) {
     return this.connections.some(
@@ -21,24 +27,88 @@ export const GameState = {
   },
 };
 
+const CHARACTER_NAMES = [
+  "Unico",
+  "Alucard", // Protaganist from a manga about vampires
+  "Abraham Van Helsing", // Famous Vampire Hunter
+  "John Adams", // a Founding Father
+  "Sherlock Holmes", // Famous detective
+  "Tobias Forge", // The lead singer of "Ghost"
+  "Saint Nicholas", // Santa Claus
+  "Aleister Crowley", // Famous occultist
+  "Christopher Lee", // Actor that played Dracula
+  "Sam Winchester", // Supernatural
+  "Dean Winchester", // Supernatural
+]
+
+function getRandomCharacterName() {
+  if (!CHARACTER_NAMES) {
+    return "Anonymous";
+  }
+
+  const idx = Math.floor(Math.random() * CHARACTER_NAMES.length);
+  const name = CHARACTER_NAMES[idx];
+  CHARACTER_NAMES.splice(idx, 1);
+  return name;
+}
+
 export class Character {
   constructor(type, airport) {
     this.type = type;
     this.airport = airport;
     this.mesh = this.createMesh();
     this.updatePosition();
+    this.name = getRandomCharacterName();
+
+    // characters a semi-balanced, since all stats often add up to
+    // some fixed number, this is some real 3am mathemagic
+    // Conjecturally, gives a uniform 
+    const TOTAL = 3;
+    this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
+    this.capacity = Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
+    this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
   }
 
   createMesh() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({
-      color: this.type === "player" ? 0x06ff00 : 0xff0000,
-      transparent: true,
-      opacity: 0.9,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(0, 60, 0);
-    return mesh;
+    if (this.type === "dracula") {
+      const geometry = new THREE.CylinderGeometry(0.2, 0.2, 5, 64, 64, true);
+      const material = new THREE.ShaderMaterial({
+        vertexShader: draculaVertex,
+        fragmentShader: draculaFragment,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        uniforms: {
+          uTime: {
+            get value() {
+              return GameState.timer;
+            },
+          },
+        },
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+
+      return mesh;
+    } else {
+      const geometry = new THREE.CylinderGeometry(0.2, 0.2, 5, 64, 64, true);
+      const material = new THREE.ShaderMaterial({
+        vertexShader: characterVertex,
+        fragmentShader: characterFragment,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        uniforms: {
+          uTime: {
+            get value() {
+              return GameState.timer;
+            },
+          },
+        },
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+
+      return mesh;
+    }
   }
 
   setAirport(target, ignoreConnections = false) {
@@ -58,20 +128,32 @@ export class Character {
   updatePosition() {
     const airportPos = this.airport.position;
     this.mesh.position.copy(airportPos.clone());
-    this.mesh.lookAt(new THREE.Vector3(0, 60, 0));
+    this.mesh.lookAt(center);
+    this.mesh.lookAt(center);
+    this.mesh.rotateX(-Math.PI / 2);
+    const currentDirection = this.mesh.position.clone().sub(center);
+    const currentDistance = currentDirection.length();
+    const newDistance = currentDistance + 2.75;
+    this.mesh.position
+      .copy(center)
+      .add(currentDirection.normalize().multiplyScalar(newDistance));
   }
 }
 
-export function createCharacters(
-  globeGroup,
-  spawns = [0, 1, 2],
-  draculaSpawn = 3
-) {
-  spawns.forEach((spawn) => {
-    const character = new Character("player", GameState.airports[spawn]);
-    globeGroup.add(character.mesh);
-    GameState.characters.push(character);
-  });
+export function createCharacters(globeGroup, draculaSpawn = 4) {
+  const characterL = new Character("light", GameState.airports[0]);
+  globeGroup.add(characterL.mesh);
+  GameState.characters.push(characterL);
+  const characterM1 = new Character("medium", GameState.airports[1]);
+  globeGroup.add(characterM1.mesh);
+  GameState.characters.push(characterM1);
+  const characterM2 = new Character("medium", GameState.airports[2]);
+  globeGroup.add(characterM2.mesh);
+  GameState.characters.push(characterM2);
+  const characterH = new Character("heavy", GameState.airports[3]);
+  globeGroup.add(characterH.mesh);
+  GameState.characters.push(characterH);
+
   const dracula = new Character("dracula", GameState.airports[draculaSpawn]);
   globeGroup.add(dracula.mesh);
   GameState.dracula = dracula;

@@ -21,16 +21,24 @@ function updateTokenCount(token) {
 }
 
 function tooltip(tokenType) {
-  if (tokenType === "square") {
-    return `This is a trap.`;
+  if (tokenType === "ticket") {
+    return "Allows the player to teleport to an airport.";
+  } else if (tokenType === "stake") {
+    return "Removes the Dracula's dice.";
+  } else if (tokenType === "garlic") {
+    return "Avoids the battle";
   } else {
     return `This is nothing.`;
   }
 }
 
-function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
+function getCharacterPortraitPath(name) {
+  return `/portraits/${name.toLowerCase().replaceAll(" ", "-")}.png`;
+}
+
+function createCard(parent, charId, character, tokenTypes = []) {
+  /// XXX: refactor me
   initializeCardCounts(charId, tokenTypes);
-  const characterName = imgAlt;
   const characterBlock = document.createElement("div");
   characterBlock.id = "character-block";
   characterBlock.setAttribute("char-id", charId);
@@ -38,19 +46,32 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
   characterImgContainer.className = "character-img-container";
   const characterImg = document.createElement("img");
   characterImg.className = "character-img";
-  characterImg.src = imgSrc;
-  characterImg.alt = imgAlt;
+
+  characterImg.src = getCharacterPortraitPath(character.name);
   characterImgContainer.appendChild(characterImg);
   const cardInfo = document.createElement("div");
   cardInfo.className = "card-info";
   const cardInfoP = document.createElement("p");
   cardInfoP.className = "card-info-p";
-  cardInfoP.textContent = `My name is ${characterName}`;
+  cardInfoP.innerHTML = `
+    <span class="card-info-hunter-name">${character.name}</span>
+    <br>
+    <span class="stats">
+      <img class="stat-icon" src="/icons/capacity.svg">${character.capacity} 
+      <img class="stat-icon" src="/icons/edge.svg">${character.edge} 
+      <img class="stat-icon" src="/icons/haste.svg">${character.haste}
+    </span>
+  `;
+
   const cardInfoToken = document.createElement("div");
-  cardInfoToken.className = "card-info-token";
+  cardInfoToken.className = "card-info-plaque";
   tokenTypes.forEach((tokenType, index) => {
-    const token = document.createElement("div");
-    token.classList.add("token", tokenType);
+    const group = document.createElement("div");
+    group.classList.add("token-group");
+    const token = document.createElement("img");
+    token.classList.add("token-image", tokenType);
+    token.src = `./icon_images/${tokenType}.svg`;
+
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () => {
@@ -61,11 +82,62 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
       );
       updateTokenCount(token);
     });
-    const cardCount = document.createElement("p");
-    cardCount.classList.add("card-count");
-    cardCount.textContent = "x0";
-    cardInfoToken.appendChild(token);
-    cardInfoToken.appendChild(cardCount);
+
+    const tokenCount = document.createElement("p");
+    tokenCount.classList.add("card-count");
+    tokenCount.textContent = "x0";
+
+    group.appendChild(token);
+    group.appendChild(tokenCount);
+
+    cardInfoToken.appendChild(group);
+
+    const tooltipDiv = document.createElement("div");
+    tooltipDiv.classList.add("tooltip");
+    tooltipDiv.textContent = tooltip(tokenType);
+    tooltipDiv.style.position = "absolute";
+    tooltipDiv.style.visibility = "hidden";
+    tooltipDiv.style.background =
+      "linear-gradient(135deg, rgba(60, 0, 0, 0.8), rgba(128, 0, 128, 0.8))";
+    tooltipDiv.style.color = "white";
+    tooltipDiv.style.padding = "5px";
+    tooltipDiv.style.borderRadius = "5px";
+    tooltipDiv.style.fontSize = "12px";
+    tooltipDiv.style.whiteSpace = "nowrap";
+    tooltipDiv.style.pointerEvents = "none";
+    token.addEventListener("mouseenter", (e) => {
+      token.classList.remove("visible");
+      token.classList.add("hidden");
+      setTimeout(() => {
+        token.src = `${getHoveredPath(tokenType)}`;
+        token.classList.remove("hidden");
+      }, 200);
+      token.classList.remove("hidden");
+      token.classList.add("visible");
+      document.body.appendChild(tooltipDiv);
+      tooltipDiv.style.visibility = "visible";
+      tooltipDiv.style.top = `${e.clientY + 10}px`;
+      tooltipDiv.style.left = `${e.clientX + 10}px`;
+    });
+    token.addEventListener("mousemove", (e) => {
+      tooltipDiv.style.top = `${e.clientY + 10}px`;
+      tooltipDiv.style.left = `${e.clientX + 10}px`;
+    });
+    token.addEventListener("mouseleave", () => {
+      token.classList.remove("visible");
+      token.classList.add("hidden");
+      setTimeout(() => {
+        token.src = `./icon_images/${tokenType}_hover.svg`;
+        setTimeout(() => {
+          token.classList.remove("hidden");
+          token.classList.add("visible");
+        }, 50);
+      }, 200);
+      token.classList.remove("hidden");
+      token.classList.add("visible");
+      tooltipDiv.style.visibility = "hidden";
+      document.body.removeChild(tooltipDiv);
+    });
   });
   cardInfo.appendChild(cardInfoP);
   cardInfo.appendChild(cardInfoToken);
