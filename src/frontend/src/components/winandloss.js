@@ -8,6 +8,7 @@ export function matchEndScene(result) {
   const gameMsg = document.getElementById("game-result");
   const button = document.getElementById("try-button");
   gameOver.style.zIndex = "1000";
+  gameOver.style.display = "flex";
   if (result === MatchResult.WIN) {
     gameMsg.innerHTML = "You Win!";
     button.innerHTML = "Play again";
