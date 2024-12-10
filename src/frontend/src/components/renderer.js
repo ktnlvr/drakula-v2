@@ -10,6 +10,7 @@ import Stats from "stats-gl";
 let stats;
 let interactionManager;
 let composer;
+const clock = new THREE.Clock();
 const timer = new Timer();
 export function createRenderer(scene, camera) {
   const renderer = new THREE.WebGLRenderer({
@@ -72,14 +73,21 @@ export function createRenderer(scene, camera) {
     interactionManager: interactionManager,
   };
 }
-export function render(cameraControls, spotlightHelper) {
+
+export function render(cameraControls, spotlightHelper, scheduled_callables) {
+  const dt = clock.getDelta();
   timer.update();
   cameraControls.update(timer.getDelta());
   GameState.timer = timer.getElapsed();
   interactionManager.update();
   spotlightHelper.update();
 
+  const schedule_systems = [];
+  for (let callable of scheduled_callables)
+    if (callable(dt))
+      schedule_systems.push(callable)
+
   composer.render();
   stats.update();
-  requestAnimationFrame(() => render(cameraControls, spotlightHelper));
+  requestAnimationFrame(() => render(cameraControls, spotlightHelper, scheduled_callables));
 }

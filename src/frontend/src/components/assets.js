@@ -200,6 +200,7 @@ export function createTable(scene) {
           object.position.z = -50;
           object.scale.set(20, 20, 20);
         } else {
+          /// XXX: what happens here? who knows.
         }
       });
       scene.add(gltf.scene);

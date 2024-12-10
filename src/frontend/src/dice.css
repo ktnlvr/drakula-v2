@@ -1,0 +1,36 @@
+.betting-overlay {
+    font-size: 28pt;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.center {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+}
+
+.betting {
+    margin: 70px 140px 0 70px;
+}
+
+.current-bet {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.betting-option:hover {
+    color:beige;
+    text-shadow: beige 0px 0 20px;
+}
+
+.bet-status {
+    font-style: italic;
+}
