@@ -1,39 +1,39 @@
-.game-over {
+#game-over {
   position: fixed;
-  display: flex;
   justify-content: center;
   align-items: center;
   height: 50vh;
   width: 50vw;
   top: 25%;
   left: 25%;
-  background-color: black;
-  color: white;
-  z-index: -1;
-  opacity: 0.75;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
-    0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
-  border-radius: 30px;
+  background-color: #000D;
+  box-shadow: 0 0 10px #000,
+  0 0 20px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 0, 0, 0.4);
+
+  z-index: 10;
+  border-radius: 2px;
 }
 
 .game-info {
+  opacity: 1;
   padding: 5px;
-  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   text-align: center;
 }
 
 #try-button {
-  background: linear-gradient(45deg, #ff007c, #ffca0f);
-  color: black;
-  font-family: "Roboto Mono", monospace;
+  background: linear-gradient(45deg, #533e3e, #3d3825);
+  color: wheat;
   border: none;
   padding: 10px 20px;
   font-size: 1.2rem;
   border-radius: 5px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+  0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
 }
 
 #game-result {
@@ -45,6 +45,7 @@
   0% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }
@@ -102,9 +103,11 @@
   0% {
     opacity: 0;
   }
+
   50% {
     opacity: 0.5;
   }
+
   100% {
     opacity: 1;
   }
@@ -113,7 +116,6 @@
 .spooky-text {
   animation: spookyFadeIn 2s ease-in-out forwards;
   color: #fff;
-  font-family: "Roboto Mono", monospace;
   font-size: 1.2rem;
   margin-bottom: 8px;
   text-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.5);
