@@ -62,7 +62,6 @@ export function createRenderer(scene, camera) {
     renderer.domElement
   );
   document.body.appendChild(renderer.domElement);
-  document.body.appendChild(stats.dom);
 
   return {
     renderer: renderer,

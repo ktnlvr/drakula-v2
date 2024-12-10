@@ -5,15 +5,6 @@
 	getting items(dracula and player both can get one)
 	exchanging items
 **/
-
-export const LogEventTypes = {
-  MOVE: "move",
-  CHARACTER_DEATH: "characterDeath",
-  GAME_END: "gameEnd",
-  ITEM_ACQUISITION: "itemAcquisition",
-  ITEM_EXCHANGE: "itemExchange",
-};
-
 export function logInfo(logMessage) {
   const parent = document.querySelector(".logs");
   const timestamp = new Date().toLocaleTimeString();

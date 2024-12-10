@@ -10,6 +10,8 @@ import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
 import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
+import { myloop} from './components/turnutils'
+import { log } from "three/webgpu";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -38,33 +40,49 @@ async function setupGame() {
   setControls(cameraControls);
   const characters = document.querySelector("#characters");
   createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
+    "teleport",
+    "stake",
+    "garlic"
   ]);
   createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
+    "teleport",
+    "stake",
+    "garlic"
   ]);
   createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
+    "teleport",
+    "stake",
+    "garlic"
   ]);
   createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
-    "square",
+    "teleport",
+    "stake",
+    "garlic"
   ]);
   createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
+    "teleport",
+    "stake",
+    "garlic"
   ]);
-
   render(cameraControls, spotlightHelper);
   /* Example actions
   logInfo("Hello this is a fucking cat.");
   matchEndScene("loss");
   characterDeath(document.querySelector('[char-id="2"]'));
   */
+  document.querySelector(".end-turn-button").addEventListener('click',() => {
+    if (myloop(GameState))
+    {
+      console.log("have not added the scene yet. Please add it.");
+    }
+    else
+    {
+      console.log("have not added the scene yet. Please add it.");
+    }
+  })
+  logInfo("It displays the logs with current time attached to it.")
+  logInfo("It also has a spooky-text effect when it appears.");
+  logInfo("The logger also handles overflows so you can scroll and see the logs from before and not loss them.")
 }
 
 setupGame().catch(console.error);
