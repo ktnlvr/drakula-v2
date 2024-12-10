@@ -6,10 +6,7 @@ import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
-import { characterDeath } from "./components/chardeath";
-import { logInfo } from "./components/logger";
-import { matchEndScene } from "./components/winandloss";
-import { createCard, cardCounts } from "./components/cards";
+import { createCard } from "./components/cards";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -37,27 +34,13 @@ async function setupGame() {
   const cameraControls = new CameraControls(camera, renderer.domElement);
   setControls(cameraControls);
   const characters = document.querySelector("#characters");
-  createCard(characters, 0, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
-  ]);
-  createCard(characters, 1, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
-  ]);
-  createCard(characters, 2, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
-  ]);
-  createCard(characters, 3, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
-    "square",
-  ]);
-  createCard(characters, 4, "https://placecats.com/100/100", "Cat", [
-    "square",
-    "square",
-  ]);
+  for (let i = 0; i < GameState.characters.length; i++) {
+    const character = GameState.characters[i];
+    createCard(characters, i, character.name, [
+      "square",
+      "square",
+    ]);
+  }
 
   render(cameraControls, spotlightHelper);
   /* Example actions

@@ -28,9 +28,13 @@ function tooltip(tokenType) {
   }
 }
 
-function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
+function getCharacterPortraitPath(name) {
+  return `/portraits/${name.toLowerCase().replaceAll(' ', '-')}.png`;
+}
+
+function createCard(parent, charId, name, tokenTypes = []) {
+  /// XXX: refactor me
   initializeCardCounts(charId, tokenTypes);
-  const characterName = imgAlt;
   const characterBlock = document.createElement("div");
   characterBlock.id = "character-block";
   characterBlock.setAttribute("char-id", charId);
@@ -38,16 +42,16 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
   characterImgContainer.className = "character-img-container";
   const characterImg = document.createElement("img");
   characterImg.className = "character-img";
-  characterImg.src = imgSrc;
-  characterImg.alt = imgAlt;
+
+  characterImg.src = getCharacterPortraitPath(name);
   characterImgContainer.appendChild(characterImg);
   const cardInfo = document.createElement("div");
   cardInfo.className = "card-info";
   const cardInfoP = document.createElement("p");
   cardInfoP.className = "card-info-p";
-  cardInfoP.textContent = `My name is ${characterName}`;
+  cardInfoP.textContent = name;
   const cardInfoToken = document.createElement("div");
-  cardInfoToken.className = "card-info-token";
+  cardInfoToken.className = "card-info-plaque";
   tokenTypes.forEach((tokenType, index) => {
     const token = document.createElement("div");
     token.classList.add("token", tokenType);
@@ -55,8 +59,7 @@ function createCard(parent, charId, imgSrc, imgAlt, tokenTypes = []) {
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () => {
       console.log(
-        `Clicked ${tokenType} card for Character ${charId}, Token No: ${
-          index + 1
+        `Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1
         }`
       );
       updateTokenCount(token);

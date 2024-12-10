@@ -21,12 +21,39 @@ export const GameState = {
   },
 };
 
+const CHARACTER_NAMES = [
+  "Sans Undertale", // Sans Undertale
+  "Alucard", // Protaganist from a manga about vampires
+  "Abraham Van Helsing", // Famous Vampire Hunter
+  "John Adams", // a Founding Father
+  "Sherlock Holmes", // Famous detective
+  "Richard", // just a guy
+  "Tobias Forge", // The lead singer of "Ghost"
+  "Saint Nicholas", // Santa Claus
+  "Aleister Crowley", // Famous occultist
+  "Christopher Lee", // Actor that played Dracula
+  "Sam Winchester", // Supernatural
+  "Dean Winchester", // Supernatural
+]
+
+function getRandomCharacterName() {
+  if (!CHARACTER_NAMES) {
+    return "Anonymous";
+  }
+
+  const idx = Math.floor(Math.random() * CHARACTER_NAMES.length);
+  const name = CHARACTER_NAMES[idx];
+  CHARACTER_NAMES.splice(idx, 1);
+  return name;
+}
+
 export class Character {
   constructor(type, airport) {
     this.type = type;
     this.airport = airport;
     this.mesh = this.createMesh();
     this.updatePosition();
+    this.name = getRandomCharacterName();
   }
 
   createMesh() {

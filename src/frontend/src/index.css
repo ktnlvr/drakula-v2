@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+
+:root {
+  --character-plaque-text: #fafff3;
+  --character-plaque-background: #331c1d;
+  --character-plaque-name: #231213;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -38,6 +46,9 @@ body {
 }
 
 #characters {
+  font-size: x-large;
+  top: 5%;
+  left: 2%;
   height: 100%;
   position: absolute;
   display: flex;
@@ -52,7 +63,8 @@ body {
 }
 
 .character-img {
-  border-radius: 5px;
+  width: 100px;
+  height: 100px;
 }
 
 .card-info {
@@ -65,23 +77,25 @@ body {
 }
 
 .card-info-p {
-  padding: 4px 6px;
+  padding: 4px 12px;
   height: auto;
-  background-color: aqua;
-  font-size: 1.1em;
+  background-color: var(--character-plaque-name);
+  font-size: 1.4em;
   width: fit-content;
-  color: blue;
-  border-radius: 2px;
+  color: var(--character-plaque-text);
+  border-top-right-radius: 10px;
 }
 
-.card-info-token {
-  height: 80px;
-  border-radius: 5px;
-  background-color: white;
+.card-info-plaque {
+  font-family: "Merriweather", serif;
+  color: var(--character-plaque-text);
+  background-color: var(--character-plaque-background);
   display: flex;
   flex-direction: row;
   padding: 10px;
   gap: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 10px;
 }
 
 .card-count {
