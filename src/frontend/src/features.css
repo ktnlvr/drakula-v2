@@ -6,9 +6,9 @@
   width: 50vw;
   top: 25%;
   left: 25%;
-  background-color: #000D;
-  box-shadow: 0 0 10px #000,
-  0 0 20px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 0, 0, 0.4);
+  background-color: #000d;
+  box-shadow: 0 0 10px #000, 0 0 20px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(0, 0, 0, 0.4);
 
   z-index: 10;
   border-radius: 2px;
@@ -33,7 +33,7 @@
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
-  0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+    0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
 }
 
 #game-result {
@@ -143,15 +143,14 @@
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
 }
 
-
 .end-turn-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
   position: absolute;
-  top: 50%;
-  left: 68%;
+  top: 85%;
+  left: 65%;
   opacity: 0.85;
 }
 
@@ -160,7 +159,7 @@
   border: 2px solid #fff;
   border-radius: 12px;
   color: #fff;
-  font-family: 'Special Elite', cursive;
+  font-family: "Special Elite", cursive;
   font-size: 1.5rem;
   font-weight: bold;
   padding: 15px 30px;

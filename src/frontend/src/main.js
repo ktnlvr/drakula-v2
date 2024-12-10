@@ -6,14 +6,12 @@ import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
 import { createCharacters, GameState } from "./components/gameState";
-import { createCard } from "./components/cards";
 import { characterDeath } from "./components/chardeath";
 import { logInfo } from "./components/logger";
 import { matchEndScene } from "./components/winandloss";
 import { createCard, cardCounts } from "./components/cards";
 import { myloop } from "./components/turnutils";
 import { log } from "three/webgpu";
-
 
 const scene = new THREE.Scene();
 const camera = createCamera();
@@ -43,10 +41,7 @@ async function setupGame() {
   const characters = document.querySelector("#characters");
   for (let i = 0; i < GameState.characters.length; i++) {
     const character = GameState.characters[i];
-    createCard(characters, i, character, [
-      "square",
-      "square",
-    ]);
+    createCard(characters, i, character, ["ticket", "stake", "garlic"]);
   }
 
   render(cameraControls, spotlightHelper);

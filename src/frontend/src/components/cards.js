@@ -21,23 +21,19 @@ function updateTokenCount(token) {
 }
 
 function tooltip(tokenType) {
-  if (tokenType === "teleport") {
-    return "Allow the player to move Combat Items.";
-  } 
-  else if (tokenType === "stake") {
+  if (tokenType === "ticket") {
+    return "Allows the player to teleport to an airport.";
+  } else if (tokenType === "stake") {
     return "Removes the Dracula's dice.";
-  }
-  else if (tokenType === "garlic") {
+  } else if (tokenType === "garlic") {
     return "Avoids the battle";
-  }
-  else {
+  } else {
     return `This is nothing.`;
   }
 }
 
-
 function getCharacterPortraitPath(name) {
-  return `/portraits/${name.toLowerCase().replaceAll(' ', '-')}.png`;
+  return `/portraits/${name.toLowerCase().replaceAll(" ", "-")}.png`;
 }
 
 function createCard(parent, charId, character, tokenTypes = []) {
@@ -70,22 +66,22 @@ function createCard(parent, charId, character, tokenTypes = []) {
   const cardInfoToken = document.createElement("div");
   cardInfoToken.className = "card-info-plaque";
   tokenTypes.forEach((tokenType, index) => {
-    const group = document.createElement('div');
-    group.classList.add("token-group")
+    const group = document.createElement("div");
+    group.classList.add("token-group");
     const token = document.createElement("img");
     token.classList.add("token-image", tokenType);
-    token.src = `${getPath(tokenType)}`;
+    token.src = `./icon_images/${tokenType}.svg`;
 
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () => {
       console.log(
-        `Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1
+        `Clicked ${tokenType} card for Character ${charId}, Token No: ${
+          index + 1
         }`
       );
       updateTokenCount(token);
     });
-
 
     const tokenCount = document.createElement("p");
     tokenCount.classList.add("card-count");
@@ -101,7 +97,8 @@ function createCard(parent, charId, character, tokenTypes = []) {
     tooltipDiv.textContent = tooltip(tokenType);
     tooltipDiv.style.position = "absolute";
     tooltipDiv.style.visibility = "hidden";
-    tooltipDiv.style.background = "linear-gradient(135deg, rgba(60, 0, 0, 0.8), rgba(128, 0, 128, 0.8))";
+    tooltipDiv.style.background =
+      "linear-gradient(135deg, rgba(60, 0, 0, 0.8), rgba(128, 0, 128, 0.8))";
     tooltipDiv.style.color = "white";
     tooltipDiv.style.padding = "5px";
     tooltipDiv.style.borderRadius = "5px";
@@ -130,7 +127,7 @@ function createCard(parent, charId, character, tokenTypes = []) {
       token.classList.remove("visible");
       token.classList.add("hidden");
       setTimeout(() => {
-        token.src = `${getPath(tokenType)}`;
+        token.src = `./icon_images/${tokenType}_hover.svg`;
         setTimeout(() => {
           token.classList.remove("hidden");
           token.classList.add("visible");
