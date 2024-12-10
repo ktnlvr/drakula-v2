@@ -39,7 +39,7 @@ body {
   display: flex;
   flex-direction: row;
   height: 100px;
-  width: 400px;
+  width: 460px;
   align-items: flex-start;
   padding-bottom: 12px;
   transition: padding-bottom 3s ease-in-out,
