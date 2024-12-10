@@ -1,5 +1,8 @@
 import * as THREE from "three";
+import characterVertex from "./shaders/characterBeaconVert";
+import characterFragment from "./shaders/characterBeaconFrag";
 
+const center = new THREE.Vector3(0, 60, 0);
 export const GameState = {
   airports: null,
   connections: null,
@@ -32,14 +35,23 @@ export class Character {
   }
 
   createMesh() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({
-      color: this.type === "player" ? 0x06ff00 : 0xff0000,
+    const geometry = new THREE.CylinderGeometry(0.2, 0.2, 5, 64, 64, true);
+    const material = new THREE.ShaderMaterial({
+      vertexShader: characterVertex,
+      fragmentShader: characterFragment,
       transparent: true,
-      opacity: 0.9,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+      uniforms: {
+        uTime: {
+          get value() {
+            return GameState.timer;
+          },
+        },
+      },
     });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(0, 60, 0);
+
     return mesh;
   }
 
@@ -60,7 +72,15 @@ export class Character {
   updatePosition() {
     const airportPos = this.airport.position;
     this.mesh.position.copy(airportPos.clone());
-    this.mesh.lookAt(new THREE.Vector3(0, 60, 0));
+    this.mesh.lookAt(center);
+    this.mesh.lookAt(center);
+    this.mesh.rotateX(-Math.PI / 2);
+    const currentDirection = this.mesh.position.clone().sub(center);
+    const currentDistance = currentDirection.length();
+    const newDistance = currentDistance + 2.75;
+    this.mesh.position
+      .copy(center)
+      .add(currentDirection.normalize().multiplyScalar(newDistance));
   }
 }
 
