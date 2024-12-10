@@ -22,12 +22,11 @@ export const GameState = {
 };
 
 const CHARACTER_NAMES = [
-  "Sans Undertale", // Sans Undertale
+  "Unico",
   "Alucard", // Protaganist from a manga about vampires
   "Abraham Van Helsing", // Famous Vampire Hunter
   "John Adams", // a Founding Father
   "Sherlock Holmes", // Famous detective
-  "Richard", // just a guy
   "Tobias Forge", // The lead singer of "Ghost"
   "Saint Nicholas", // Santa Claus
   "Aleister Crowley", // Famous occultist
