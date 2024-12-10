@@ -78,7 +78,7 @@ body {
   font-size: larger;
 }
 
-.card-info-p {
+ {
   padding: 4px 12px;
   height: auto;
   background-color: var(--character-plaque-name);
@@ -107,7 +107,7 @@ body {
   content: attr(data-tooltip);
   position: absolute;
   opacity: 0;
-  visibility: hidden;
+  visibility: ;
   color: bisque;
   background-color: rgba(241, 54, 40, 0.7);
   padding: 5px;

@@ -120,12 +120,12 @@ export async function createGlobe(
     const points = curve.getPoints(25);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({
-      color: 0xe5e5e5,
+      color: 0xe9d0b4,
       transparent: false,
-      opacity: 0.7,
+      opacity: 1,
     });
 
-    return new THREE.Line(geometry, material);
+    return new THREE.LineSegments(geometry, material);
   }
 
   return new Promise((resolve) => {
@@ -137,7 +137,7 @@ export async function createGlobe(
             airport.latitude_deg,
             airport.longitude_deg
           );
-          const geometry = new THREE.SphereGeometry(0.4, 64, 32);
+          const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.5);
           const material = new THREE.MeshStandardMaterial({
             color: "#646464",
           });
@@ -162,6 +162,8 @@ export async function createGlobe(
             document.body.style.cursor = "default";
           });
           airportMesh.position.set(coords.x, coords.y, coords.z);
+          airportMesh.lookAt(new THREE.Vector3(0, 60, 0));
+          airportMesh.rotateX(-Math.PI / 2);
           globeGroup.add(airportMesh);
           airportsData.push(airportMesh);
           index++;

@@ -7,9 +7,8 @@ export function matchEndScene(result) {
   const gameOver = document.getElementById("game-over");
   const gameMsg = document.getElementById("game-result");
   const button = document.getElementById("try-button");
-
   gameOver.classList.remove("hidden");
-
+  
   if (result === MatchResult.WIN) {
     gameMsg.innerHTML = "You Win!";
     button.innerHTML = "Play again";

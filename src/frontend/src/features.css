@@ -41,6 +41,20 @@
   font-family: "Special Elite", cursive;
 }
 
+.token-image {
+  height: 40px;
+  width: 40px;
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.token-image.hidden {
+  opacity: 0;
+}
+
+.token-image.visible {
+  opacity: 1;
+}
 @keyframes explode {
   0% {
     opacity: 1;
@@ -127,4 +141,42 @@
   animation: spookyFadeIn 2s ease-in-out forwards;
   font-weight: bold;
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+
+.end-turn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  position: absolute;
+  top: 50%;
+  left: 68%;
+  opacity: 0.85;
+}
+
+.end-turn-button {
+  background: #000;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Special Elite', cursive;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 15px 30px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 0, 0, 0.7);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), 0 5px 15px rgba(255, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.end-turn-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), 0 10px 25px rgba(255, 0, 0, 0.6);
+}
+
+.end-turn-button:active {
+  transform: scale(0.95);
+  background: linear-gradient(45deg, #8b0000, #660000);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(255, 0, 0, 0.2);
 }
