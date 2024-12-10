@@ -5,6 +5,7 @@ import { createGlobe, createTable } from "./components/assets";
 import { setupLights } from "./components/lights";
 import { setupGui } from "./components/gui";
 import CameraControls from "camera-controls";
+import { GameState, createCharacters } from "./components/gameState";
 import { createDie, startDiceRound, rollDice } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
 import { characterDeath } from "./components/chardeath";
@@ -19,15 +20,14 @@ const camera = createCamera();
 const { renderer, selectionPass, hoverPass, composer, interactionManager } =
   createRenderer(scene, camera);
 
-let TESTING_DICE = false
+let TESTING_DICE = false;
 
 function createCharacterCards() {
   const characters = document.querySelector("#characters");
-   for (let i = 0; i < GameState.characters.length; i++) {
+  for (let i = 0; i < GameState.characters.length; i++) {
     const character = GameState.characters[i];
     createCard(characters, i, character, ["ticket", "stake", "garlic"]);
   }
-
 }
 
 async function setupGame(scene) {
@@ -46,10 +46,8 @@ async function setupGame(scene) {
 
   window.GameState = GameState;
 
-  createCharacterCards();
- 
   if (TESTING_DICE) {
-    console.log(cameraControls.getPosition())
+    console.log(cameraControls.getPosition());
 
     const diceModels = new THREE.Group();
     let dice = [];
@@ -58,7 +56,7 @@ async function setupGame(scene) {
       const die = await createDie(scene);
 
       const width = 150;
-      die.model.position.set(width * i / n - width / 2, 0, 50);
+      die.model.position.set((width * i) / n - width / 2, 0, 50);
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
       die.setSpin(randomSpin);
@@ -74,8 +72,13 @@ async function setupGame(scene) {
 
     scene.add(diceModels);
     await cameraControls.setLookAt(
-      camera.position.x, camera.position.y, camera.position.z,
-      diceModels.position.x, diceModels.position.y, diceModels.position.z);
+      camera.position.x,
+      camera.position.y,
+      camera.position.z,
+      diceModels.position.x,
+      diceModels.position.y,
+      diceModels.position.z
+    );
 
     await startDiceRound(6, dice);
   } else {
@@ -86,6 +89,7 @@ async function setupGame(scene) {
     );
     createCharacters(globeGroup);
     scene.add(globeGroup);
+    createCharacterCards();
   }
 
   render(cameraControls, spotlightHelper, scheduledCallables);

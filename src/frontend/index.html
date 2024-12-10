@@ -1,44 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Drakula V2</title>
-        <link rel="stylesheet" href="/src/index.css">
-        <link rel="stylesheet" href="/src/dice.css" />
-        <script type="module" defer src="/src/main.js"></script>
-        <link rel="stylesheet" href="/src/features.css">
-        <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        <div id="game-over" class="hidden">
-            <div class="game-info">
-                <h1 id="game-result"></h1>
-                <button id="try-button">Try again</button>
-            </div>
-        </div>
-        <div id="app"></div>
-        <div id="characters"></div>
-        <div class="end-turn-container">
-            <button class="end-turn-button">End Turn</button>
-        </div>
-        <div class="logger-box">
-            <h1>Game History</h1>
-            <div class="logs"></div>
-        </div>
-        <div class="betting-overlay">
-    <div class="center">
-      <div class="betting">
-        <div class="current-bet" id="current-bet">Current bet: ⚁⚁<br>What do you do?</div>
-        <span id="bet-status" class="bet-status hidden"></span>
-        <div id="betting-options">
-          <div class="betting-option" id="bet-bump-value">⚂⚂</div>
-          <div class="betting-option" id="bet-bump-number">⚁⚁⚁</div>
-          <div class="betting-option" id="bet-bump-both">⚂⚂⚂</div>
-          <div class="betting-option" id="bet-call">call</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drakula V2</title>
+    <link rel="stylesheet" href="/src/index.css" />
+    <link rel="stylesheet" href="/src/dice.css" />
+    <script type="module" defer src="/src/main.js"></script>
+    <link rel="stylesheet" href="/src/features.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="game-over" class="hidden">
+      <div class="game-info">
+        <h1 id="game-result"></h1>
+        <button id="try-button">Try again</button>
+      </div>
+    </div>
+    <div id="app"></div>
+    <div id="characters"></div>
+    <div class="end-turn-container">
+      <button class="end-turn-button">End Turn</button>
+    </div>
+    <div class="logger-box">
+      <h1>Game History</h1>
+      <div class="logs"></div>
+    </div>
+    <div class="betting-overlay hidden">
+      <div class="center">
+        <div class="betting">
+          <div class="current-bet" id="current-bet">
+            Current bet: ⚁⚁<br />What do you do?
+          </div>
+          <span id="bet-status" class="bet-status hidden"></span>
+          <div id="betting-options">
+            <div class="betting-option" id="bet-bump-value">⚂⚂</div>
+            <div class="betting-option" id="bet-bump-number">⚁⚁⚁</div>
+            <div class="betting-option" id="bet-bump-both">⚂⚂⚂</div>
+            <div class="betting-option" id="bet-call">call</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-    </body>
+  </body>
 </html>
