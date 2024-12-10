@@ -41,6 +41,20 @@
   font-family: "Special Elite", cursive;
 }
 
+.token-image {
+  height: 40px;
+  width: 40px;
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.token-image.hidden {
+  opacity: 0;
+}
+
+.token-image.visible {
+  opacity: 1;
+}
 @keyframes explode {
   0% {
     opacity: 1;
