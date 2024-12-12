@@ -92,8 +92,9 @@ async function changeScene(globeGroup, cameraControls) {
     for (let i = 0; i < n; i++) {
       const die = await createDie(scene);
 
-      const width = 150;
-      die.model.position.set((width * i) / n - width / 2, 0, 50);
+      const radius = 20;
+      const theta = 2 * Math.PI * i / n;
+      die.model.position.set(radius * Math.sin(theta), -1, radius * Math.cos(theta) + radius * 0.75);
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
       die.setSpin(randomSpin);

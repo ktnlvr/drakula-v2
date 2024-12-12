@@ -73,10 +73,18 @@ class DiceProxy {
   }
 }
 
+const gltf = await new GLTFLoader().loadAsync("/dice.glb");
+gltf.scene.traverse(function (child) {
+  if (child.isMesh) {
+    child.castShadow = true;
+    child.receiveShadow = true;
+  }
+});
+
 export async function createDie() {
-  const gltf = await new GLTFLoader().loadAsync("/dice.glb");
-  const model = gltf.scene;
-  model.scale.set(6, 6, 6);
+  const model = gltf.scene.clone(true);
+  model.scale.set(3, 3, 3);
+  model.castShadow = true;
   return new DiceProxy(model);
 }
 
@@ -260,17 +268,15 @@ async function callOut() {
   let betStatus = "undefined";
   if (isPlayerTurn)
     if (loser_idx == DRACULA)
-      betStatus = `Good call. Dracula has ${
-        diceState.dice[DRACULA].length - 1
-      } left.`;
+      betStatus = `Good call. Dracula has ${diceState.dice[DRACULA].length - 1
+        } left.`;
     else betStatus = "Poor call";
   else if (loser_idx == PLAYER)
     betStatus = "Dracula calls you out. Lose a dice";
   // Just wanted to sneak in a Harry Potter reference
   else
-    betStatus = `Dracula called and lost, he has ${
-      diceState.dice[DRACULA].length - 1
-    } left.`;
+    betStatus = `Dracula called and lost, he has ${diceState.dice[DRACULA].length - 1
+      } left.`;
 
   if (diceState.dice[DRACULA].length < 1) {
     diceState.onGameEnd("draculaDead");
