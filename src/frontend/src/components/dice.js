@@ -233,15 +233,9 @@ async function removeDice(loser_idx) {
       dt,
       DICE_REMOVE_ANIMATION_DURATION_S
     );
-    diceState.playerDiceProxies[i].model.removeFromParent();
 
+    diceState.playerDiceProxies[i].model.removeFromParent();
     proxies.splice(i, 1);
-    if (proxies.length === 0) {
-      if (diceState.onGameEnd) {
-        diceState.onGameEnd("playerDead");
-      }
-      return;
-    }
   }
   // TODO: when Dracula's dice gets removed there is no timeout
   // or animation, so it looks kinda choppy.
@@ -290,14 +284,18 @@ async function callOut() {
     betStatus = `Dracula called and lost, he has ${diceState.dice[DRACULA].length - 1
       } left.`;
 
-  if (diceState.dice[DRACULA].length < 1) {
-    diceState.onGameEnd("draculaDead");
-  }
-
   setBetStatus(betStatus);
 
   // Remove the dice from the respective player
   await removeDice(loser_idx);
+
+  if (diceState.dice[DRACULA].length <= 0) {
+    diceState.onGameEnd("draculaDead");
+    return;
+  } else if (diceState.dice[PLAYER].length <= 0) {
+    diceState.onGameEnd("playerDead");
+    return;
+  }
 
   // Reroll Player's dice
   await rollDice(diceState.playerDiceProxies, "wait");
