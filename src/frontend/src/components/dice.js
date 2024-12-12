@@ -1,4 +1,6 @@
 import { easeInQuart, randomPointOnSphere, sleep, sleepActive } from "./utils";
+import { draculaDecide } from "../draculaAi";
+
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 
@@ -162,20 +164,30 @@ async function draculaThink() {
   );
   thinkingPlaceholder.classList.add("hidden");
 
-  let choices = [betBumpNumber, callOut];
-  // Can bump value
-  if (diceState.bet[1] != 6) {
-    choices.push(betBumpValue);
-    choices.push(betBumpBoth);
+  let choices = { 'bumpValue': betBumpValue, 'bumpNumber': betBumpNumber, 'bumpValueAndNumber': betBumpBoth, 'call': callOut };
+
+  // Can not bump a value
+  if (diceState.bet[1] == 6) {
+    delete choices.bumpValue;
+    delete choices.betBumpBoth;
+  }
+
+  let choice = draculaDecide(diceState.dice.dracula, diceState.dice.player, diceState.bet);
+  console.info(choice);
+  console.log(choice)
+  if (!(choice in choices)) {
+    console.warn("Whoops, Dracula wants to " + choice + ", but can't, falling back calling out");
+    choice = 'call';
   }
 
   // TODO: make dracula be able to select calling out
-  await choices[Math.floor(choices.length * Math.random())]();
+  await choices[choice]();
 }
 
 function draculaSetStartingBet() {
-  // TODO: Possibly make up a better starting bet?
-  return [1, 1];
+  let n = 3 - Math.floor(Math.sqrt(Math.random() * 9));
+  let m = Math.floor(Math.random() * 6) + 1;
+  return [n, m];
 }
 
 async function betBumpValue() {
@@ -221,15 +233,9 @@ async function removeDice(loser_idx) {
       dt,
       DICE_REMOVE_ANIMATION_DURATION_S
     );
-    diceState.playerDiceProxies[i].model.removeFromParent();
 
+    diceState.playerDiceProxies[i].model.removeFromParent();
     proxies.splice(i, 1);
-    if (proxies.length === 0) {
-      if (diceState.onGameEnd) {
-        diceState.onGameEnd("playerDead");
-      }
-      return;
-    }
   }
   // TODO: when Dracula's dice gets removed there is no timeout
   // or animation, so it looks kinda choppy.
@@ -278,14 +284,18 @@ async function callOut() {
     betStatus = `Dracula called and lost, he has ${diceState.dice[DRACULA].length - 1
       } left.`;
 
-  if (diceState.dice[DRACULA].length < 1) {
-    diceState.onGameEnd("draculaDead");
-  }
-
   setBetStatus(betStatus);
 
   // Remove the dice from the respective player
   await removeDice(loser_idx);
+
+  if (diceState.dice[DRACULA].length <= 0) {
+    diceState.onGameEnd("draculaDead");
+    return;
+  } else if (diceState.dice[PLAYER].length <= 0) {
+    diceState.onGameEnd("playerDead");
+    return;
+  }
 
   // Reroll Player's dice
   await rollDice(diceState.playerDiceProxies, "wait");

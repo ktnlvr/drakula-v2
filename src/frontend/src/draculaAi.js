@@ -1,8 +1,6 @@
-import { getGlobals, updateGlobals } from './testMainGameLoop.js';
-//main drakula logic
-export function draculaTurn(draculaDice, playerDice) {
-    let { chosenValue, chosenNumber } = getGlobals(); // Get current values
-    let totalDice = draculaDice.length + playerDice.length;
+export function draculaDecide(draculaDice, playerDiceCount, bet) {
+    let [chosenNumber, chosenValue] = bet; // Get current values
+    let totalDice = draculaDice.length + playerDiceCount;
     let halfDice = totalDice / 2;
     const potentialAction = Math.random();
     let bumpValue = false;
@@ -93,7 +91,7 @@ export function draculaTurn(draculaDice, playerDice) {
 
     if (chosenNumber < draculaNumber) {
         // When Dracula has more Dice
-        if (draculaDice.length > playerDice.length) {
+        if (draculaDice.length > playerDiceCount) {
             draculaMoreDice();
             // When Dracula has fewer or equal number of dices than player
         } else {
@@ -101,7 +99,7 @@ export function draculaTurn(draculaDice, playerDice) {
         }
     } else if (chosenNumber === draculaNumber && potentialAction < 0.7) {
         // When Dracula has more Dice
-        if (draculaDice.length > playerDice.length) {
+        if (draculaDice.length > playerDiceCount) {
             draculaMoreDice();
             // When Dracula has fewer or equal number of dices than player
         } else {
@@ -111,43 +109,49 @@ export function draculaTurn(draculaDice, playerDice) {
         call = true;
     }
 
-    let draculaAction = null;
+    let action = null;
     if (call) {
-        draculaAction = 'call';
+        action = 'call';
     } else if (bumpValue && bumpNumber) {
-        draculaAction = 'bumpValueAndNumber';
+        action = 'bumpValueAndNumber';
     } else if (bumpValue) {
-        draculaAction = 'bumpValue';
+        action = 'bumpValue';
     } else if (bumpNumber) {
-        draculaAction = 'bumpNumber';
+        action = 'bumpNumber';
     } else {
-        draculaAction = 'call';
+        action = 'call';
     }
 
     // Handle the actions
-    if (draculaAction === 'call') {
+    if (action === 'call') {
         //console.log(`Dracula chooses to call -> Number:${chosenNumber}, Value:${chosenValue}`);
-        return { action: 'call', chosenNumber, chosenValue };
+        return 'call';
     }
 
-    if (draculaAction === 'bumpValueAndNumber') {
+    if (action === 'bumpValueAndNumber') {
         if (chosenValue < 6 && chosenNumber < totalDice) {
             chosenValue += 1;
             chosenNumber += 1;
             //console.log(`Dracula bumps both number and value -> Number:${chosenNumber}, Value:${chosenValue}`);
         }
-    } else if (draculaAction === 'bumpValue') {
+    } else if (action === 'bumpValue') {
         if (chosenValue < 6) {
             chosenValue += 1;
             //console.log(`Dracula bumps the value -> Number:${chosenNumber}, Value:${chosenValue}`);
         }
-    } else if (draculaAction === 'bumpNumber') {
+    } else if (action === 'bumpNumber') {
         if (chosenNumber < totalDice) {
             chosenNumber += 1;
             //console.log(`Dracula bumps the number -> Number:${chosenNumber}, Value:${chosenValue}`);
         }
     }
-    updateGlobals(chosenValue, chosenNumber);
-    //console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
-    return { action: draculaAction, chosenNumber, chosenValue };
+
+    // Reduce the aggression
+    if (playerDiceCount < draculaDice.length) {
+        if (action === 'call') {
+            action = ['call', 'bumpNumber', 'bumpValue', 'bumpValueAndNumber'][Math.floor(Math.random() * 4)]
+        }
+    }
+
+    return action;
 }
