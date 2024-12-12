@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { logInfo } from "./logger";
 import characterVertex from "./shaders/characterBeaconVert";
 import characterFragment from "./shaders/characterBeaconFrag";
 import draculaVertex from "./shaders/draculaBeaconVert";
@@ -12,10 +13,14 @@ export const GameState = {
   dracula: null,
   scene: "Overworld",
   timer: null,
+  selectedCharacter: null,
+  battleCharacter: null,
 
   isConnected(from, to) {
     return this.connections.some(
-      ([a, b]) => (a === from && b === to) || (a === to && b === from)
+      (connection) =>
+        (connection[0] === from && connection[1] === to) ||
+        (connection[0] === to && connection[1] === from)
     );
   },
   markAirport(airport, isMarked = false) {
@@ -39,7 +44,7 @@ const CHARACTER_NAMES = [
   "Christopher Lee", // Actor that played Dracula
   "Sam Winchester", // Supernatural
   "Dean Winchester", // Supernatural
-]
+];
 
 function getRandomCharacterName() {
   if (!CHARACTER_NAMES) {
@@ -59,14 +64,19 @@ export class Character {
     this.mesh = this.createMesh();
     this.updatePosition();
     this.name = getRandomCharacterName();
-
     // characters a semi-balanced, since all stats often add up to
     // some fixed number, this is some real 3am mathemagic
-    // Conjecturally, gives a uniform 
+    // Conjecturally, gives a uniform
     const TOTAL = 3;
     this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
-    this.capacity = Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
+    this.capacity =
+      Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
     this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
+    this.totalMoves = this.haste;
+  }
+
+  resetMoves() {
+    this.totalMoves = this.haste;
   }
 
   createMesh() {
@@ -117,11 +127,17 @@ export class Character {
       this.airport = GameState.airports[target];
       this.updatePosition();
       return;
-    } else if (GameState.isConnected(currentIndex, target)) {
-      this.airport = GameState.airports[target];
-      this.updatePosition();
+    } else if (this.totalMoves !== 0) {
+      if (GameState.isConnected(currentIndex, target)) {
+        this.airport = GameState.airports[target];
+        this.updatePosition();
+        this.totalMoves--;
+      } else {
+        logInfo("The selected airport is out of reach for this character");
+      }
     } else {
-      console.error("Unconnected airport:", target);
+      logInfo("This character is out of moves");
+      GameState.selectedCharacter = null;
     }
   }
 

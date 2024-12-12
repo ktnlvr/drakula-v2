@@ -149,6 +149,12 @@ export async function createGlobe(
               "Selected airport: N.",
               GameState.airports[airportMesh.name].name
             );
+            if (GameState.selectedCharacter) {
+              GameState.characters[GameState.selectedCharacter].setAirport(
+                airportMesh.name
+              );
+            }
+
             event.stopPropagation();
             selectionPass.selectedObjects = [airportMesh];
           });

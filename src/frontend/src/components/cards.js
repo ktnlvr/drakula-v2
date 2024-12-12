@@ -36,7 +36,7 @@ function getCharacterPortraitPath(name) {
   return `/portraits/${name.toLowerCase().replaceAll(" ", "-")}.png`;
 }
 
-function createCard(parent, charId, character, tokenTypes = []) {
+function createCard(parent, charId, character, tokenTypes = [], charPass) {
   /// XXX: refactor me
   initializeCardCounts(charId, tokenTypes);
   const characterBlock = document.createElement("div");
@@ -49,6 +49,11 @@ function createCard(parent, charId, character, tokenTypes = []) {
 
   characterImg.src = getCharacterPortraitPath(character.name);
   characterImgContainer.appendChild(characterImg);
+  characterImgContainer.addEventListener("click", () => {
+    console.log(`Clicked ${charId}`);
+    charPass.selectedObjects = [GameState.characters[charId].mesh];
+    GameState.selectedCharacter = charId;
+  });
   const cardInfo = document.createElement("div");
   cardInfo.className = "card-info";
   const cardInfoP = document.createElement("p");
@@ -109,7 +114,7 @@ function createCard(parent, charId, character, tokenTypes = []) {
       token.classList.remove("visible");
       token.classList.add("hidden");
       setTimeout(() => {
-        token.src = `${getHoveredPath(tokenType)}`;
+        token.src = `./icon_images/${tokenType}_hover.svg`;
         token.classList.remove("hidden");
       }, 200);
       token.classList.remove("hidden");
@@ -127,7 +132,7 @@ function createCard(parent, charId, character, tokenTypes = []) {
       token.classList.remove("visible");
       token.classList.add("hidden");
       setTimeout(() => {
-        token.src = `./icon_images/${tokenType}_hover.svg`;
+        token.src = `./icon_images/${tokenType}.svg`;
         setTimeout(() => {
           token.classList.remove("hidden");
           token.classList.add("visible");
@@ -145,10 +150,4 @@ function createCard(parent, charId, character, tokenTypes = []) {
   characterBlock.appendChild(cardInfo);
   parent.appendChild(characterBlock);
 }
-export {
-  cardCounts,
-  initializeCardCounts,
-  updateTokenCount,
-  tooltip,
-  createCard,
-};
+export { initializeCardCounts, updateTokenCount, tooltip, createCard };

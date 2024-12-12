@@ -53,6 +53,19 @@ export function createRenderer(scene, camera) {
   hoverPass.hiddenEdgeColor.set("#d9d9d9");
   composer.addPass(hoverPass);
 
+  const charPass = new OutlinePass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    scene,
+    camera
+  );
+  charPass.edgeStrength = 1;
+  charPass.edgeGlow = 1;
+  charPass.edgeThickness = 1;
+  charPass.visibleEdgeColor.set("#ffffff");
+  charPass.hiddenEdgeColor.set("#ffffff");
+
+  composer.addPass(charPass);
+
   const outputPass = new OutputPass();
   composer.addPass(outputPass);
 
@@ -69,6 +82,7 @@ export function createRenderer(scene, camera) {
     renderer: renderer,
     selectionPass: selectionPass,
     hoverPass: hoverPass,
+    charPass: charPass,
     composer: composer,
     interactionManager: interactionManager,
   };
@@ -84,10 +98,11 @@ export function render(cameraControls, spotlightHelper, scheduled_callables) {
 
   const schedule_systems = [];
   for (let callable of scheduled_callables)
-    if (callable(dt))
-      schedule_systems.push(callable)
+    if (callable(dt)) schedule_systems.push(callable);
 
   composer.render();
   stats.update();
-  requestAnimationFrame(() => render(cameraControls, spotlightHelper, scheduled_callables));
+  requestAnimationFrame(() =>
+    render(cameraControls, spotlightHelper, scheduled_callables)
+  );
 }

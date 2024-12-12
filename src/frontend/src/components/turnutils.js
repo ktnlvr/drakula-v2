@@ -2,22 +2,29 @@ import { matchEndScene } from "./winandloss";
 
 //This function needs to be integrated into a bigger game loop this is the part i had to do.
 export function myloop(gamestate) {
-  if (isEndGame(gamestate)) {
-    return true;
+  for (const element of gamestate.characters) {
+    element.resetMoves();
+    if (isEndGame(gamestate)) {
+      return true;
+    }
+    moveDracula(gamestate);
+    if (hasWorldReachedDestructionLimit(gamestate)) matchEndScene("loss");
+    if (isEndGame(gamestate)) {
+      return true;
+    }
+    return false;
   }
-  moveDracula(gamestate); //This is stupid path decider add wangs function here.
-  if (hasWorldReachedDestructionLimit(gamestate)) matchEndScene("loss");
-  if (isEndGame(gamestate)) {
-    return true;
-  }
-  return null;
 }
 
 // Checks if the game has reached its end condition.
 // Returns true if any player shares the same airport as Dracula.
 export function isEndGame(gamestate) {
-  for (const element of gamestate.characters) {
-    if (element.airport.name === gamestate.dracula.airport.name) return true;
+  for (let i = 0; i < gamestate.characters.length; i++) {
+    const element = gamestate.characters[i];
+    if (element.airport.name === gamestate.dracula.airport.name) {
+      gamestate.battleCharacter = i;
+      return true;
+    }
   }
   return false;
 }

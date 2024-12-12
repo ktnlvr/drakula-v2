@@ -8,33 +8,43 @@ import CameraControls from "camera-controls";
 import { GameState, createCharacters } from "./components/gameState";
 import { createDie, startDiceRound, rollDice } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
-import { characterDeath } from "./components/chardeath";
-import { logInfo } from "./components/logger";
-import { matchEndScene } from "./components/winandloss";
-import { createCard, cardCounts } from "./components/cards";
+import { createCard } from "./components/cards";
 import { myloop } from "./components/turnutils";
-import { log } from "three/webgpu";
+import { matchEndScene } from "./components/winandloss";
+import { logInfo } from "./components/logger";
+import { characterDeath } from "./components/chardeath";
 
 const scene = new THREE.Scene();
 const camera = createCamera();
-const { renderer, selectionPass, hoverPass, composer, interactionManager } =
-  createRenderer(scene, camera);
-
-let TESTING_DICE = false;
+const {
+  renderer,
+  selectionPass,
+  hoverPass,
+  charPass,
+  composer,
+  interactionManager,
+} = createRenderer(scene, camera);
 
 function createCharacterCards() {
   const characters = document.querySelector("#characters");
   for (let i = 0; i < GameState.characters.length; i++) {
     const character = GameState.characters[i];
-    createCard(characters, i, character, ["ticket", "stake", "garlic"]);
+    createCard(
+      characters,
+      i,
+      character,
+      ["ticket", "stake", "garlic"],
+      charPass
+    );
   }
 }
 
 async function setupGame(scene) {
   const { ambientLight, spotlight } = setupLights(scene);
   const spotlightHelper = new THREE.SpotLightHelper(spotlight);
-  setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
+  //setupGui(ambientLight, spotlight, spotlightHelper, renderer, scene);
   scene.add(spotlightHelper);
+  spotlightHelper.visible = false;
 
   createTable(scene);
 
@@ -46,10 +56,37 @@ async function setupGame(scene) {
 
   window.GameState = GameState;
 
-  if (TESTING_DICE) {
-    console.log(cameraControls.getPosition());
+  const { globeGroup } = await createGlobe(
+    interactionManager,
+    selectionPass,
+    hoverPass
+  );
+  createCharacters(globeGroup);
+  scene.add(globeGroup);
+  createCharacterCards();
+  GameState.markAirport(8, true);
+  GameState.markAirport(7, true);
+  GameState.markAirport(3, true);
 
-    const diceModels = new THREE.Group();
+  render(cameraControls, spotlightHelper, scheduledCallables);
+
+  return { globeGroup, cameraControls, scheduledCallables };
+}
+
+const { globeGroup, cameraControls, scheduledCallables } = await setupGame(
+  scene
+);
+
+async function changeScene(globeGroup, cameraControls) {
+  const diceModels = new THREE.Group();
+  if (GameState.scene === "Battle") {
+    globeGroup.visible = false;
+    diceModels.visible = true;
+    document.querySelector(".end-turn-container").classList.add("hidden");
+    document.querySelector(".logger-box").classList.add("hidden");
+    document.getElementById("characters").classList.add("hidden");
+    document.querySelector(".betting-overlay").classList.remove("hidden");
+
     let dice = [];
     let n = 6;
     for (let i = 0; i < n; i++) {
@@ -71,50 +108,47 @@ async function setupGame(scene) {
     diceModels.position.set(0, 20, 0);
 
     scene.add(diceModels);
-    await cameraControls.setLookAt(
-      camera.position.x,
-      camera.position.y,
-      camera.position.z,
-      diceModels.position.x,
-      diceModels.position.y,
-      diceModels.position.z
-    );
+    cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
 
-    await startDiceRound(6, dice);
-  } else {
-    const { globeGroup } = await createGlobe(
-      interactionManager,
-      selectionPass,
-      hoverPass
-    );
-    createCharacters(globeGroup);
-    scene.add(globeGroup);
-    createCharacterCards();
-  }
+    await startDiceRound(6, dice, (reason) => {
+      GameState.scene = "Overworld";
+      changeScene(globeGroup, cameraControls);
+      if (reason == "playerDead") {
+        logInfo("Your character has fallen to the Dracula");
+        const char = GameState.battleCharacter;
+        characterDeath(document.querySelector(`[char-id="${char}"]`));
+        scene.remove(GameState.characters[char].mesh);
+        GameState.characters.splice(char, 1);
 
-  render(cameraControls, spotlightHelper, scheduledCallables);
-  /* Example actions
-  logInfo("Hello this is a fucking cat.");
-  matchEndScene("loss");
-  characterDeath(document.querySelector('[char-id="2"]'));
-  */
-  document.querySelector(".end-turn-button").addEventListener("click", () => {
-    if (GameState.scene === "Overworld") {
-      if (myloop(GameState)) {
-        cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
-      } else {
-        cameraControls.setLookAt(0, 80, 99, 0, 60, 0, true);
+        if (GameState.characters.length == 0) {
+          matchEndScene("loss");
+        }
+      } else if (reason == "draculaDead") {
+        matchEndScene("win");
       }
-    }
-  });
-  logInfo("It displays the logs with current time attached to it.");
-  logInfo("It also has a spooky-text effect when it appears.");
-  logInfo(
-    "The logger also handles overflows so you can scroll and see the logs from before and not loss them."
-  );
+    });
+  } else if (GameState.scene === "Overworld") {
+    globeGroup.visible = true;
+    diceModels.visible = false;
+    cameraControls.setLookAt(0, 80, 99, 0, 60, 0, true);
+    document.querySelector(".end-turn-container").classList.remove("hidden");
+    document.querySelector(".betting-overlay").classList.add("hidden");
+    document.getElementById("characters").classList.remove("hidden");
+    document.querySelector(".logger-box").classList.remove("hidden");
+  }
 }
 
-setupGame(scene);
+document.querySelector(".end-turn-button").addEventListener("click", () => {
+  if (GameState.scene === "Overworld") {
+    if (myloop(GameState)) {
+      GameState.scene = "Battle";
+      changeScene(globeGroup, cameraControls);
+    } else {
+      GameState.scene = "Overworld";
+      changeScene(globeGroup, cameraControls);
+    }
+  }
+});
 
 window.addEventListener(
   "resize",

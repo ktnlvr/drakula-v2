@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
 
 :root {
   --character-plaque-text: #fafff3;
@@ -76,9 +76,6 @@ body {
 
 .card-info-hunter-name {
   font-size: larger;
-}
-
- {
   padding: 4px 12px;
   height: auto;
   background-color: var(--character-plaque-name);
@@ -107,7 +104,6 @@ body {
   content: attr(data-tooltip);
   position: absolute;
   opacity: 0;
-  visibility: ;
   color: bisque;
   background-color: rgba(241, 54, 40, 0.7);
   padding: 5px;
@@ -145,5 +141,5 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
