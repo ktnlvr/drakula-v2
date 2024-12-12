@@ -99,7 +99,7 @@ function updateCurrentBetDisplay() {
 }
 
 function hideBettingOptions() {
-  document.getElementById("betting-options").classList.add(["hidden"]);
+  document.getElementById("betting-options").classList.add("hidden");
 }
 
 // Shows and refreshes the betting options
@@ -112,10 +112,12 @@ function showBettingOptions() {
 
   if (diceState.bet[1] == 6) {
     if (betBumpValue && betBumpBoth) {
-      betBumpValue.remove();
-      betBumpBoth.remove();
+      betBumpValue.classList.add("hidden");
+      betBumpBoth.classList.add("hidden");
     }
   } else {
+    betBumpValue.classList.remove("hidden");
+    betBumpBoth.classList.remove("hidden")
     betBumpValue.innerText = diceToString(n, m + 1);
     betBumpBoth.innerText = diceToString(n + 1, m + 1);
   }
