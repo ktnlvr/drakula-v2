@@ -145,11 +145,8 @@ export async function createGlobe(
           airportMesh.name = index;
           interactionManager.add(airportMesh);
           airportMesh.addEventListener("mousedown", (event) => {
-            console.log(
-              "Selected airport: N.",
-              GameState.airports[airportMesh.name].name
-            );
-            if (GameState.selectedCharacter) {
+            console.log("Selected airport: N.", airportMesh.name);
+            if (GameState.selectedCharacter !== null) {
               GameState.characters[GameState.selectedCharacter].setAirport(
                 airportMesh.name
               );
