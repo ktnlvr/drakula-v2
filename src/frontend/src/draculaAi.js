@@ -146,6 +146,12 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
         }
     }
 
-    //console.log(`Dracula current chosen number: ${chosenNumber}, chosen value: ${chosenValue}`);
+    // Reduce the aggression
+    if (playerDiceCount < draculaDice.length) {
+        if (action === 'call') {
+            action = ['call', 'bumpNumber', 'bumpValue', 'bumpValueAndNumber'][Math.floor(Math.random() * 4)]
+        }
+    }
+
     return action;
 }
