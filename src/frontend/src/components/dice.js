@@ -319,6 +319,8 @@ export async function rollDice(dice = [], mode = "nowait") {
     await promises[i];
     dice[i].stop();
   }
+
+  diceState.dice.player = dice.map((dice) => dice.face + 1);
 }
 
 export async function startDiceRound(
