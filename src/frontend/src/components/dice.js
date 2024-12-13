@@ -1,8 +1,9 @@
-import { easeInQuart, randomPointOnSphere, sleep, sleepActive } from "./utils";
+import { easeInQuart, randomPointOnSphere, sleep, sleepActive, $ } from "./utils";
 import { draculaDecide } from "../draculaAi";
 
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
+import { GameState } from "./gameState";
 
 const DICE_FACE_ROTATIONS_EULER = [
   // I just tested it for different values until it worked
@@ -104,20 +105,40 @@ function diceToString(n, m) {
 }
 
 function updateCurrentBetDisplay() {
-  let currentBet = document.getElementById("current-bet");
+  let currentBet = $("#current-bet");
   currentBet.textContent = "Current bet: " + diceToString(...diceState.bet);
 }
 
-function hideBettingOptions() {
-  document.getElementById("betting-options").classList.add("hidden");
+function hideBattleOptions() {
+  $("#battle-options").classList.add("hidden");
 }
 
 // Shows and refreshes the betting options
-function showBettingOptions() {
-  document.getElementById("betting-options").classList.remove("hidden");
-  const betBumpValue = document.getElementById("bet-bump-value");
-  const betBumpNumber = document.getElementById("bet-bump-number");
-  const betBumpBoth = document.getElementById("bet-bump-both");
+function showBattleOptions() {
+  $("#battle-options").classList.remove("hidden");
+  const betBumpValue = $("#bet-bump-value");
+  const betBumpNumber = $("#bet-bump-number");
+  const betBumpBoth = $("#bet-bump-both");
+
+  const useStake = $("#use-stake");
+  const useGarlic = $("#use-garlic");
+
+  const character = GameState.getBattleCharacter();
+
+  if (character.garlics) {
+    useGarlic.classList.remove("hidden");
+    $("#stake-count").textContent = 'x' + character.garlics;
+  } else {
+    useGarlic.classList.add("hidden");
+  }
+
+  if (character.stakes) {
+    useStake.classList.remove("hidden");
+    $("#stake-count").textContent = 'x' + character.stakes;
+  } else {
+    useStake.classList.add("hidden");
+  }
+
   const [n, m] = diceState.bet;
 
   if (diceState.bet[1] == 6) {
@@ -135,12 +156,16 @@ function showBettingOptions() {
   betBumpNumber.innerText = diceToString(n + 1, m);
 }
 
-const thinkingPlaceholder = document.getElementById("bet-status");
+const battleStatus = $("#bet-status");
 
 // Used to report Dracula thinking as well as good and bad bet calls
-function setBetStatus(status) {
-  thinkingPlaceholder.classList.remove("hidden");
-  thinkingPlaceholder.innerText = status;
+function setBattleStatus(status) {
+  battleStatus.classList.remove("hidden");
+  if (diceState.stakeActive)
+    battleStatus.innerText = "Stake is active.\n"
+  else
+    battleStatus.innerText = ""
+  battleStatus.innerText += status;
 }
 
 async function draculaThink() {
@@ -154,15 +179,15 @@ async function draculaThink() {
 
   // Display 3 dots while the dracula is thinking, blinking
   // them periodically
-  setBetStatus(".");
+  setBattleStatus(".");
   await sleepActive(
     (i) => {
-      setBetStatus(".".repeat((i % 3) + 1));
+      setBattleStatus(".".repeat((i % 3) + 1));
     },
     UPDATE_INTERVAL,
     DRACULA_THINKING_TIME
   );
-  thinkingPlaceholder.classList.add("hidden");
+  battleStatus.classList.add("hidden");
 
   let choices = { 'bumpValue': betBumpValue, 'bumpNumber': betBumpNumber, 'bumpValueAndNumber': betBumpBoth, 'call': callOut };
 
@@ -243,7 +268,7 @@ async function removeDice(loser_idx) {
 
 async function callOut() {
   const isPlayerTurn = diceState.turn == PLAYER;
-  if (isPlayerTurn) hideBettingOptions();
+  if (isPlayerTurn) hideBattleOptions();
 
   console.log(diceState.turn + " calls!");
   const [n, m] = diceState.bet;
@@ -261,33 +286,45 @@ async function callOut() {
   );
 
   // The bet is safe if there is not less dice with the face value `m`
-  let is_bet_safe = N >= n;
+  let isBetSafe = N >= n;
 
   // Is Dracula's Turn? | Is The Bet Safe? | Who loses the dice?
   //        No          |       No         |        Player
   //        No          |       Yes        |        Dracula
   //        Yes         |       No         |        Dracula
   //        Yes         |       Yes        |        Player
-  let loser_idx = (diceState.turn == DRACULA) ^ is_bet_safe ? PLAYER : DRACULA;
+  let loserIdx = (diceState.turn == DRACULA) ^ isBetSafe ? PLAYER : DRACULA;
+
+  let diceLost = 1;
+  if (diceState.stakeActive)
+    diceLost++;
 
   // TODO: refactor me
   let betStatus = "undefined";
   if (isPlayerTurn)
-    if (loser_idx == DRACULA)
-      betStatus = `Good call. Dracula has ${diceState.dice[DRACULA].length - 1
-        } left.`;
-    else betStatus = "Poor call";
-  else if (loser_idx == PLAYER)
-    betStatus = "Dracula calls you out. Lose a dice";
-  // Just wanted to sneak in a Harry Potter reference
+    if (loserIdx == DRACULA)
+      betStatus = `Good call. Dracula has ${diceState.dice[DRACULA].length - diceLost
+        } left. `;
+    else betStatus = "Poor call. ";
+  else if (loserIdx == PLAYER)
+    betStatus = "Dracula called your bluff. Lose a dice. ";
   else
     betStatus = `Dracula called and lost, he has ${diceState.dice[DRACULA].length - 1
-      } left.`;
+      } left. `;
 
-  setBetStatus(betStatus);
+  console.log(diceState.stakeActive)
+  if (isPlayerTurn && diceState.stakeActive)
+    if (loserIdx === DRACULA)
+      betStatus += "\nThe stake worked!";
+    else if (loserIdx === PLAYER)
+      betStatus += "\nThe stake was wasted.";
+
+  setBattleStatus(betStatus);
+  diceState.stakeActive = false;
 
   // Remove the dice from the respective player
-  await removeDice(loser_idx);
+  for (let i = 0; i < diceLost; i++)
+    await removeDice(loserIdx);
 
   if (diceState.dice[DRACULA].length <= 0) {
     diceState.onGameEnd("draculaDead");
@@ -307,7 +344,7 @@ async function callOut() {
 
   diceState.bet = draculaSetStartingBet();
   updateCurrentBetDisplay();
-  if (isPlayerTurn) showBettingOptions();
+  if (isPlayerTurn) showBattleOptions();
 }
 
 // Q: Why use a mode argument instead of just a boolean?
@@ -363,41 +400,58 @@ export async function startDiceRound(
   console.log(diceState);
 
   diceState.turn = PLAYER;
-  showBettingOptions();
+  showBattleOptions();
   updateCurrentBetDisplay();
 
   diceState.onGameEnd = onGameEnd;
 
   // Returns a function that handles all the setup and teardown
   // for making a bet for a given `action`
-  function betActionFactory(action) {
+  function actionFactory(action) {
     async function wrapped() {
       // If it's not the player's turn, don't react to buttons
       if (diceState.turn !== PLAYER) return;
       // Do the action
       await action();
       // Hide the buttons after one is clicked
-      hideBettingOptions();
+      hideBattleOptions();
       // Move the turn over to Dracula
       diceState.turn = DRACULA;
       await draculaThink();
       // Return turn back to the player
       diceState.turn = PLAYER;
-      showBettingOptions();
+      showBattleOptions();
     }
 
     return wrapped;
   }
 
-  document.getElementById("bet-bump-value").onclick =
-    betActionFactory(betBumpValue);
-  document.getElementById("bet-bump-number").onclick =
-    betActionFactory(betBumpNumber);
-  document.getElementById("bet-bump-both").onclick =
-    betActionFactory(betBumpBoth);
-  document.getElementById("bet-call").onclick = async () => {
+  $("#bet-bump-value").onclick =
+    actionFactory(betBumpValue);
+  $("#bet-bump-number").onclick =
+    actionFactory(betBumpNumber);
+  $("#bet-bump-both").onclick =
+    actionFactory(betBumpBoth);
+  $("#use-garlic").onclick = async () => {
+    /// XXX: hook garlic into here
+  }
+  $("#use-stake").onclick = async () => {
     if (diceState.turn !== PLAYER) return;
+    let character = GameState.getBattleCharacter();
+    if (!character.stakes) return;
 
+    if (diceState.stakeActive) {
+      setBattleStatus("Can't use more than 1 stake at a time");
+      return;
+    }
+
+    diceState.stakeActive = true;
+    character.stakes--;
+    setBattleStatus("");
+    showBattleOptions();
+  }
+  $("#bet-call").onclick = async () => {
+    if (diceState.turn !== PLAYER) return;
     await callOut();
   };
 }

@@ -28,3 +28,10 @@ export async function sleepActive(callable, interval_s = 0, t_s = 0) {
         resolve();
     }, 1000 * t_s))
 }
+
+// Not actual jquery, just makes stuff shorter
+export function $(selector) {
+    if (!(selector.startsWith('.') || selector.startsWith('#')))
+        console.log("Oh? Are you sure you are using the selector correctly? You are selecting " + selector);
+    return document.querySelector(selector);
+}
