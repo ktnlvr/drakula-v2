@@ -26,9 +26,13 @@
     font-weight: bold;
 }
 
-.betting-option:hover {
+.battle-option:hover {
     color:beige;
     text-shadow: beige 0px 0 20px;
+}
+
+.battle-option-image {
+    height: 40px;
 }
 
 .bet-status {

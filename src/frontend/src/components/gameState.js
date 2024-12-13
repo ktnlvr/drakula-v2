@@ -23,6 +23,7 @@ export const GameState = {
         (connection[0] === to && connection[1] === from)
     );
   },
+
   markAirport(airport, isMarked = false) {
     if (isMarked) {
       this.airports[airport].material.color.set("#fffe32");
@@ -30,6 +31,12 @@ export const GameState = {
       this.airports[airport].material.color.set("#414141");
     }
   },
+
+  getBattleCharacter() {
+    console.log(this.characters);
+    console.log(this.battleCharacter);
+    return this.characters[this.battleCharacter]
+  }
 };
 
 const CHARACTER_NAMES = [
@@ -64,6 +71,7 @@ export class Character {
     this.mesh = this.createMesh();
     this.updatePosition();
     this.name = getRandomCharacterName();
+
     // characters a semi-balanced, since all stats often add up to
     // some fixed number, this is some real 3am mathemagic
     // Conjecturally, gives a uniform
@@ -73,6 +81,10 @@ export class Character {
       Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
     this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
     this.totalMoves = this.haste;
+    
+    this.garlics = 0;
+    this.stakes = 0;
+    this.tickets = 0;
   }
 
   resetMoves() {
