@@ -140,6 +140,13 @@ body {
   width: 24px;
 }
 
+.stat-value{
+  margin: 0;
+  display: inline;
+  padding: 5px;
+  color:#fafff3;
+}
+
 .hidden {
   display: none !important;
 }

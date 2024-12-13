@@ -1,3 +1,5 @@
+import { GameState } from "./gameState";
+
 const cardCounts = {};
 
 function initializeCardCounts(charId, tokenTypes) {
@@ -36,6 +38,14 @@ function getCharacterPortraitPath(name) {
   return `/portraits/${name.toLowerCase().replaceAll(" ", "-")}.png`;
 }
 
+export default function updateMovesInUI() {
+  const cards = document.querySelectorAll("#haste");
+  console.log("Changing the moves of all the characters.");
+  GameState.characters.forEach((char, index) => {
+    cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`
+  })
+}
+
 function createCard(parent, charId, character, tokenTypes = [], charPass) {
   /// XXX: refactor me
   initializeCardCounts(charId, tokenTypes);
@@ -62,11 +72,12 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
     <span class="card-info-hunter-name">${character.name}</span>
     <br>
     <span class="stats">
-      <img class="stat-icon" src="/icons/capacity.svg">${character.capacity} 
-      <img class="stat-icon" src="/icons/edge.svg">${character.edge} 
-      <img class="stat-icon" src="/icons/haste.svg">${character.haste}
+      <img class="stat-icon" src="/icons/capacity.svg"><p class="stat-value">${character.capacity}</p>
+      <img class="stat-icon" src="/icons/edge.svg"><p class="stat-value">${character.edge}</p>
+      <img class="stat-icon" src="/icons/haste.svg"><p class="stat-value" id="haste">(${character.haste}/${character.haste})</p>
     </span>
   `;
+  console.log(character.edge)
 
   const cardInfoToken = document.createElement("div");
   cardInfoToken.className = "card-info-plaque";

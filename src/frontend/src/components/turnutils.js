@@ -1,6 +1,5 @@
 import { matchEndScene } from "./winandloss";
 
-//This function needs to be integrated into a bigger game loop this is the part i had to do.
 export function myloop(gamestate) {
   for (const element of gamestate.characters) {
     element.resetMoves();
