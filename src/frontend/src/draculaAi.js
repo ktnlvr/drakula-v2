@@ -2,23 +2,21 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
     let [chosenNumber, chosenValue] = bet; // Get current values
     let totalDice = draculaDice.length + playerDiceCount;
     let halfDice = totalDice / 2;
-    const potentialAction = Math.random();
     let bumpValue = false;
     let bumpNumber = false;
     let call = false;
-    let draculaNumber = draculaDice.filter(value => value === chosenValue).length;
 
     function draculaMoreDice() {
         // Dracula has more dice - more confident to bump values or numbers, dice number max 8 min 3
         if (chosenValue < 4 && chosenNumber < halfDice) {
             //chosen number max 4 min 1
-            if (chosenNumber >= halfDice - 3 && potentialAction < 0.7) {
+            if (chosenNumber >= halfDice - 3 && Math.random() < 0.7) {
                 // chosenNumber max 1 bump number or not meet
                 bumpNumber = true;
             } else if (chosenNumber >= halfDice - 2) {
                 // chosenNumber max 2 bump number or not meet
                 bumpNumber = true;
-            } else if (chosenNumber >= halfDice - 1 && potentialAction < 0.9) {
+            } else if (chosenNumber >= halfDice - 1 && Math.random() < 0.9) {
                 // chosenNumber max 3 bump number or not meet
                 bumpNumber = true;
             } else {
@@ -26,15 +24,15 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
                 bumpValue = true;
                 bumpNumber = true;
             }
-        } else if (chosenValue < 4 && chosenNumber >= halfDice && potentialAction < 0.6) {
+        } else if (chosenValue < 4 && chosenNumber >= halfDice && Math.random() < 0.6) {
             //chosen number max 5 min 2
-            if (chosenNumber <= halfDice + 1 && potentialAction < 0.6) {
+            if (chosenNumber <= halfDice + 1 && Math.random() < 0.6) {
                 // chosenNumber max 4 bump number or not meet
                 bumpValue = true;
             } else if (chosenNumber <= halfDice + 2) {
                 // chosenNumber max 5 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 3 && potentialAction < 0.9) {
+            } else if (chosenNumber <= halfDice + 3 && Math.random() < 0.9) {
                 // chosenNumber max 6 bump number or not meet
                 bumpValue = true;
             } else {
@@ -43,13 +41,13 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
             }
         } else if (chosenValue >= 4 && chosenNumber < halfDice) {
             //chosen number max 4 min 1, Value max 6 min 4
-            if (chosenNumber >= halfDice - 3 && potentialAction < 0.6) {
+            if (chosenNumber >= halfDice - 3 && Math.random() < 0.6) {
                 // chosenNumber max 1 bump number or not meet
                 bumpNumber = true;
             } else if (chosenNumber >= halfDice - 2) {
                 // chosenNumber max 2 bump number or not meet
                 bumpNumber = true;
-            } else if (chosenNumber >= halfDice - 1 && potentialAction < 0.9) {
+            } else if (chosenNumber >= halfDice - 1 && Math.random() < 0.9) {
                 // chosenNumber max 3 bump number or not meet
                 bumpNumber = true;
             } else {
@@ -59,13 +57,13 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
             }
         } else if (chosenValue >= 4 && chosenNumber >= halfDice) {
             //chosen number max 5 min 2
-            if (chosenNumber <= halfDice + 1 && potentialAction < 0.3) {
+            if (chosenNumber <= halfDice + 1 && Math.random() < 0.3) {
                 // chosenNumber max 4 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 2 && potentialAction < 0.4) {
+            } else if (chosenNumber <= halfDice + 2 && Math.random() < 0.4) {
                 // chosenNumber max 5 bump number or not meet
                 bumpValue = true;
-            } else if (chosenNumber <= halfDice + 3 && potentialAction < 0.8) {
+            } else if (chosenNumber <= halfDice + 3 && Math.random() < 0.8) {
                 // chosenNumber max 6 bump number or not meet
                 bumpValue = true;
             } else {
@@ -76,50 +74,43 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
             call = true;
         }
     }
+
     // Less dice drakula less bump
     function drakulaEqualOrLessDice() {
-        if (potentialAction < 0.4) {
-            call = true; // Call more often in a defensive stance
-        } else if (chosenValue <= 3 && potentialAction < 0.5) {
+        if (chosenValue <= 3 && Math.random() < 0.5) {
             bumpValue = true;
-        } else if (chosenNumber < totalDice && potentialAction < 0.9) {
+        } else if (chosenNumber < totalDice && Math.random() < 0.9) {
             bumpNumber = true;
         } else {
             call = true; // Fall back to calling if no other option is favorable
         }
     }
 
-    if (chosenNumber < draculaNumber) {
-        // When Dracula has more Dice
-        if (draculaDice.length > playerDiceCount) {
-            draculaMoreDice();
-            // When Dracula has fewer or equal number of dices than player
-        } else {
-            drakulaEqualOrLessDice();
-        }
-    } else if (chosenNumber === draculaNumber && potentialAction < 0.7) {
-        // When Dracula has more Dice
-        if (draculaDice.length > playerDiceCount) {
-            draculaMoreDice();
-            // When Dracula has fewer or equal number of dices than player
-        } else {
-            drakulaEqualOrLessDice();
-        }
+    if (draculaDice.length > playerDiceCount) {
+        draculaMoreDice();
     } else {
-        call = true;
+        drakulaEqualOrLessDice();
     }
 
-    let action = null;
+    let actionPool = [];
     if (call) {
-        action = 'call';
+        actionPool.push('call');
     } else if (bumpValue && bumpNumber) {
-        action = 'bumpValueAndNumber';
+        actionPool.push('bumpValueAndNumber');
     } else if (bumpValue) {
-        action = 'bumpValue';
+        actionPool.push('bumpValue');
     } else if (bumpNumber) {
-        action = 'bumpNumber';
-    } else {
-        action = 'call';
+        actionPool.push('bumpNumber');
+    }
+
+    let action = 'call';
+    if (actionPool) {
+        action = actionPool[Math.floor(Math.random() * actionPool.length)]
+    }
+
+    // Vary the strategy a little sometimes
+    if (action === 'call' && Math.random() < 0.1) {
+        action = ['bumpNumber', 'bumpValue', 'bumpValueAndNumber'][Math.floor(Math.random() * 3)]
     }
 
     // Handle the actions
@@ -147,11 +138,38 @@ export function draculaDecide(draculaDice, playerDiceCount, bet) {
     }
 
     // Reduce the aggression
-    if (playerDiceCount < draculaDice.length) {
-        if (action === 'call') {
-            action = ['call', 'bumpNumber', 'bumpValue', 'bumpValueAndNumber'][Math.floor(Math.random() * 4)]
-        }
-    }
-
     return action;
 }
+
+
+// Code for trialing the Dracula's strategy
+// If we ever come around to implementing proper debugging features
+// or debug layers this is where it would go
+/*
+
+const decisions = { 'call': 0, 'bumpValue': 0, 'bumpNumber': 0, 'bumpValueAndNumber': 0}
+let trials = 0;
+
+for(let i = 1; i <= 6; i++) {
+    for (let j = 1; i <= 6; i++) {
+        for (let k = 0; k < 100000; k++) {
+            const bet = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
+            const draculaDice = []
+            for (let s = 0; s < j; s++)
+                draculaDice.push(Math.floor(Math.random() * 6) + 1);
+
+            const decision = draculaDecide(draculaDice, i, bet);
+            decisions[decision]++;
+            trials++;
+        }
+    }
+}
+
+console.log(trials)
+for (const [key, value] of Object.entries(decisions)) {
+    decisions[key] = Math.round(10000 * value / trials) / 100
+}
+
+console.log(decisions)
+
+*/
