@@ -17,8 +17,6 @@ function updateTokenCount(token) {
   const p = token.nextElementSibling;
   const tokenId = token.getAttribute("token-no");
   cardCounts[characterId][tokenId] += 1;
-  console.log(`The new value is ${cardCounts[characterId][tokenId]}`);
-  console.log("Decrement here and add changes according to yourself.");
   p.textContent = `x${cardCounts[characterId][tokenId]}`;
 }
 
@@ -42,9 +40,100 @@ export default function updateMovesInUI() {
   const cards = document.querySelectorAll("#haste");
   console.log("Changing the moves of all the characters.");
   GameState.characters.forEach((char, index) => {
-    cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`
+    cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`;
+  });
+}
+
+export function removeAllCharEventListeners() {
+  const characters = document.querySelectorAll("#character-block");
+  characters.forEach((character, index) => {
+    removeCharEventListeners(character);
   })
 }
+
+export function addAllCharEventListeners() {
+  const characters = document.querySelectorAll("#character-block");
+  characters.forEach((character, index) => {
+    addCharEventListeners(character);
+  })
+}
+
+export function addCharEventListeners(char) {
+  const charImg = char.querySelector(".character-img");
+  const tokenImages = char.querySelectorAll(".token-img");
+
+  if (charImg) charImg.addEventListener("click", handleCharacterImgClick);
+  tokenImages.forEach((tokenImage) => {
+    tokenImage.addEventListener("click", handleTokenClick);
+    tokenImage.addEventListener("mouseenter", handleMouseEnterToken);
+    tokenImage.addEventListener("mousemove", handleMouseMoveToken);
+    tokenImage.addEventListener("mouseleave", handleMouseLeaveToken);
+  });
+}
+
+export function removeCharEventListeners(char) {
+  const charImg = char.querySelector(".character-img");
+  const tokenImages = char.querySelectorAll(".token-img");
+  console.log(charImg, tokenImages);
+
+  if (charImg) charImg.removeEventListener("click", handleCharacterImgClick);
+  tokenImages.forEach((tokenImage) => {
+    tokenImage.removeEventListener("click", handleTokenClick);
+    tokenImage.removeEventListener("mouseenter", handleMouseEnterToken);
+    tokenImage.removeEventListener("mousemove", handleMouseMoveToken);
+    tokenImage.removeEventListener("mouseleave", handleMouseLeaveToken);
+  });
+}
+
+const handleCharacterImgClick = (charId, charPass) => {
+  if (GameState.characters[charId]) {
+    console.log(`Clicked ${charId}`);
+    charPass.selectedObjects = [GameState.characters[charId].mesh];
+    GameState.selectedCharacter = charId;
+  }
+};
+
+const handleTokenClick = (tokenType, charId, index) => {
+  console.log(
+    `Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1}`
+  );
+};
+
+const handleMouseEnterToken = (token, tooltipDiv, tokenType, e) => {
+  token.classList.remove("visible");
+  token.classList.add("hidden");
+  setTimeout(() => {
+    token.src = `./icon_images/${tokenType}_hover.svg`;
+    token.classList.remove("hidden");
+  }, 200);
+  token.classList.remove("hidden");
+  token.classList.add("visible");
+  document.body.appendChild(tooltipDiv);
+  tooltipDiv.style.visibility = "visible";
+  tooltipDiv.style.top = `${e.clientY + 10}px`;
+  tooltipDiv.style.left = `${e.clientX + 10}px`;
+};
+
+const handleMouseMoveToken = (tooltipDiv, e) => {
+  tooltipDiv.style.top = `${e.clientY + 10}px`;
+  tooltipDiv.style.left = `${e.clientX + 10}px`;
+};
+
+const handleMouseLeaveToken = (token, tooltip, tooltipDiv, tokenType) => {
+  token.classList.remove("visible");
+  token.classList.add("hidden");
+  setTimeout(() => {
+    token.src = `./icon_images/${tokenType}.svg`;
+    setTimeout(() => {
+      token.classList.remove("hidden");
+      token.classList.add("visible");
+    }, 50);
+  }, 200);
+  token.classList.remove("hidden");
+  token.classList.add("visible");
+  tooltipDiv.style.visibility = "hidden";
+  document.body.removeChild(tooltipDiv);
+};
 
 function createCard(parent, charId, character, tokenTypes = [], charPass) {
   /// XXX: refactor me
@@ -59,11 +148,9 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
 
   characterImg.src = getCharacterPortraitPath(character.name);
   characterImgContainer.appendChild(characterImg);
-  characterImgContainer.addEventListener("click", () => {
-    console.log(`Clicked ${charId}`);
-    charPass.selectedObjects = [GameState.characters[charId].mesh];
-    GameState.selectedCharacter = charId;
-  });
+  characterImgContainer.addEventListener("click", () =>
+    handleCharacterImgClick(charId, charPass)
+  );
   const cardInfo = document.createElement("div");
   cardInfo.className = "card-info";
   const cardInfoP = document.createElement("p");
@@ -77,7 +164,7 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
       <img class="stat-icon" src="/icons/haste.svg"><p class="stat-value" id="haste">(${character.haste}/${character.haste})</p>
     </span>
   `;
-  console.log(character.edge)
+  console.log(character.edge);
 
   const cardInfoToken = document.createElement("div");
   cardInfoToken.className = "card-info-plaque";
@@ -90,14 +177,9 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
 
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
-    token.addEventListener("click", () => {
-      console.log(
-        `Clicked ${tokenType} card for Character ${charId}, Token No: ${
-          index + 1
-        }`
-      );
-      updateTokenCount(token);
-    });
+    token.addEventListener("click", () =>
+      handleTokenClick(tokenType, charId, index)
+    );
 
     const tokenCount = document.createElement("p");
     tokenCount.classList.add("card-count");
@@ -121,39 +203,15 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
     tooltipDiv.style.fontSize = "12px";
     tooltipDiv.style.whiteSpace = "nowrap";
     tooltipDiv.style.pointerEvents = "none";
-    token.addEventListener("mouseenter", (e) => {
-      token.classList.remove("visible");
-      token.classList.add("hidden");
-      setTimeout(() => {
-        token.src = `./icon_images/${tokenType}_hover.svg`;
-        token.classList.remove("hidden");
-      }, 200);
-      token.classList.remove("hidden");
-      token.classList.add("visible");
-      document.body.appendChild(tooltipDiv);
-      tooltipDiv.style.visibility = "visible";
-      tooltipDiv.style.top = `${e.clientY + 10}px`;
-      tooltipDiv.style.left = `${e.clientX + 10}px`;
-    });
-    token.addEventListener("mousemove", (e) => {
-      tooltipDiv.style.top = `${e.clientY + 10}px`;
-      tooltipDiv.style.left = `${e.clientX + 10}px`;
-    });
-    token.addEventListener("mouseleave", () => {
-      token.classList.remove("visible");
-      token.classList.add("hidden");
-      setTimeout(() => {
-        token.src = `./icon_images/${tokenType}.svg`;
-        setTimeout(() => {
-          token.classList.remove("hidden");
-          token.classList.add("visible");
-        }, 50);
-      }, 200);
-      token.classList.remove("hidden");
-      token.classList.add("visible");
-      tooltipDiv.style.visibility = "hidden";
-      document.body.removeChild(tooltipDiv);
-    });
+    token.addEventListener("mouseenter", (e) =>
+      handleMouseEnterToken(token, tooltipDiv, tokenType, e)
+    );
+    token.addEventListener("mousemove", (e) =>
+      handleMouseMoveToken(tooltipDiv, e)
+    );
+    token.addEventListener("mouseleave", () =>
+      handleMouseLeaveToken(token, tooltip, tooltipDiv, tokenType)
+    );
   });
   cardInfo.appendChild(cardInfoP);
   cardInfo.appendChild(cardInfoToken);
