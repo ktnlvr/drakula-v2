@@ -31,8 +31,16 @@ export async function fetchAirports(n) {
     }
 
     const connections = [];
+    for (let i = 0; i < airports.length; i++) {
+      let a = Math.floor(Math.random() * airports.length);
+      let b = Math.floor(Math.random() * airports.length);
+      if (a == b)
+        continue;
+      const con = [a + b - Math.min(a, b), a + b - Math.max(a, b)];
+      connections.push(con);
+    }
 
-    console.log(airports);
+    console.log(airports, connections);
 
     return { airports, connections };
   }
