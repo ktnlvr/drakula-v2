@@ -90,7 +90,7 @@ export function removeCharEventListeners(char) {
   });
 }
 
-const handleCharacterImgClick = (charId, charPass) => {
+export const handleCharacterImgClick = (charId, charPass) => {
   if (GameState.characters[charId]) {
     console.log(`Clicked ${charId}`);
     charPass.selectedObjects = [GameState.characters[charId].mesh];
