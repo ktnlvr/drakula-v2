@@ -101,18 +101,9 @@ export class Character {
     if (this.type === "dracula") {
       const geometry = new THREE.CylinderGeometry(0.2, 0.2, 5, 64, 64, true);
       const material = new THREE.ShaderMaterial({
-        vertexShader: draculaVertex,
-        fragmentShader: draculaFragment,
         transparent: true,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        uniforms: {
-          uTime: {
-            get value() {
-              return GameState.timer;
-            },
-          },
-        },
+        opacity: 0,
+        visible: false,
       });
       const mesh = new THREE.Mesh(geometry, material);
 

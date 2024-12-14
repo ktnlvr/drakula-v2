@@ -64,9 +64,6 @@ async function setupGame(scene) {
   createCharacters(globeGroup);
   scene.add(globeGroup);
   createCharacterCards();
-  GameState.markAirport(8, true);
-  GameState.markAirport(7, true);
-  GameState.markAirport(3, true);
 
   render(cameraControls, spotlightHelper, scheduledCallables);
 
