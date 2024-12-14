@@ -1,9 +1,14 @@
+import { GameState } from "./gameState";
+import { globeGroup, cameraControls, changeScene } from "../main";
+
 export const MatchResult = {
   WIN: "win",
   LOSS: "loss",
 };
 
 export function matchEndScene(result) {
+  GameState.scene = "Overworld";
+  changeScene(globeGroup, cameraControls);
   const gameOver = document.getElementById("game-over");
   const gameMsg = document.getElementById("game-result");
   const button = document.getElementById("try-button");

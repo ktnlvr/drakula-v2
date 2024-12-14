@@ -260,14 +260,14 @@ async function removeDice(loser_idx) {
   if (loser_idx == PLAYER) {
     const proxies = diceState.playerDiceProxies;
     const i = Math.floor(Math.random() * proxies.length);
-
+  
     const DICE_REMOVE_ANIMATION_DURATION_S = 0.75;
     const TIMESLICES = 100;
     // XXX: assuming scale is uniform
     const START_SCALE = proxies[i].model.scale[0];
     const dt = DICE_REMOVE_ANIMATION_DURATION_S / TIMESLICES;
     const integrator = { t: 0 };
-
+    GameState.getBattleCharacter().dices--;
     await sleepActive(
       () => {
         const SCALE = START_SCALE * (1 - easeInQuart(integrator.t));
@@ -280,6 +280,10 @@ async function removeDice(loser_idx) {
 
     diceState.playerDiceProxies[i].model.removeFromParent();
     proxies.splice(i, 1);
+  }
+  else
+  {
+    GameState.dracula.dices--;
   }
   // TODO: when Dracula's dice gets removed there is no timeout
   // or animation, so it looks kinda choppy.
@@ -329,7 +333,7 @@ async function callOut() {
     betStatus = "Dracula called your bluff. Lose a dice. ";
   else
     betStatus = `Dracula called and lost, he has ${
-      diceState.dice[DRACULA].length - 1
+      GameState.dracula.dices
     } left. `;
 
   console.log(diceState.stakeActive);
@@ -452,11 +456,11 @@ export async function startDiceRound(
     if (!character.garlics) return;
 
     character.garlics--;
-    GameState.scene = "Overworld";
-    changeScene(globeGroup, cameraControls);
     for (let die of diceState.playerDiceProxies) {
       die.model.removeFromParent();
     }
+    GameState.scene = "Overworld";
+    changeScene(globeGroup, cameraControls);
     diceState.playerDiceProxies = [];
     diceState.dice[PLAYER] = [];
     moveDracula(GameState);

@@ -8,7 +8,7 @@ import CameraControls from "camera-controls";
 import { GameState, createCharacters } from "./components/gameState";
 import { createDie, startDiceRound, rollDice } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
-import { createCard } from "./components/cards";
+import updateMovesInUI, { createCard } from "./components/cards";
 import { myloop } from "./components/turnutils";
 import { matchEndScene } from "./components/winandloss";
 import { logInfo } from "./components/logger";
@@ -88,7 +88,7 @@ export async function changeScene(globeGroup, cameraControls) {
     document.querySelector(".betting-overlay").classList.remove("hidden");
 
     let dice = [];
-    let n = 6;
+    let n = GameState.getBattleCharacter().dices;
     for (let i = 0; i < n; i++) {
       const die = await createDie(scene);
 
@@ -116,7 +116,7 @@ export async function changeScene(globeGroup, cameraControls) {
     cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
     GameState.getBattleCharacter().garlics++;
     console.log("Number of garlic", GameState.getBattleCharacter().garlics);
-    await startDiceRound(6, dice, (reason) => {
+    await startDiceRound(GameState.dracula.dices, dice, (reason) => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
       if (reason == "playerDead") {
@@ -155,6 +155,10 @@ document.querySelector(".end-turn-button").addEventListener("click", () => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
     }
+    GameState.characters.forEach((character) => {
+      character.resetMoves();
+    });
+    updateMovesInUI();
   }
 });
 

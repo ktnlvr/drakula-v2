@@ -82,7 +82,7 @@ export class Character {
       Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
     this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
     this.totalMoves = this.haste;
-    
+    this.dices = 6;
     this.garlics = 0;
     this.stakes = 0;
     this.tickets = 0;
