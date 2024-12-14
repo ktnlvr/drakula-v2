@@ -110,10 +110,10 @@ async def create_game(
     game_id: str, game_data: dict, db: Annotated[Database, Depends(db)]
 ):
     game_exist = db.get_save(game_id)
-    if game_exist:
-        raise HTTPException(status_code=409, detail="Game ID already exists.")
-    db.set_save(game_id, game_data)
-    return {"id": game_id, "data": game_data}
+    if not game_exist:
+        raise HTTPException(status_code=404, detail="Game not found.")
+    db.update_save(game_id, game_data)
+    return {"id": game_id, "data": game_data, "updated": True}
 
 
 @app.get("/game")

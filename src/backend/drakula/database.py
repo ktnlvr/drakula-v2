@@ -47,6 +47,13 @@ class Database:
 
         return cursor.fetchall()
 
+    def update_save(self, game_id, json_data):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "UPDATE games SET `json`=%s WHERE id=%s", (json.dumps(json_data), game_id)
+        )
+        print(f"Game {game_id} updated!")
+
 
 def make_db() -> Optional[Database]:
     db = Database(
