@@ -93,10 +93,11 @@ const handleCharacterImgClick = (charId, charPass) => {
   }
 };
 
-const handleTokenClick = (tokenType, charId, index) => {
+const handleTokenClick = (tokenType, charId, token, index) => {
   console.log(
     `Clicked ${tokenType} card for Character ${charId}, Token No: ${index + 1}`
   );
+  updateTokenCount(token);
 };
 
 const handleMouseEnterToken = (token, tooltipDiv, tokenType, e) => {
@@ -178,7 +179,7 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
     token.setAttribute("token-no", index + 1);
     token.addEventListener("click", () =>
-      handleTokenClick(tokenType, charId, index)
+      handleTokenClick(tokenType, charId, token, index)
     );
 
     const tokenCount = document.createElement("p");

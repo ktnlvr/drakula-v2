@@ -1,9 +1,17 @@
-import { easeInQuart, randomPointOnSphere, sleep, sleepActive, $ } from "./utils";
+import {
+  easeInQuart,
+  randomPointOnSphere,
+  sleep,
+  sleepActive,
+  $,
+} from "./utils";
 import { draculaDecide } from "../draculaAi";
 
+import { changeScene, globeGroup, cameraControls } from "../main";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { GameState } from "./gameState";
+import { moveDracula } from "./turnutils";
 
 const DICE_FACE_ROTATIONS_EULER = [
   // I just tested it for different values until it worked
@@ -127,14 +135,14 @@ function showBattleOptions() {
 
   if (character.garlics) {
     useGarlic.classList.remove("hidden");
-    $("#stake-count").textContent = 'x' + character.garlics;
+    $("#garlic-count").textContent = "x" + character.garlics;
   } else {
     useGarlic.classList.add("hidden");
   }
 
   if (character.stakes) {
     useStake.classList.remove("hidden");
-    $("#stake-count").textContent = 'x' + character.stakes;
+    $("#stake-count").textContent = "x" + character.stakes;
   } else {
     useStake.classList.add("hidden");
   }
@@ -148,7 +156,7 @@ function showBattleOptions() {
     }
   } else {
     betBumpValue.classList.remove("hidden");
-    betBumpBoth.classList.remove("hidden")
+    betBumpBoth.classList.remove("hidden");
     betBumpValue.innerText = diceToString(n, m + 1);
     betBumpBoth.innerText = diceToString(n + 1, m + 1);
   }
@@ -161,10 +169,8 @@ const battleStatus = $("#bet-status");
 // Used to report Dracula thinking as well as good and bad bet calls
 function setBattleStatus(status) {
   battleStatus.classList.remove("hidden");
-  if (diceState.stakeActive)
-    battleStatus.innerText = "Stake is active.\n"
-  else
-    battleStatus.innerText = ""
+  if (diceState.stakeActive) battleStatus.innerText = "Stake is active.\n";
+  else battleStatus.innerText = "";
   battleStatus.innerText += status;
 }
 
@@ -189,7 +195,12 @@ async function draculaThink() {
   );
   battleStatus.classList.add("hidden");
 
-  let choices = { 'bumpValue': betBumpValue, 'bumpNumber': betBumpNumber, 'bumpValueAndNumber': betBumpBoth, 'call': callOut };
+  let choices = {
+    bumpValue: betBumpValue,
+    bumpNumber: betBumpNumber,
+    bumpValueAndNumber: betBumpBoth,
+    call: callOut,
+  };
 
   // Can not bump a value
   if (diceState.bet[1] == 6) {
@@ -197,12 +208,20 @@ async function draculaThink() {
     delete choices.betBumpBoth;
   }
 
-  let choice = draculaDecide(diceState.dice.dracula, diceState.dice.player, diceState.bet);
+  let choice = draculaDecide(
+    diceState.dice.dracula,
+    diceState.dice.player,
+    diceState.bet
+  );
   console.info(choice);
-  console.log(choice)
+  console.log(choice);
   if (!(choice in choices)) {
-    console.warn("Whoops, Dracula wants to " + choice + ", but can't, falling back calling out");
-    choice = 'call';
+    console.warn(
+      "Whoops, Dracula wants to " +
+        choice +
+        ", but can't, falling back calling out"
+    );
+    choice = "call";
   }
 
   // TODO: make dracula be able to select calling out
@@ -296,35 +315,33 @@ async function callOut() {
   let loserIdx = (diceState.turn == DRACULA) ^ isBetSafe ? PLAYER : DRACULA;
 
   let diceLost = 1;
-  if (diceState.stakeActive)
-    diceLost++;
+  if (diceState.stakeActive) diceLost++;
 
   // TODO: refactor me
   let betStatus = "undefined";
   if (isPlayerTurn)
     if (loserIdx == DRACULA)
-      betStatus = `Good call. Dracula has ${diceState.dice[DRACULA].length - diceLost
-        } left. `;
+      betStatus = `Good call. Dracula has ${
+        diceState.dice[DRACULA].length - diceLost
+      } left. `;
     else betStatus = "Poor call. ";
   else if (loserIdx == PLAYER)
     betStatus = "Dracula called your bluff. Lose a dice. ";
   else
-    betStatus = `Dracula called and lost, he has ${diceState.dice[DRACULA].length - 1
-      } left. `;
+    betStatus = `Dracula called and lost, he has ${
+      diceState.dice[DRACULA].length - 1
+    } left. `;
 
-  console.log(diceState.stakeActive)
+  console.log(diceState.stakeActive);
   if (isPlayerTurn && diceState.stakeActive)
-    if (loserIdx === DRACULA)
-      betStatus += "\nThe stake worked!";
-    else if (loserIdx === PLAYER)
-      betStatus += "\nThe stake was wasted.";
+    if (loserIdx === DRACULA) betStatus += "\nThe stake worked!";
+    else if (loserIdx === PLAYER) betStatus += "\nThe stake was wasted.";
 
   setBattleStatus(betStatus);
   diceState.stakeActive = false;
 
   // Remove the dice from the respective player
-  for (let i = 0; i < diceLost; i++)
-    await removeDice(loserIdx);
+  for (let i = 0; i < diceLost; i++) await removeDice(loserIdx);
 
   if (diceState.dice[DRACULA].length <= 0) {
     diceState.onGameEnd("draculaDead");
@@ -426,15 +443,24 @@ export async function startDiceRound(
     return wrapped;
   }
 
-  $("#bet-bump-value").onclick =
-    actionFactory(betBumpValue);
-  $("#bet-bump-number").onclick =
-    actionFactory(betBumpNumber);
-  $("#bet-bump-both").onclick =
-    actionFactory(betBumpBoth);
+  $("#bet-bump-value").onclick = actionFactory(betBumpValue);
+  $("#bet-bump-number").onclick = actionFactory(betBumpNumber);
+  $("#bet-bump-both").onclick = actionFactory(betBumpBoth);
   $("#use-garlic").onclick = async () => {
-    /// XXX: hook garlic into here
-  }
+    if (diceState.turn !== PLAYER) return;
+    let character = GameState.getBattleCharacter();
+    if (!character.garlics) return;
+
+    character.garlics--;
+    GameState.scene = "Overworld";
+    changeScene(globeGroup, cameraControls);
+    for (let die of diceState.playerDiceProxies) {
+      die.model.removeFromParent();
+    }
+    diceState.playerDiceProxies = [];
+    diceState.dice[PLAYER] = [];
+    moveDracula(GameState);
+  };
   $("#use-stake").onclick = async () => {
     if (diceState.turn !== PLAYER) return;
     let character = GameState.getBattleCharacter();
@@ -449,7 +475,7 @@ export async function startDiceRound(
     character.stakes--;
     setBattleStatus("");
     showBattleOptions();
-  }
+  };
   $("#bet-call").onclick = async () => {
     if (diceState.turn !== PLAYER) return;
     await callOut();

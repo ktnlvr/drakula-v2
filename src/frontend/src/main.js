@@ -77,7 +77,7 @@ const { globeGroup, cameraControls, scheduledCallables } = await setupGame(
   scene
 );
 
-async function changeScene(globeGroup, cameraControls) {
+export async function changeScene(globeGroup, cameraControls) {
   const diceModels = new THREE.Group();
   if (GameState.scene === "Battle") {
     globeGroup.visible = false;
@@ -93,8 +93,12 @@ async function changeScene(globeGroup, cameraControls) {
       const die = await createDie(scene);
 
       const radius = 20;
-      const theta = 2 * Math.PI * i / n;
-      die.model.position.set(radius * Math.sin(theta), -1, radius * Math.cos(theta) + radius * 0.75);
+      const theta = (2 * Math.PI * i) / n;
+      die.model.position.set(
+        radius * Math.sin(theta),
+        -1,
+        radius * Math.cos(theta) + radius * 0.75
+      );
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
       die.setSpin(randomSpin);
@@ -110,7 +114,8 @@ async function changeScene(globeGroup, cameraControls) {
 
     scene.add(diceModels);
     cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
-
+    GameState.getBattleCharacter().garlics++;
+    console.log("Number of garlic", GameState.getBattleCharacter().garlics);
     await startDiceRound(6, dice, (reason) => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
@@ -138,6 +143,8 @@ async function changeScene(globeGroup, cameraControls) {
     document.querySelector(".logger-box").classList.remove("hidden");
   }
 }
+
+export { cameraControls, globeGroup };
 
 document.querySelector(".end-turn-button").addEventListener("click", () => {
   if (GameState.scene === "Overworld") {
