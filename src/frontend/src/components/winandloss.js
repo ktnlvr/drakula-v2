@@ -1,3 +1,5 @@
+import { removeGameIdCookie } from './main.js';
+
 export const MatchResult = {
   WIN: "win",
   LOSS: "loss",
@@ -18,6 +20,7 @@ export function matchEndScene(result) {
   button.addEventListener("click", (e) => {
     e.preventDefault();
     console.log("Reloading the page");
+    removeGameIdCookie();
     location.reload();
   });
 }

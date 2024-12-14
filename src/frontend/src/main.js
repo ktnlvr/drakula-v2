@@ -140,7 +140,48 @@ async function changeScene(globeGroup, cameraControls) {
   }
 }
 
-document.querySelector(".end-turn-button").addEventListener("click", () => {
+document.querySelector(".end-turn-button").addEventListener("click", async () => {
+  const game_data = {
+    chosenValue,
+    chosenNumber,
+    draculaDice,
+    playerDice,
+    scene: GameState.scene,
+    character: {
+      name: character.name,
+      position: character.position
+      // ... other character data
+    },
+    airports: GameState.airports,
+    connections: GameState.connections,
+    dracula: GameState.dracula,
+    timer: GameState.timer,
+    selectedCharacter: GameState.selectedCharacter,
+    battleCharacter: GameState.battleCharacter,
+    ticketCharacter: GameState.ticketCharacter,
+    draculaDiceCount: GameState.draculaDiceCount,
+    //and more
+  };
+
+  const game_id = getGameIdFromCookie();
+
+  if (!game_id) {
+    setGameIdCookie(crypto.randomUUID());
+  }
+
+  const response = await fetch(`http://127.0.0.1:8000/game?game_id=${game_id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(game_data)
+  });
+
+  if (response.ok) {
+    const result = await response.json();
+    console.log("Game state saved", result);
+  } else {
+    console.log("Failed to save game state");
+  }
+
   if (GameState.scene === "Overworld") {
     if (myloop(GameState)) {
       GameState.scene = "Battle";
@@ -164,3 +205,55 @@ window.addEventListener(
   },
   false
 );
+
+function getGameIdFromCookie() {
+  const match = document.cookie.match(/(^| )game_id=([^;]+)/);
+  return match ? match[2] : null;
+}
+
+function setGameIdCookie(game_id) {
+  document.cookie = `game_id=${game_id}; path=/; max-age=31536000`; // 1 year
+}
+
+function removeGameIdCookie() {
+  document.cookie = `game_id=; path=/; max-age=0`;
+}
+
+// On initial page load:
+let game_id = getGameIdFromCookie();
+if (!game_id) {
+  // Generate a new ID - can use crypto API or a simple random:
+  game_id = crypto.randomUUID();
+  setGameIdCookie(game_id);
+}
+
+async function loadGameState() {
+  const game_id = getGameIdFromCookie();
+  if (game_id) {
+    const response = await fetch(`http://127.0.0.1:8000/game?game_id=${game_id}`);
+    if (response.ok) {
+      const savedData = await response.json();
+      const gameData = savedData[0].json; // assuming structure returned
+      // Restore game state from gameData
+      chosenValue = gameData.chosenValue;
+      chosenNumber = gameData.chosenNumber;
+      draculaDice = gameData.draculaDice;
+      playerDice = gameData.playerDice;
+      scene: GameState.scene;
+      character = gameData.character;
+      airports = gameData.airports;
+      connections = gameData.connections;
+      dracula = gameData.dracula;
+      timer = gameData.timer;
+      selectedCharacter = gameData.selectedCharacter;
+      battleCharacter = gameData.battleCharacter;
+      ticketCharacter = gameData.ticketCharacter;
+      draculaDiceCount = gameData.draculaDiceCount;
+      //and more
+    } else {
+      console.log("No saved game found for this game_id");
+    }
+  }
+}
+
+loadGameState();
