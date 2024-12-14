@@ -192,7 +192,8 @@ export class Character {
     if (!GameState.characters[characterIdx].hasCapacity())
       return;
 
-    if (Math.random() < 1) {
+    const ITEM_GAIN_CHANCE = 0.1;
+    if (Math.random() < ITEM_GAIN_CHANCE) {
       const things = ["garlics", "tickets", "stakes"];
       let gains = things[Math.floor(Math.random() * things.length)];
       this[gains]++;
