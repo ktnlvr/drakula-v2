@@ -88,7 +88,7 @@ export async function changeScene(globeGroup, cameraControls) {
     document.querySelector(".betting-overlay").classList.remove("hidden");
 
     let dice = [];
-    let n = GameState.getBattleCharacter().dices;
+    let n = GameState.getBattleCharacter().edge;
     for (let i = 0; i < n; i++) {
       const die = await createDie(scene);
 
@@ -116,7 +116,7 @@ export async function changeScene(globeGroup, cameraControls) {
     cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
     GameState.getBattleCharacter().garlics++;
     console.log("Number of garlic", GameState.getBattleCharacter().garlics);
-    await startDiceRound(GameState.dracula.dices, dice, (reason) => {
+    await startDiceRound(GameState.dracula.edge, dice, (reason) => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
       if (reason == "playerDead") {

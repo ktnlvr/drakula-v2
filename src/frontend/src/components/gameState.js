@@ -36,8 +36,8 @@ export const GameState = {
   getBattleCharacter() {
     console.log(this.characters);
     console.log(this.battleCharacter);
-    return this.characters[this.battleCharacter]
-  }
+    return this.characters[this.battleCharacter];
+  },
 };
 
 const CHARACTER_NAMES = [
@@ -82,7 +82,6 @@ export class Character {
       Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
     this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
     this.totalMoves = this.haste;
-    this.dices = 6;
     this.garlics = 0;
     this.stakes = 0;
     this.tickets = 0;

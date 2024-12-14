@@ -38,9 +38,13 @@ function getCharacterPortraitPath(name) {
 
 export default function updateMovesInUI() {
   const cards = document.querySelectorAll("#haste");
+  const edges = document.querySelectorAll("#edge");
   console.log("Changing the moves of all the characters.");
   GameState.characters.forEach((char, index) => {
     cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`;
+  });
+  GameState.characters.forEach((char, index) => {
+    edges[index].innerHTML = `${char.edge}`;
   });
 }
 
@@ -48,14 +52,14 @@ export function removeAllCharEventListeners() {
   const characters = document.querySelectorAll("#character-block");
   characters.forEach((character, index) => {
     removeCharEventListeners(character);
-  })
+  });
 }
 
 export function addAllCharEventListeners() {
   const characters = document.querySelectorAll("#character-block");
   characters.forEach((character, index) => {
     addCharEventListeners(character);
-  })
+  });
 }
 
 export function addCharEventListeners(char) {
@@ -161,7 +165,7 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
     <br>
     <span class="stats">
       <img class="stat-icon" src="/icons/capacity.svg"><p class="stat-value">${character.capacity}</p>
-      <img class="stat-icon" src="/icons/edge.svg"><p class="stat-value">${character.edge}</p>
+      <img class="stat-icon" src="/icons/edge.svg"><p class="stat-value" id="edge">${character.edge}</p>
       <img class="stat-icon" src="/icons/haste.svg"><p class="stat-value" id="haste">(${character.haste}/${character.haste})</p>
     </span>
   `;

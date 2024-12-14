@@ -12,6 +12,7 @@ import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { GameState } from "./gameState";
 import { moveDracula } from "./turnutils";
+import updateMovesInUI from "./cards";
 
 const DICE_FACE_ROTATIONS_EULER = [
   // I just tested it for different values until it worked
@@ -260,14 +261,14 @@ async function removeDice(loser_idx) {
   if (loser_idx == PLAYER) {
     const proxies = diceState.playerDiceProxies;
     const i = Math.floor(Math.random() * proxies.length);
-  
+
     const DICE_REMOVE_ANIMATION_DURATION_S = 0.75;
     const TIMESLICES = 100;
     // XXX: assuming scale is uniform
     const START_SCALE = proxies[i].model.scale[0];
     const dt = DICE_REMOVE_ANIMATION_DURATION_S / TIMESLICES;
     const integrator = { t: 0 };
-    GameState.getBattleCharacter().dices--;
+    GameState.getBattleCharacter().edge--;
     await sleepActive(
       () => {
         const SCALE = START_SCALE * (1 - easeInQuart(integrator.t));
@@ -280,10 +281,8 @@ async function removeDice(loser_idx) {
 
     diceState.playerDiceProxies[i].model.removeFromParent();
     proxies.splice(i, 1);
-  }
-  else
-  {
-    GameState.dracula.dices--;
+  } else {
+    GameState.dracula.edge--;
   }
   // TODO: when Dracula's dice gets removed there is no timeout
   // or animation, so it looks kinda choppy.
@@ -332,9 +331,7 @@ async function callOut() {
   else if (loserIdx == PLAYER)
     betStatus = "Dracula called your bluff. Lose a dice. ";
   else
-    betStatus = `Dracula called and lost, he has ${
-      GameState.dracula.dices
-    } left. `;
+    betStatus = `Dracula called and lost, he has ${GameState.dracula.edge} left. `;
 
   console.log(diceState.stakeActive);
   if (isPlayerTurn && diceState.stakeActive)
@@ -461,6 +458,7 @@ export async function startDiceRound(
     }
     GameState.scene = "Overworld";
     changeScene(globeGroup, cameraControls);
+    updateMovesInUI();
     diceState.playerDiceProxies = [];
     diceState.dice[PLAYER] = [];
     moveDracula(GameState);
