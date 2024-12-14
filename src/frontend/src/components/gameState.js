@@ -17,7 +17,7 @@ export const GameState = {
   selectedCharacter: null,
   battleCharacter: null,
   ticketCharacter: null,
-  draculaDiceCount: 6,
+  draculaDiceCount: 5,
 
   isConnected(from, to) {
     return this.connections.some(
@@ -190,7 +190,7 @@ export class Character {
   hasCapacity() {
     return this.garlics + this.stakes + this.tickets < this.capacity;
   }
-
+  
   gainItem(characterIdx) {
     if (!GameState.characters[characterIdx].hasCapacity())
       return;

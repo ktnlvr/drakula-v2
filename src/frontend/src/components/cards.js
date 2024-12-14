@@ -16,7 +16,7 @@ function updateTokenCount(token) {
   const characterId = character.getAttribute("char-id");
   const p = token.nextElementSibling;
   const tokenId = token.getAttribute("token-no");
-  cardCounts[characterId][tokenId] -= 1;
+  cardCounts[characterId][tokenId] += 1;
   console.log(`The new value is ${cardCounts[characterId][tokenId]}`);
   p.textContent = `x${cardCounts[characterId][tokenId]}`;
 }
@@ -42,10 +42,12 @@ export default function updateMovesInUI() {
   const edges = document.querySelectorAll("#edge");
   console.log("Changing the moves of all the characters.");
   GameState.characters.forEach((char, index) => {
-    cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`;
+    if (char && char.type !== "drakula")
+      cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`;
   });
   GameState.characters.forEach((char, index) => {
-    edges[index].innerHTML = `${char.edge}`;
+    if (char && char.edge)
+      edges[index].innerHTML = `${char.edge}`;
   });
 }
 
