@@ -159,7 +159,8 @@ export class Character {
       if (GameState.isConnected(currentIndex, target)) {
         this.airport = GameState.airports[target];
         this.updatePosition();
-        this.gainItem(GameState.selectedCharacter);
+        if (this.type !== 'dracula')
+          this.gainItem(GameState.selectedCharacter);
         this.totalMoves--;
         updateMovesInUI();
         GameState.selectedCharacter = null;
