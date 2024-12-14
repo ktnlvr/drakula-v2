@@ -14,15 +14,14 @@ function updateTokenCount(token) {
   const characterId = character.getAttribute("char-id");
   const p = token.nextElementSibling;
   const tokenId = token.getAttribute("token-no");
-  cardCounts[characterId][tokenId] += 1;
+  cardCounts[characterId][tokenId] -= 1;
   console.log(`The new value is ${cardCounts[characterId][tokenId]}`);
-  console.log("Decrement here and add changes according to yourself.");
   p.textContent = `x${cardCounts[characterId][tokenId]}`;
 }
 
 function tooltip(tokenType) {
   if (tokenType === "ticket") {
-    return "Allows the player to teleport to an airport.";
+    return "Use and select an airport to teleport to.";
   } else if (tokenType === "stake") {
     return "Removes the Dracula's dice.";
   } else if (tokenType === "garlic") {
@@ -75,6 +74,11 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
     group.classList.add("token-group");
     const token = document.createElement("img");
     token.classList.add("token-image", tokenType);
+    if (tokenType === "ticket") {
+      token.addEventListener("click", () => {
+        GameState.ticketCharacter = charId;
+      });
+    }
     token.src = `./icon_images/${tokenType}.svg`;
 
     token.setAttribute("data-tooltip", `${tooltip(tokenType)}`);
@@ -85,7 +89,7 @@ function createCard(parent, charId, character, tokenTypes = [], charPass) {
           index + 1
         }`
       );
-      updateTokenCount(token);
+      //updateTokenCount(token);
     });
 
     const tokenCount = document.createElement("p");

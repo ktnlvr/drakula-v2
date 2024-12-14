@@ -15,6 +15,7 @@ export const GameState = {
   timer: null,
   selectedCharacter: null,
   battleCharacter: null,
+  ticketCharacter: null,
 
   isConnected(from, to) {
     return this.connections.some(
@@ -35,8 +36,8 @@ export const GameState = {
   getBattleCharacter() {
     console.log(this.characters);
     console.log(this.battleCharacter);
-    return this.characters[this.battleCharacter]
-  }
+    return this.characters[this.battleCharacter];
+  },
 };
 
 const CHARACTER_NAMES = [
@@ -81,7 +82,7 @@ export class Character {
       Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
     this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
     this.totalMoves = this.haste;
-    
+
     this.garlics = 0;
     this.stakes = 0;
     this.tickets = 0;
@@ -136,14 +137,28 @@ export class Character {
   setAirport(target, ignoreConnections = false) {
     const currentIndex = GameState.airports.indexOf(this.airport);
     if (ignoreConnections) {
-      this.airport = GameState.airports[target];
-      this.updatePosition();
+      if (this.tickets > 0) {
+        this.airport = GameState.airports[target];
+        this.updatePosition();
+        this.tickets--;
+        const tokenElement = document.querySelector(
+          `#character-block[char-id="${GameState.ticketCharacter}"] .ticket`
+        );
+        if (tokenElement) {
+          const countElement = tokenElement.nextElementSibling;
+          countElement.textContent = `x${this.tickets}`;
+        }
+        GameState.ticketCharacter = null;
+      } else {
+        logInfo("This character has no tickets");
+      }
       return;
     } else if (this.totalMoves !== 0) {
       if (GameState.isConnected(currentIndex, target)) {
         this.airport = GameState.airports[target];
         this.updatePosition();
         this.totalMoves--;
+        GameState.selectedCharacter = null;
       } else {
         logInfo("The selected airport is out of reach for this character");
       }
