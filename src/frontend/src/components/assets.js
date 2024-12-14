@@ -151,7 +151,12 @@ export async function createGlobe(
                 airportMesh.name
               );
             }
-
+            if (GameState.ticketCharacter !== null) {
+              GameState.characters[GameState.ticketCharacter].setAirport(
+                airportMesh.name,
+                true
+              );
+            }
             event.stopPropagation();
             selectionPass.selectedObjects = [airportMesh];
           });
