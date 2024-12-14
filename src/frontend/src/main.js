@@ -93,8 +93,12 @@ async function changeScene(globeGroup, cameraControls) {
       const die = await createDie(scene);
 
       const radius = 20;
-      const theta = 2 * Math.PI * i / n;
-      die.model.position.set(radius * Math.sin(theta), -1, radius * Math.cos(theta) + radius * 0.75);
+      const theta = (2 * Math.PI * i) / n;
+      die.model.position.set(
+        radius * Math.sin(theta),
+        -1,
+        radius * Math.cos(theta) + radius * 0.75
+      );
 
       let randomSpin = randomPointOnSphere().multiplyScalar(10);
       die.setSpin(randomSpin);
@@ -111,7 +115,7 @@ async function changeScene(globeGroup, cameraControls) {
     scene.add(diceModels);
     cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
 
-    await startDiceRound(6, dice, (reason) => {
+    await startDiceRound(GameState.draculaDiceCount, dice, (reason) => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
       if (reason == "playerDead") {
