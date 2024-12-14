@@ -34,7 +34,9 @@ export async function createGlobe(
   const stopping = 0.92;
   globe.addEventListener("mousedown", (event) => {
     event.stopPropagation();
-    mousedown = true;
+    if (event.originalEvent.button === 0) {
+      mousedown = true;
+    }
   });
 
   window.addEventListener("mouseup", (event) => {
