@@ -114,9 +114,8 @@ export async function changeScene(globeGroup, cameraControls) {
 
     scene.add(diceModels);
     cameraControls.setLookAt(0, 80, 70, 0, 0, 0, true);
-    GameState.getBattleCharacter().garlics++;
-    console.log("Number of garlic", GameState.getBattleCharacter().garlics);
-    await startDiceRound(GameState.dracula.edge, dice, (reason) => {
+
+    await startDiceRound(GameState.draculaDiceCount, dice, (reason) => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
       if (reason == "playerDead") {

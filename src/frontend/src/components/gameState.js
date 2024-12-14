@@ -16,6 +16,8 @@ export const GameState = {
   timer: null,
   selectedCharacter: null,
   battleCharacter: null,
+  ticketCharacter: null,
+  draculaDiceCount: 6,
 
   isConnected(from, to) {
     return this.connections.some(
@@ -76,15 +78,20 @@ export class Character {
     // characters a semi-balanced, since all stats often add up to
     // some fixed number, this is some real 3am mathemagic
     // Conjecturally, gives a uniform
-    const TOTAL = 3;
-    this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
-    this.capacity =
-      Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
-    this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
-    this.totalMoves = this.haste;
-    this.garlics = 0;
-    this.stakes = 0;
-    this.tickets = 0;
+    if (this.type !== "dracula") {
+      const TOTAL = 3;
+      this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
+      this.capacity =
+        Math.max(0, Math.floor(Math.random() * TOTAL - this.edge)) + 1;
+      this.haste = Math.max(0, TOTAL - this.edge - this.capacity) + 1;
+      this.totalMoves = this.haste;
+
+      this.garlics = 0;
+      this.stakes = 0;
+      this.tickets = 0;
+    } else {
+      this.totalMoves = 0;
+    }
   }
 
   resetMoves() {
@@ -136,8 +143,21 @@ export class Character {
   setAirport(target, ignoreConnections = false) {
     const currentIndex = GameState.airports.indexOf(this.airport);
     if (ignoreConnections) {
-      this.airport = GameState.airports[target];
-      this.updatePosition();
+      if (this.tickets > 0) {
+        this.airport = GameState.airports[target];
+        this.updatePosition();
+        this.tickets--;
+        const tokenElement = document.querySelector(
+          `#character-block[char-id="${GameState.ticketCharacter}"] .ticket`
+        );
+        if (tokenElement) {
+          const countElement = tokenElement.nextElementSibling;
+          countElement.textContent = `x${this.tickets}`;
+        }
+        GameState.ticketCharacter = null;
+      } else {
+        logInfo("This character has no tickets");
+      }
       return;
     } else if (this.totalMoves !== 0) {
       if (GameState.isConnected(currentIndex, target)) {
@@ -145,6 +165,7 @@ export class Character {
         this.updatePosition();
         this.totalMoves--;
         updateMovesInUI();
+        GameState.selectedCharacter = null;
       } else {
         logInfo("The selected airport is out of reach for this character");
       }

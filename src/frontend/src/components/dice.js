@@ -258,7 +258,9 @@ async function removeDice(loser_idx) {
   console.log(loser_idx);
   console.log(diceState);
   diceState.dice[loser_idx].pop();
-  if (loser_idx == PLAYER) {
+  if (loser_idx == DRACULA) {
+    GameState.draculaDiceCount = diceState.dice[DRACULA].length;
+  } else if (loser_idx == PLAYER) {
     const proxies = diceState.playerDiceProxies;
     const i = Math.floor(Math.random() * proxies.length);
 
@@ -397,7 +399,7 @@ export async function rollDice(dice = [], mode = "nowait") {
 }
 
 export async function startDiceRound(
-  draculaDiceCount = 6,
+  draculaDiceCount,
   playerDiceProxies = [],
   onGameEnd
 ) {
