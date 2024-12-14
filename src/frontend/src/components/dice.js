@@ -11,8 +11,9 @@ import { changeScene, globeGroup, cameraControls } from "../main";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { GameState } from "./gameState";
-import { moveDracula } from "./turnutils";
+import { isEndGame, moveDracula } from "./turnutils";
 import updateMovesInUI from "./cards";
+import { matchEndScene } from "./winandloss";
 
 const DICE_FACE_ROTATIONS_EULER = [
   // I just tested it for different values until it worked
@@ -229,9 +230,19 @@ async function draculaThink() {
   await choices[choice]();
 }
 
-function draculaSetStartingBet() {
-  let n = 3 - Math.floor(Math.sqrt(Math.random() * 9));
-  let m = Math.floor(Math.random() * 6) + 1;
+function draculaSetStartingBet(draculaDice) {
+  let n = 1;
+  let m = Math.min(...draculaDice);
+  if (Math.random() < 0.1) {
+    n = 1 + (Math.random() < 0.4);
+    if (n > 6)
+      n = 6
+  }
+  if (Math.random() < 0.1) {
+    m = 1 + (Math.random() < 0.4);
+    if (m > 6)
+      m = 6;
+  }
   return [n, m];
 }
 
@@ -260,6 +271,11 @@ async function removeDice(loser_idx) {
   diceState.dice[loser_idx].pop();
   if (loser_idx == DRACULA) {
     GameState.draculaDiceCount = diceState.dice[DRACULA].length;
+    if (GameState.draculaDiceCount> 0)
+      GameState.draculaDiceCount--;
+    else {
+      matchEndScene("win");
+    }
   } else if (loser_idx == PLAYER) {
     const proxies = diceState.playerDiceProxies;
     const i = Math.floor(Math.random() * proxies.length);
@@ -283,8 +299,6 @@ async function removeDice(loser_idx) {
 
     diceState.playerDiceProxies[i].model.removeFromParent();
     proxies.splice(i, 1);
-  } else {
-    GameState.dracula.edge--;
   }
   // TODO: when Dracula's dice gets removed there is no timeout
   // or animation, so it looks kinda choppy.
@@ -333,7 +347,7 @@ async function callOut() {
   else if (loserIdx == PLAYER)
     betStatus = "Dracula called your bluff. Lose a dice. ";
   else
-    betStatus = `Dracula called and lost, he has ${GameState.dracula.edge} left. `;
+    betStatus = `Dracula called and lost, he has ${GameState.draculaDiceCount} left. `;
 
   console.log(diceState.stakeActive);
   if (isPlayerTurn && diceState.stakeActive)
@@ -362,7 +376,7 @@ async function callOut() {
     newDice.push(Math.floor(Math.random() * 6) + 1);
   diceState.dice[DRACULA] = newDice;
 
-  diceState.bet = draculaSetStartingBet();
+  diceState.bet = draculaSetStartingBet(newDice);
   updateCurrentBetDisplay();
   if (isPlayerTurn) showBattleOptions();
 }
@@ -403,10 +417,10 @@ export async function startDiceRound(
   playerDiceProxies = [],
   onGameEnd
 ) {
-  diceState.bet = draculaSetStartingBet();
   const draculaDice = [];
   for (let i = 0; i < draculaDiceCount; i++)
     draculaDice.push(Math.floor(Math.random() * 6) + 1);
+  diceState.bet = draculaSetStartingBet(draculaDice);
   const playerDice = playerDiceProxies.map((dice) => dice.face + 1);
   diceState.playerDiceProxies = playerDiceProxies;
 
