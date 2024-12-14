@@ -1,11 +1,11 @@
 #game-over {
   position: fixed;
+  display: flex;
   justify-content: center;
   align-items: center;
-  height: 50vh;
-  width: 50vw;
-  top: 25%;
-  left: 25%;
+  height: 100vh;
+  width: 100vw;
+  opacity: 0.9;
   background-color: #000d;
   box-shadow: 0 0 10px #000, 0 0 20px rgba(0, 0, 0, 0.6),
     0 0 30px rgba(0, 0, 0, 0.4);
@@ -26,6 +26,7 @@
 
 #try-button {
   background: linear-gradient(45deg, #533e3e, #3d3825);
+  font-family: "Courier New", Courier, monospace;
   color: wheat;
   border: none;
   padding: 10px 20px;
@@ -37,6 +38,7 @@
 }
 
 #game-result {
+  color: white;
   padding: 15px;
   font-family: "Special Elite", cursive;
 }

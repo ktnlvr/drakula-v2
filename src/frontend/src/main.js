@@ -8,7 +8,7 @@ import CameraControls from "camera-controls";
 import { GameState, createCharacters } from "./components/gameState";
 import { createDie, startDiceRound, rollDice } from "./components/dice";
 import { randomPointOnSphere } from "./components/utils";
-import { createCard } from "./components/cards";
+import updateMovesInUI, { createCard } from "./components/cards";
 import { myloop } from "./components/turnutils";
 import { matchEndScene } from "./components/winandloss";
 import { logInfo } from "./components/logger";
@@ -74,7 +74,7 @@ const { globeGroup, cameraControls, scheduledCallables } = await setupGame(
   scene
 );
 
-async function changeScene(globeGroup, cameraControls) {
+export async function changeScene(globeGroup, cameraControls) {
   const diceModels = new THREE.Group();
   if (GameState.scene === "Battle") {
     globeGroup.visible = false;
@@ -85,7 +85,7 @@ async function changeScene(globeGroup, cameraControls) {
     document.querySelector(".betting-overlay").classList.remove("hidden");
 
     let dice = [];
-    let n = 6;
+    let n = GameState.getBattleCharacter().edge;
     for (let i = 0; i < n; i++) {
       const die = await createDie(scene);
 
@@ -140,6 +140,8 @@ async function changeScene(globeGroup, cameraControls) {
   }
 }
 
+export { cameraControls, globeGroup };
+
 document.querySelector(".end-turn-button").addEventListener("click", () => {
   if (GameState.scene === "Overworld") {
     if (myloop(GameState)) {
@@ -149,6 +151,10 @@ document.querySelector(".end-turn-button").addEventListener("click", () => {
       GameState.scene = "Overworld";
       changeScene(globeGroup, cameraControls);
     }
+    GameState.characters.forEach((character) => {
+      character.resetMoves();
+    });
+    updateMovesInUI();
   }
 });
 

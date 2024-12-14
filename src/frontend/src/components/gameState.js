@@ -4,6 +4,7 @@ import characterVertex from "./shaders/characterBeaconVert";
 import characterFragment from "./shaders/characterBeaconFrag";
 import draculaVertex from "./shaders/draculaBeaconVert";
 import draculaFragment from "./shaders/draculaBeaconFrag";
+import updateMovesInUI from "../components/cards";
 
 const center = new THREE.Vector3(0, 60, 0);
 export const GameState = {
@@ -154,6 +155,7 @@ export class Character {
         this.airport = GameState.airports[target];
         this.updatePosition();
         this.totalMoves--;
+        updateMovesInUI();
         GameState.selectedCharacter = null;
       } else {
         logInfo("The selected airport is out of reach for this character");
