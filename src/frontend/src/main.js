@@ -118,7 +118,6 @@ export async function changeScene(globeGroup, cameraControls) {
       if (reason == "playerDead") {
         logInfo("Your character has fallen to the Dracula");
         const char = GameState.battleCharacter;
-        characterDeath(document.querySelector(`[char-id="${char}"]`));
         scene.remove(GameState.characters[char].mesh);
         GameState.characters.splice(char, 1);
 

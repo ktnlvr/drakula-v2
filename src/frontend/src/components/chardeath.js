@@ -3,27 +3,12 @@ import {
   removeAllCharEventListeners,
   removeCharEventListeners,
 } from "./cards";
-import { handleCharacterImgClick } from "./cards";
-
-function reapplyListeners() {
-  const charId = [0, 1, 2, 3];
-
-  const characters = document.querySelectorAll(".character-img-container");
-  characters.forEach((charImg) => {
-    charImg.removeEventListener("click",
-      handleCharacterImgClick
-    );
-    charImg.addEventListener("click", handleCharacterImgClick);
-    console.log("I am repplying shit.")
-  }
-);
-}
+import { GameState } from "./gameState";
 
 export function characterDeath(charElement) {
   charElement.classList.add("explode");
   setTimeout(() => {
     //removeCharEventListeners(charElement);
-    charElement.remove();
+    //GameState.diedCharacters++;
   }, 2000);
-  reapplyListeners();
 }
