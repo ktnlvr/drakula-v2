@@ -1,4 +1,4 @@
-import { removeGameIdCookie } from './main.js';
+import { removeGameIdCookie } from '../main.js';
 
 export const MatchResult = {
   WIN: "win",

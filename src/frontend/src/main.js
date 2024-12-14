@@ -142,19 +142,15 @@ async function changeScene(globeGroup, cameraControls) {
 
 document.querySelector(".end-turn-button").addEventListener("click", async () => {
   const game_data = {
-    chosenValue,
-    chosenNumber,
-    draculaDice,
-    playerDice,
-    scene: GameState.scene,
-    character: {
-      name: character.name,
-      position: character.position
-      // ... other character data
-    },
+    //chosenValue,
+    //chosenNumber,
+    //draculaDice,
+    //playerDice,
     airports: GameState.airports,
     connections: GameState.connections,
+    characters: GameState.characters,
     dracula: GameState.dracula,
+    scene: GameState.scene,
     timer: GameState.timer,
     selectedCharacter: GameState.selectedCharacter,
     battleCharacter: GameState.battleCharacter,
@@ -162,11 +158,26 @@ document.querySelector(".end-turn-button").addEventListener("click", async () =>
     draculaDiceCount: GameState.draculaDiceCount,
     //and more
   };
+  console.log("Sending POST request to save game state...", game_data);
 
   const game_id = getGameIdFromCookie();
+  console.log("getGameIdFromCookie ok");
 
   if (!game_id) {
-    setGameIdCookie(crypto.randomUUID());
+    game_id = crypto.randomUUID();
+    setGameIdCookie(game_id);
+    const initialData = {
+      airports: GameState.airports,
+      connections: GameState.connections,
+      characters: GameState.characters,
+      dracula: GameState.dracula,
+      scene: GameState.scene,
+      timer: GameState.timer,
+      selectedCharacter: GameState.selectedCharacter,
+      battleCharacter: GameState.battleCharacter,
+      ticketCharacter: GameState.ticketCharacter,
+      draculaDiceCount: GameState.draculaDiceCount,
+    };
   }
 
   const response = await fetch(`http://127.0.0.1:8000/game?game_id=${game_id}`, {
@@ -174,6 +185,7 @@ document.querySelector(".end-turn-button").addEventListener("click", async () =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(game_data)
   });
+  console.log("POST request completed with status:", response.status);
 
   if (response.ok) {
     const result = await response.json();
@@ -215,7 +227,7 @@ function setGameIdCookie(game_id) {
   document.cookie = `game_id=${game_id}; path=/; max-age=31536000`; // 1 year
 }
 
-function removeGameIdCookie() {
+export function removeGameIdCookie() {
   document.cookie = `game_id=; path=/; max-age=0`;
 }
 
@@ -235,20 +247,20 @@ async function loadGameState() {
       const savedData = await response.json();
       const gameData = savedData[0].json; // assuming structure returned
       // Restore game state from gameData
-      chosenValue = gameData.chosenValue;
-      chosenNumber = gameData.chosenNumber;
-      draculaDice = gameData.draculaDice;
-      playerDice = gameData.playerDice;
-      scene: GameState.scene;
-      character = gameData.character;
-      airports = gameData.airports;
-      connections = gameData.connections;
-      dracula = gameData.dracula;
-      timer = gameData.timer;
-      selectedCharacter = gameData.selectedCharacter;
-      battleCharacter = gameData.battleCharacter;
-      ticketCharacter = gameData.ticketCharacter;
-      draculaDiceCount = gameData.draculaDiceCount;
+      //chosenValue = gameData.chosenValue;
+      //chosenNumber = gameData.chosenNumber;
+      //draculaDice = gameData.draculaDice;
+      //playerDice = gameData.playerDice;
+      GameState.airports = gameData.airports;
+      GameState.connections = gameData.connections;
+      GameState.characters = gameData.characters;
+      GameState.dracula = gameData.dracula;
+      GameState.scene = gameData.scene;
+      GameState.timer = gameData.timer;
+      GameState.selectedCharacter = gameData.selectedCharacter;
+      GameState.battleCharacter = gameData.battleCharacter;
+      GameState.ticketCharacter = gameData.ticketCharacter;
+      GameState.draculaDiceCount = gameData.draculaDiceCount;
       //and more
     } else {
       console.log("No saved game found for this game_id");
