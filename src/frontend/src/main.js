@@ -144,10 +144,6 @@ export { cameraControls, globeGroup };
 
 document.querySelector(".end-turn-button").addEventListener("click", async () => {
   const game_data = {
-    //chosenValue,
-    //chosenNumber,
-    //draculaDice,
-    //playerDice,
     airports: GameState.airports,
     connections: GameState.connections,
     characters: GameState.characters,
@@ -250,13 +246,9 @@ async function loadGameState() {
   if (game_id) {
     const response = await fetch(`http://127.0.0.1:8000/game?game_id=${game_id}`);
     if (response.ok) {
+      console.log("saved game found for this game_id");
       const savedData = await response.json();
       const gameData = savedData[0].json; // assuming structure returned
-      // Restore game state from gameData
-      //chosenValue = gameData.chosenValue;
-      //chosenNumber = gameData.chosenNumber;
-      //draculaDice = gameData.draculaDice;
-      //playerDice = gameData.playerDice;
       GameState.airports = gameData.airports;
       GameState.connections = gameData.connections;
       GameState.characters = gameData.characters;
