@@ -141,7 +141,6 @@ export class Character {
       if (this.tickets > 0) {
         this.airport = GameState.airports[target];
         this.updatePosition();
-        this.gainItem();
         this.tickets--;
         const tokenElement = document.querySelector(
           `#character-block[char-id="${GameState.ticketCharacter}"] .ticket`
@@ -159,7 +158,7 @@ export class Character {
       if (GameState.isConnected(currentIndex, target)) {
         this.airport = GameState.airports[target];
         this.updatePosition();
-        this.gainItem();
+        this.gainItem(GameState.selectedCharacter);
         this.totalMoves--;
         GameState.selectedCharacter = null;
       } else {
@@ -185,19 +184,35 @@ export class Character {
       .add(currentDirection.normalize().multiplyScalar(newDistance));
   }
 
-  gainItem() {
+  hasCapacity() {
+    return this.garlics + this.stakes + this.tickets < this.capacity;
+  }
+
+  gainItem(characterIdx) {
+    if (!GameState.characters[characterIdx].hasCapacity())
+      return;
+
     if (Math.random() < 1) {
       const things = ["garlics", "tickets", "stakes"];
       let gains = things[Math.floor(Math.random() * things.length)];
       this[gains]++;
       logInfo(`The character gains ${gains}! +1`);
     }
-    updateItemCountDisplay()
+
+    updateItemCountDisplay(characterIdx);
   }
 }
 
-function updateItemCountDisplay() {
-  /// XXX: hook into here for refreshing the item counts on the screen
+function updateItemCountDisplay(characterIdx) {
+  for (const [cssName, gainName] of [["ticket", "tickets"], ["stake", "stakes"], ["garlic", "garlics"]]) {
+    const tokenElement = document.querySelector(
+      `#character-block[char-id="${characterIdx}"] .${cssName}`
+    );
+    if (tokenElement) {
+      const countElement = tokenElement.nextElementSibling;
+      countElement.textContent = `x${GameState.characters[gainName]}`;
+    }
+  }
 }
 
 export function createCharacters(globeGroup, draculaSpawn = 4) {
