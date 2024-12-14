@@ -205,9 +205,9 @@ async function draculaThink() {
   };
 
   // Can not bump a value
-  if (diceState.bet[1] == 6) {
+  if (diceState.bet[1] >= 6) {
     delete choices.bumpValue;
-    delete choices.betBumpBoth;
+    delete choices.bumpValueAndNumber;
   }
 
   let choice = draculaDecide(
