@@ -1,3 +1,4 @@
+import { Dracula } from "../game";
 import { matchEndScene } from "./winandloss";
 
 export function myloop(gamestate) {
@@ -62,6 +63,7 @@ export function moveDracula(gamestate) {
 export function hasWorldReachedDestructionLimit(gamestate) {
   let currentDestruction;
 
+  console.log(gamestate.dracula.totalMoves);
   gamestate.dracula.totalMoves++;
   currentDestruction =
     (gamestate.dracula.totalMoves / gamestate.airports.length) * 100;
