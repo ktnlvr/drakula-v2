@@ -118,7 +118,7 @@ export class Character {
 
       return mesh;
     } else {
-      const geometry = new THREE.CylinderGeometry(0.2, 0.2, 5, 64, 64, true);
+      const geometry = new THREE.CylinderGeometry(0.6, 0.6, 2, 64, 64, true);
       const material = new THREE.ShaderMaterial({
         vertexShader: characterVertex,
         fragmentShader: characterFragment,
@@ -181,7 +181,7 @@ export class Character {
     this.mesh.rotateX(-Math.PI / 2);
     const currentDirection = this.mesh.position.clone().sub(center);
     const currentDistance = currentDirection.length();
-    const newDistance = currentDistance + 2.75;
+    const newDistance = currentDistance + 1.25;
     this.mesh.position
       .copy(center)
       .add(currentDirection.normalize().multiplyScalar(newDistance));

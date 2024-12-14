@@ -137,9 +137,9 @@ export async function createGlobe(
             airport.latitude_deg,
             airport.longitude_deg
           );
-          const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.5);
+          const geometry = new THREE.CylinderGeometry(0.6, 0.6, 0.5);
           const material = new THREE.MeshStandardMaterial({
-            color: "#646464",
+            color: "#252525",
           });
           const airportMesh = new THREE.Mesh(geometry, material);
           airportMesh.name = index;
