@@ -53,6 +53,7 @@ export function moveDracula(gamestate) {
     const randomIndex = Math.floor(Math.random() * connectedAirports.length);
     const newAirportIndex = connectedAirports[randomIndex];
     gamestate.dracula.setAirport(newAirportIndex);
+    gamestate.dracula.totalMoves++;
   }
 }
 
