@@ -4,6 +4,7 @@ import characterVertex from "./shaders/characterBeaconVert";
 import characterFragment from "./shaders/characterBeaconFrag";
 import draculaVertex from "./shaders/draculaBeaconVert";
 import draculaFragment from "./shaders/draculaBeaconFrag";
+import updateMovesInUI from "../components/cards";
 
 const center = new THREE.Vector3(0, 60, 0);
 export const GameState = {
@@ -26,11 +27,16 @@ export const GameState = {
     );
   },
 
-  markAirport(airport, isMarked = false) {
-    if (isMarked) {
-      this.airports[airport].material.color.set("#fffe32");
+  markAirport(airport, isMarked = false, color = undefined) {
+    const colorData = this.airports[airport].material.color;
+
+    // Required to keep compatibility with possible callsites.
+    if (color !== undefined) {
+      colorData.set(color);
+    } else if (isMarked) {
+      colorData.set("#fffe32");
     } else {
-      this.airports[airport].material.color.set("#414141");
+      colorData.set("#414141");
     }
   },
 
@@ -74,10 +80,10 @@ export class Character {
     this.updatePosition();
     this.name = getRandomCharacterName();
 
-    // characters a semi-balanced, since all stats often add up to
-    // some fixed number, this is some real 3am mathemagic
-    // Conjecturally, gives a uniform
     if (this.type !== "dracula") {
+      // characters a semi-balanced, since all stats often add up to
+      // some fixed number, this is some real 3am mathemagic
+      // Conjecturally, gives a uniform
       const TOTAL = 3;
       this.edge = 2 * Math.floor(Math.random() * TOTAL) + 1;
       this.capacity =
@@ -153,7 +159,9 @@ export class Character {
       if (GameState.isConnected(currentIndex, target)) {
         this.airport = GameState.airports[target];
         this.updatePosition();
+        this.gainItem(GameState.selectedCharacter);
         this.totalMoves--;
+        updateMovesInUI();
         GameState.selectedCharacter = null;
       } else {
         logInfo("The selected airport is out of reach for this character");
@@ -176,6 +184,37 @@ export class Character {
     this.mesh.position
       .copy(center)
       .add(currentDirection.normalize().multiplyScalar(newDistance));
+  }
+
+  hasCapacity() {
+    return this.garlics + this.stakes + this.tickets < this.capacity;
+  }
+
+  gainItem(characterIdx) {
+    if (!GameState.characters[characterIdx].hasCapacity())
+      return;
+
+    const ITEM_GAIN_CHANCE = 0.1;
+    if (Math.random() < ITEM_GAIN_CHANCE) {
+      const things = ["garlics", "tickets", "stakes"];
+      let gains = things[Math.floor(Math.random() * things.length)];
+      this[gains]++;
+      logInfo(`The character gains ${gains}! +1`);
+    }
+
+    updateItemCountDisplay(characterIdx);
+  }
+}
+
+function updateItemCountDisplay(characterIdx) {
+  for (const [cssName, gainName] of [["ticket", "tickets"], ["stake", "stakes"], ["garlic", "garlics"]]) {
+    const tokenElement = document.querySelector(
+      `#character-block[char-id="${characterIdx}"] .${cssName}`
+    );
+    if (tokenElement) {
+      const countElement = tokenElement.nextElementSibling;
+      countElement.textContent = `x${GameState.characters[gainName]}`;
+    }
   }
 }
 

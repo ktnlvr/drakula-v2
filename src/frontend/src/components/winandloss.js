@@ -1,3 +1,6 @@
+import { GameState } from "./gameState";
+import { globeGroup, cameraControls, changeScene } from "../main";
+
 import { removeGameIdCookie } from '../main.js';
 
 export const MatchResult = {
@@ -6,11 +9,17 @@ export const MatchResult = {
 };
 
 export function matchEndScene(result) {
+  GameState.scene = "Overworld";
+  changeScene(globeGroup, cameraControls);
   const gameOver = document.getElementById("game-over");
   const gameMsg = document.getElementById("game-result");
   const button = document.getElementById("try-button");
-  gameOver.classList.remove("hidden");
+  const endButton = document.querySelector(".end-turn-button");
+  const logger = document.querySelector(".logger-box");
 
+  logger.style.zIndex = "-1";
+  endButton.classList.add("hidden");
+  gameOver.classList.remove("hidden");
   if (result === MatchResult.WIN) {
     gameMsg.innerHTML = "You Win!";
     button.innerHTML = "Play again";
