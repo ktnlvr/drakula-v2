@@ -20,7 +20,10 @@ export function myloop(gamestate) {
 export function isEndGame(gamestate) {
   for (let i = 0; i < gamestate.characters.length; i++) {
     const element = gamestate.characters[i];
-    if (element.airport.name === gamestate.dracula.airport.name) {
+    if (
+      element.airport.name === gamestate.dracula.airport.name &&
+      !gamestate.deadCharacters.includes(i.toString())
+    ) {
       gamestate.battleCharacter = i;
       return true;
     }

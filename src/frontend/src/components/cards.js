@@ -42,12 +42,16 @@ export default function updateMovesInUI() {
   const edges = document.querySelectorAll("#edge");
   console.log("Changing the moves of all the characters.");
   GameState.characters.forEach((char, index) => {
-    if (char && char.type !== "drakula")
+    if (GameState.deadCharacters.includes(index.toString())) return;
+    if (cards[index]) {
       cards[index].innerHTML = `(${char.totalMoves}/${char.haste})`;
+    }
   });
   GameState.characters.forEach((char, index) => {
-    if (char && char.edge)
+    if (GameState.deadCharacters.includes(index.toString())) return;
+    if (cards[index]) {
       edges[index].innerHTML = `${char.edge}`;
+    }
   });
 }
 

@@ -18,6 +18,7 @@ export const GameState = {
   battleCharacter: null,
   ticketCharacter: null,
   draculaDiceCount: 5,
+  deadCharacters: [],
 
   isConnected(from, to) {
     return this.connections.some(
@@ -159,8 +160,7 @@ export class Character {
       if (GameState.isConnected(currentIndex, target)) {
         this.airport = GameState.airports[target];
         this.updatePosition();
-        if (this.type !== 'dracula')
-          this.gainItem(GameState.selectedCharacter);
+        if (this.type !== "dracula") this.gainItem(GameState.selectedCharacter);
         this.totalMoves--;
         updateMovesInUI();
         GameState.selectedCharacter = null;
@@ -190,10 +190,9 @@ export class Character {
   hasCapacity() {
     return this.garlics + this.stakes + this.tickets < this.capacity;
   }
-  
+
   gainItem(characterIdx) {
-    if (!GameState.characters[characterIdx].hasCapacity())
-      return;
+    if (!GameState.characters[characterIdx].hasCapacity()) return;
 
     const ITEM_GAIN_CHANCE = 0.1;
     if (Math.random() < ITEM_GAIN_CHANCE) {
@@ -208,7 +207,11 @@ export class Character {
 }
 
 function updateItemCountDisplay(characterIdx) {
-  for (const [cssName, gainName] of [["ticket", "tickets"], ["stake", "stakes"], ["garlic", "garlics"]]) {
+  for (const [cssName, gainName] of [
+    ["ticket", "tickets"],
+    ["stake", "stakes"],
+    ["garlic", "garlics"],
+  ]) {
     const tokenElement = document.querySelector(
       `#character-block[char-id="${characterIdx}"] .${cssName}`
     );

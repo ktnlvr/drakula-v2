@@ -10,5 +10,7 @@ export function characterDeath(charElement) {
   setTimeout(() => {
     //removeCharEventListeners(charElement);
     //GameState.diedCharacters++;
+    GameState.deadCharacters.push(charElement.getAttribute("char-id"));
+    charElement.remove();
   }, 2000);
 }

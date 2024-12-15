@@ -83,7 +83,8 @@ export async function changeScene(globeGroup, cameraControls) {
     document.querySelector(".logger-box").classList.add("hidden");
     document.getElementById("characters").classList.add("hidden");
     document.querySelector(".betting-overlay").classList.remove("hidden");
-
+    if (GameState.getBattleCharacter().airport.name in GameState.deadCharacters)
+      return;
     let dice = [];
     let n = GameState.getBattleCharacter().edge;
     for (let i = 0; i < n; i++) {
@@ -118,9 +119,8 @@ export async function changeScene(globeGroup, cameraControls) {
       if (reason == "playerDead") {
         logInfo("Your character has fallen to the Dracula");
         const char = GameState.battleCharacter;
+        characterDeath(document.querySelector(`[char-id="${char}"]`));
         scene.remove(GameState.characters[char].mesh);
-        GameState.characters.splice(char, 1);
-
         if (GameState.characters.length == 0) {
           matchEndScene("loss");
         }
