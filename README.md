@@ -1,4 +1,4 @@
-# drakula v2
+# :vampire: Drakula v2
 
 ![Screenshot](https://github.com/user-attachments/assets/7d07f052-fb81-4f62-9de2-76f0ab94e5b0)
 
