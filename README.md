@@ -1,5 +1,7 @@
 # drakula v2
 
+![Screenshot](https://github.com/user-attachments/assets/7d07f052-fb81-4f62-9de2-76f0ab94e5b0)
+
 Now with twice more fangs!
 
 ## Philosophy & Rules
@@ -39,3 +41,4 @@ Based on Zen of Python and previous experience.
 
 * FastAPI. Modern REST API endpoint service.
 * MariaDB. The DB our university really likes.
+
